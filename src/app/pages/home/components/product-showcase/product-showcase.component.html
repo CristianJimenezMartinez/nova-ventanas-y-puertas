@@ -1,0 +1,120 @@
+<section id="productos" class="section-py showcase-section">
+  <div class="container">
+    
+    <!-- Encabezado de la Sección -->
+    <div class="showcase-header text-center">
+      <div class="badge-tag badge-tag--primary">
+        Catálogo Vitrina 2026
+      </div>
+      <h2 class="heading-section showcase-header__title">
+        Soluciones a Medida en PVC y Aluminio
+      </h2>
+      <p class="subtitle-text showcase-header__subtitle">
+        Diseñadas y fabricadas con los más altos estándares europeos de estanqueidad, seguridad y ahorro energético.
+      </p>
+
+      <!-- Selector / Pestañas de Categoría -->
+      <div class="category-pills">
+        @for (cat of categories; track cat.key) {
+          <button 
+            type="button" 
+            class="pill-btn" 
+            [class.pill-btn--active]="productService.selectedCategory() === cat.key"
+            (click)="selectCategory(cat.key)">
+            <span class="pill-btn__icon">{{ cat.icon }}</span>
+            <span class="pill-btn__label">{{ cat.label }}</span>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Rejilla de Productos (Vitrina) -->
+    <div class="products-grid">
+      @for (product of productService.getFilteredProducts(); track product.id) {
+        <article class="product-card card-panel">
+          
+          <!-- Imagen del Producto y Badges -->
+          <div class="product-card__media">
+            <img 
+              [src]="product.imageUrl" 
+              [alt]="product.name" 
+              loading="lazy"
+              class="product-card__image" />
+
+            <div class="product-card__badges">
+              @if (product.badge) {
+                <span class="media-badge media-badge--primary">{{ product.badge }}</span>
+              }
+              @if (product.passivhausReady) {
+                <span class="media-badge media-badge--gold">Passivhaus Ready</span>
+              }
+            </div>
+          </div>
+
+          <!-- Contenido del Producto -->
+          <div class="product-card__body">
+            <div class="product-card__series">{{ product.series }}</div>
+            <h3 class="heading-card product-card__name">{{ product.name }}</h3>
+            <p class="product-card__headline">{{ product.headline }}</p>
+
+            <!-- Tira de Especificaciones Técnicas -->
+            <div class="specs-strip">
+              <div class="spec-item">
+                <span class="spec-item__label">Térmica Uw</span>
+                <span class="spec-item__val text-primary">{{ product.uwValue }}</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-item__label">Acústica</span>
+                <span class="spec-item__val">{{ product.dbValue }}</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-item__label">Perfil</span>
+                <span class="spec-item__val">{{ product.profileDepth }}</span>
+              </div>
+              <div class="spec-item">
+                <span class="spec-item__label">Hermeticidad</span>
+                <span class="spec-item__val">{{ product.airPermeability }}</span>
+              </div>
+            </div>
+
+            <!-- Lista de Características Destacadas -->
+            <ul class="highlights-list">
+              @for (feat of product.highlights; track feat) {
+                <li class="highlight-item">
+                  <svg class="highlight-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                  <span>{{ feat }}</span>
+                </li>
+              }
+            </ul>
+
+            <!-- Acciones de Ficha -->
+            <div class="product-card__actions">
+              <button 
+                type="button" 
+                class="btn btn--primary btn--sm flex-1"
+                (click)="quoteProduct(product)">
+                Configurar Medidas
+              </button>
+
+              <button 
+                type="button" 
+                class="btn btn--whatsapp btn--sm"
+                (click)="openWhatsAppProduct(product)"
+                title="Consultar por WhatsApp">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.539 1.761.814 2.791.814 3.179 0 5.769-2.587 5.77-5.767 0-3.18-2.589-5.766-5.77-5.766zm9.969 5.766c0 5.503-4.468 9.97-9.97 9.97-1.748 0-3.382-.452-4.808-1.242l-5.222 1.369 1.393-5.086c-.887-1.488-1.393-3.23-1.393-5.081 0-5.503 4.468-9.97 9.97-9.97s9.97 4.467 9.97 9.97z"/>
+                </svg>
+                WhatsApp
+              </button>
+            </div>
+
+          </div>
+
+        </article>
+      }
+    </div>
+
+  </div>
+</section>

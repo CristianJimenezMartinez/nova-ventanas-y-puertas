@@ -1,0 +1,167 @@
+.passivhaus-section {
+  background-color: var(--bg-secondary);
+  transition: background-color var(--transition-normal);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.section-header {
+  max-width: 840px;
+  margin: 0 auto 3.5rem;
+
+  &__title {
+    margin-top: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+}
+
+.efficiency-comparison {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-bottom: 4rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.comparison-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-lg);
+  padding: 2rem 1.5rem;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: transform var(--transition-fast);
+
+  &:hover {
+    transform: translateY(-3px);
+  }
+
+  &__badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+
+    &--gold {
+      color: var(--color-gold);
+    }
+  }
+
+  &__uw {
+    font-family: var(--font-title);
+    font-size: 1.85rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.1;
+
+    .unit {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+  }
+
+  &__loss {
+    font-size: 0.88rem;
+    font-weight: 700;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  &__text {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  &--old {
+    border-top: 4px solid #ef4444;
+    .comparison-card__loss {
+      color: #ef4444;
+    }
+  }
+
+  &--mid {
+    border-top: 4px solid #f59e0b;
+    .comparison-card__loss {
+      color: #f59e0b;
+    }
+  }
+
+  &--nova {
+    border: 2px solid var(--color-gold);
+    background: linear-gradient(135deg, var(--bg-card) 0%, var(--color-gold-light) 100%);
+    box-shadow: 0 10px 30px rgba(217, 119, 6, 0.15);
+
+    .comparison-card__star {
+      position: absolute;
+      top: -12px;
+      right: 20px;
+      background: var(--color-gold);
+      color: #ffffff;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--border-radius-full);
+      letter-spacing: 0.05em;
+    }
+  }
+}
+
+.text-gold {
+  color: var(--color-gold);
+}
+
+.text-success {
+  color: var(--color-success);
+}
+
+.pillars-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.pillar-card {
+  padding: 2rem 1.5rem;
+  text-align: left;
+
+  &__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--border-radius-md);
+    background: var(--color-primary-light);
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+
+  &__title {
+    margin-bottom: 0.5rem;
+    font-size: 1.15rem;
+  }
+
+  &__desc {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+}

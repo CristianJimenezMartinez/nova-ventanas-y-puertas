@@ -1,0 +1,296 @@
+<section id="configurador" class="section-py configurador-section">
+  <div class="container">
+    
+    <div class="configurador-wrapper card-panel">
+      
+      <!-- Cabecera del Configurador -->
+      <div class="config-header text-center">
+        <span class="badge-tag badge-tag--primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="3" y1="9" x2="21" y2="9"></line>
+            <line x1="9" y1="21" x2="9" y2="9"></line>
+          </svg>
+          Presupuestador Express en 2 Minutos
+        </span>
+        <h2 class="heading-section config-header__title">
+          Configura tu Proyecto a Medida
+        </h2>
+        <p class="subtitle-text config-header__subtitle">
+          Selecciona tus necesidades y obtén asesoramiento técnico personalizado con visita de medición gratuita en Murcia y alrededores.
+        </p>
+
+        <!-- Barra de Progreso de Pasos -->
+        <div class="steps-progress">
+          <div class="step-indicator" [class.step-indicator--active]="currentStep() >= 1">
+            <div class="step-circle">1</div>
+            <span class="step-title">Cerramiento</span>
+          </div>
+          <div class="step-line" [class.step-line--active]="currentStep() >= 2"></div>
+          <div class="step-indicator" [class.step-indicator--active]="currentStep() >= 2">
+            <div class="step-circle">2</div>
+            <span class="step-title">Material & Cantidad</span>
+          </div>
+          <div class="step-line" [class.step-line--active]="currentStep() >= 3"></div>
+          <div class="step-indicator" [class.step-indicator--active]="currentStep() >= 3">
+            <div class="step-circle">3</div>
+            <span class="step-title">Ubicación & Envío</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cuerpo del Asistente -->
+      <div class="config-body">
+
+        <!-- PASO 1: Tipo de Solución -->
+        @if (currentStep() === 1) {
+          <div class="step-content">
+            <h3 class="step-heading">¿Qué tipo de cerramiento necesitas para tu espacio?</h3>
+            
+            <div class="options-grid">
+              <button 
+                type="button" 
+                class="option-card"
+                [class.option-card--selected]="quoteData.serviceType === 'pvc'"
+                (click)="setServiceType('pvc')">
+                <div class="option-card__icon">🪟</div>
+                <div class="option-card__title">Ventanas de PVC</div>
+                <div class="option-card__desc">Máximo aislamiento térmico y acústico (A+++)</div>
+              </button>
+
+              <button 
+                type="button" 
+                class="option-card"
+                [class.option-card--selected]="quoteData.serviceType === 'aluminio'"
+                (click)="setServiceType('aluminio')">
+                <div class="option-card__icon">📐</div>
+                <div class="option-card__title">Ventanas Aluminio RPT</div>
+                <div class="option-card__desc">Diseño minimalista de perfilería oculta</div>
+              </button>
+
+              <button 
+                type="button" 
+                class="option-card"
+                [class.option-card--selected]="quoteData.serviceType === 'puertas'"
+                (click)="setServiceType('puertas')">
+                <div class="option-card__icon">🚪</div>
+                <div class="option-card__title">Puerta de Entrada</div>
+                <div class="option-card__desc">Acorazadas de alta seguridad certificada RC3</div>
+              </button>
+
+              <button 
+                type="button" 
+                class="option-card"
+                [class.option-card--selected]="quoteData.serviceType === 'cortinas'"
+                (click)="setServiceType('cortinas')">
+                <div class="option-card__icon">💎</div>
+                <div class="option-card__title">Cortinas de Cristal</div>
+                <div class="option-card__desc">Cerramientos panorámicos sin perfiles</div>
+              </button>
+
+              <button 
+                type="button" 
+                class="option-card"
+                [class.option-card--selected]="quoteData.serviceType === 'techos'"
+                (click)="setServiceType('techos')">
+                <div class="option-card__icon">☀️</div>
+                <div class="option-card__title">Techos Móviles & Pérgolas</div>
+                <div class="option-card__desc">Apertura motorizada para porches y terrazas</div>
+              </button>
+
+              <button 
+                type="button" 
+                class="option-card"
+                [class.option-card--selected]="quoteData.serviceType === 'persianas'"
+                (click)="setServiceType('persianas')">
+                <div class="option-card__icon">⚙️</div>
+                <div class="option-card__title">Persianas & Mosquiteras</div>
+                <div class="option-card__desc">Cajones túnel con aislamiento térmico y motor</div>
+              </button>
+            </div>
+
+            <div class="step-footer">
+              <button type="button" class="btn btn--primary btn--lg" (click)="nextStep()">
+                Continuar al Paso 2 →
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- PASO 2: Material y Cantidades -->
+        @if (currentStep() === 2) {
+          <div class="step-content">
+            <h3 class="step-heading">Elige material y volumen aproximado</h3>
+
+            <div class="form-group-block">
+              <label class="form-label">Material preferido:</label>
+              <div class="pill-selector">
+                <button 
+                  type="button" 
+                  class="pill-choice" 
+                  [class.pill-choice--active]="quoteData.material === 'pvc'"
+                  (click)="setMaterial('pvc')">
+                  PVC Alta Eficiencia
+                </button>
+                <button 
+                  type="button" 
+                  class="pill-choice" 
+                  [class.pill-choice--active]="quoteData.material === 'aluminio'"
+                  (click)="setMaterial('aluminio')">
+                  Aluminio con RPT
+                </button>
+                <button 
+                  type="button" 
+                  class="pill-choice" 
+                  [class.pill-choice--active]="quoteData.material === 'indiferente'"
+                  (click)="setMaterial('indiferente')">
+                  Necesito Asesoramiento Técnico
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group-block">
+              <label class="form-label">Tipo de inmueble:</label>
+              <div class="pill-selector">
+                <button 
+                  type="button" 
+                  class="pill-choice" 
+                  [class.pill-choice--active]="quoteData.propertyType === 'piso'"
+                  (click)="setPropertyType('piso')">
+                  Piso / Ático
+                </button>
+                <button 
+                  type="button" 
+                  class="pill-choice" 
+                  [class.pill-choice--active]="quoteData.propertyType === 'chalet'"
+                  (click)="setPropertyType('chalet')">
+                  Chalet / Vivienda Unifamiliar
+                </button>
+                <button 
+                  type="button" 
+                  class="pill-choice" 
+                  [class.pill-choice--active]="quoteData.propertyType === 'comercial'"
+                  (click)="setPropertyType('comercial')">
+                  Local Comercial / Oficina
+                </button>
+              </div>
+            </div>
+
+            <div class="form-group-block">
+              <label class="form-label">Cantidad aproximada de huecos / ventanas:</label>
+              <div class="pill-selector">
+                <button 
+                  type="button" 
+                  class="pill-choice" 
+                  [class.pill-choice--active]="quoteData.approximateUnits === '1-2 ventanas'"
+                  (click)="setUnits('1-2 ventanas')">
+                  1 - 2 unidades
+                </button>
+                <button 
+                  type="button" 
+                  class="pill-choice" 
+                  [class.pill-choice--active]="quoteData.approximateUnits === '3-5 ventanas'"
+                  (click)="setUnits('3-5 ventanas')">
+                  3 - 5 unidades (Media vivienda)
+                </button>
+                <button 
+                  type="button" 
+                  class="pill-choice" 
+                  [class.pill-choice--active]="quoteData.approximateUnits === 'Toda la vivienda (6+)'"
+                  (click)="setUnits('Toda la vivienda (6+)')">
+                  Toda la vivienda (6 o más)
+                </button>
+              </div>
+            </div>
+
+            <div class="checkbox-options">
+              <label class="custom-checkbox">
+                <input type="checkbox" [(ngModel)]="quoteData.needsNextGenHelp">
+                <span class="checkmark"></span>
+                <span>Quiero información para tramitar las <strong>Ayudas Next Generation (Hasta 4.000€)</strong></span>
+              </label>
+
+              <label class="custom-checkbox">
+                <input type="checkbox" [(ngModel)]="quoteData.includeInstallation">
+                <span class="checkmark"></span>
+                <span>Incluir retirada de ventanas antiguas e instalación limpia en el día</span>
+              </label>
+            </div>
+
+            <div class="step-footer step-footer--between">
+              <button type="button" class="btn btn--secondary" (click)="prevStep()">
+                ← Volver
+              </button>
+              <button type="button" class="btn btn--primary btn--lg" (click)="nextStep()">
+                Último Paso →
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- PASO 3: Ubicación y Contacto Directo -->
+        @if (currentStep() === 3) {
+          <div class="step-content">
+            <h3 class="step-heading">¿Dónde se encuentra tu vivienda?</h3>
+            <p class="step-subheading">Para enviarte un presupuesto personalizado y organizar una visita gratuita sin compromiso.</p>
+
+            <div class="form-inputs-grid">
+              <div class="input-field">
+                <label>Tu Nombre y Apellidos:</label>
+                <input type="text" [(ngModel)]="quoteData.clientName" placeholder="Ej: Carlos Martínez" />
+              </div>
+
+              <div class="input-field">
+                <label>Municipio o Población (Murcia y alrededores):</label>
+                <input type="text" [(ngModel)]="quoteData.clientCity" placeholder="Ej: Molina de Segura, Murcia, etc." />
+              </div>
+
+              <div class="input-field">
+                <label>Teléfono de Contacto:</label>
+                <input type="tel" [(ngModel)]="quoteData.clientPhone" placeholder="Ej: 613 75 42 71" />
+              </div>
+            </div>
+
+            <!-- Resumen de Configuración -->
+            <div class="summary-preview">
+              <div class="summary-preview__title">Resumen de tu selección:</div>
+              <div class="summary-preview__tags">
+                <span class="summary-tag">{{ quoteData.serviceType.toUpperCase() }}</span>
+                <span class="summary-tag">{{ quoteData.material.toUpperCase() }}</span>
+                <span class="summary-tag">{{ quoteData.approximateUnits }}</span>
+                @if (quoteData.needsNextGenHelp) {
+                  <span class="summary-tag summary-tag--gold">Con Ayudas NextGen</span>
+                }
+              </div>
+            </div>
+
+            <div class="step-footer step-footer--between">
+              <button type="button" class="btn btn--secondary" (click)="prevStep()">
+                ← Modificar
+              </button>
+
+              <button 
+                type="button" 
+                class="btn btn--whatsapp btn--lg"
+                (click)="sendToWhatsApp()">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                  <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.539 1.761.814 2.791.814 3.179 0 5.769-2.587 5.77-5.767 0-3.18-2.589-5.766-5.77-5.766zm9.969 5.766c0 5.503-4.468 9.97-9.97 9.97-1.748 0-3.382-.452-4.808-1.242l-5.222 1.369 1.393-5.086c-.887-1.488-1.393-3.23-1.393-5.081 0-5.503 4.468-9.97 9.97-9.97s9.97 4.467 9.97 9.97z"/>
+                </svg>
+                Enviar Presupuesto por WhatsApp
+              </button>
+            </div>
+
+            @if (isSubmitted()) {
+              <div class="success-alert">
+                ✓ ¡Solicitud abierta en WhatsApp! Un asesor técnico de Grupo Soto te contactará de inmediato para concretar las medidas exactas.
+              </div>
+            }
+          </div>
+        }
+
+      </div>
+
+    </div>
+
+  </div>
+</section>

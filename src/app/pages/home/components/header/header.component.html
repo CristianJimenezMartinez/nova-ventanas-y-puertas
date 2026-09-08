@@ -1,0 +1,143 @@
+<header class="nova-header glass-nav">
+  <div class="container nova-header__inner">
+    
+    <!-- Logo de Marca -->
+    <a href="#" class="nova-brand" (click)="$event.preventDefault(); scrollToSection('hero')">
+      <div class="nova-brand__symbol">
+        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" class="nova-brand__icon">
+          <!-- Marco de ventana estilizado -->
+          <rect x="3" y="3" width="30" height="30" rx="4" stroke="currentColor" stroke-width="2.5" />
+          <line x1="18" y1="3" x2="18" y2="33" stroke="currentColor" stroke-width="2" />
+          <line x1="3" y1="18" x2="33" y2="18" stroke="currentColor" stroke-width="2" />
+          <path d="M18 3L33 18" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 2" opacity="0.4" />
+        </svg>
+      </div>
+      <div class="nova-brand__text">
+        <span class="nova-brand__title">NOVA</span>
+        <span class="nova-brand__subtitle">VENTANAS & PUERTAS</span>
+        <span class="nova-brand__badge">GRUPO SOTO</span>
+      </div>
+    </a>
+
+    <!-- Navegación de Escritorio -->
+    <nav class="nova-nav-pc">
+      <button type="button" class="nova-nav-link" (click)="scrollToSection('productos')">
+        Productos
+      </button>
+      <button type="button" class="nova-nav-link" (click)="scrollToSection('configurador')">
+        <span class="nova-nav-badge">Express</span>
+        Configurador
+      </button>
+      <button type="button" class="nova-nav-link" (click)="scrollToSection('nextgen')">
+        Ayudas NextGen
+      </button>
+      <button type="button" class="nova-nav-link" (click)="scrollToSection('tecnologia')">
+        Aislamiento
+      </button>
+      <button type="button" class="nova-nav-link" (click)="scrollToSection('showroom')">
+        Showroom
+      </button>
+      <button type="button" class="nova-nav-link" (click)="scrollToSection('contacto')">
+        Contacto
+      </button>
+    </nav>
+
+    <!-- Acciones / CTA -->
+    <div class="nova-header__actions">
+      <!-- Botón de Modo Oscuro/Claro -->
+      <button 
+        type="button" 
+        class="theme-toggle-btn" 
+        (click)="themeService.toggleTheme()" 
+        [title]="themeService.isDark() ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'"
+        aria-label="Alternar tema">
+        @if (themeService.isDark()) {
+          <!-- Icono Sol -->
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+        } @else {
+          <!-- Icono Luna -->
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        }
+      </button>
+
+      <!-- Botón WhatsApp Rápido -->
+      <a 
+        href="https://wa.me/34613754271?text=Hola%20Grupo%20Soto%20Nova%20Ventanas,%20solicito%20informaci%C3%B3n" 
+        target="_blank" 
+        rel="noopener" 
+        class="btn-icon-whatsapp"
+        title="Contactar por WhatsApp">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+          <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.539 1.761.814 2.791.814 3.179 0 5.769-2.587 5.77-5.767 0-3.18-2.589-5.766-5.77-5.766zm9.969 5.766c0 5.503-4.468 9.97-9.97 9.97-1.748 0-3.382-.452-4.808-1.242l-5.222 1.369 1.393-5.086c-.887-1.488-1.393-3.23-1.393-5.081 0-5.503 4.468-9.97 9.97-9.97s9.97 4.467 9.97 9.97z"/>
+        </svg>
+      </a>
+
+      <!-- Botón CTA Presupuesto -->
+      <button 
+        type="button" 
+        class="btn btn--primary btn--sm header-cta-btn"
+        (click)="scrollToSection('configurador')">
+        Cotizar Ahora
+      </button>
+
+      <!-- Hamburguesa Móvil -->
+      <button 
+        type="button" 
+        class="mobile-burger-btn" 
+        (click)="toggleMobileMenu()" 
+        aria-label="Abrir menú">
+        <span class="burger-line" [class.burger-line--top-open]="isMobileMenuOpen()"></span>
+        <span class="burger-line" [class.burger-line--mid-open]="isMobileMenuOpen()"></span>
+        <span class="burger-line" [class.burger-line--bot-open]="isMobileMenuOpen()"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Menú Desplegable Móvil -->
+  @if (isMobileMenuOpen()) {
+    <div class="nova-mobile-menu">
+      <div class="container mobile-menu__links">
+        <button type="button" class="mobile-nav-link" (click)="scrollToSection('productos')">
+          Catálogo de Productos
+        </button>
+        <button type="button" class="mobile-nav-link" (click)="scrollToSection('configurador')">
+          Configurador de Presupuesto
+        </button>
+        <button type="button" class="mobile-nav-link" (click)="scrollToSection('nextgen')">
+          Ayudas Next Generation (Hasta 4.000€)
+        </button>
+        <button type="button" class="mobile-nav-link" (click)="scrollToSection('tecnologia')">
+          Tecnología & Aislamiento Passivhaus
+        </button>
+        <button type="button" class="mobile-nav-link" (click)="scrollToSection('showroom')">
+          Showroom & Obras Realizadas
+        </button>
+        <button type="button" class="mobile-nav-link" (click)="scrollToSection('contacto')">
+          Contacto y Asesoramiento
+        </button>
+
+        <div class="mobile-menu__footer">
+          <a 
+            href="https://wa.me/34613754271?text=Hola%20Grupo%20Soto%20Nova%20Ventanas,%20solicito%20presupuesto" 
+            target="_blank" 
+            rel="noopener" 
+            class="btn btn--whatsapp btn--lg w-100">
+            Pedir Presupuesto por WhatsApp
+          </a>
+        </div>
+      </div>
+    </div>
+  }
+</header>

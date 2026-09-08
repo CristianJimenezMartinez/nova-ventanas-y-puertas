@@ -1,0 +1,74 @@
+<section id="showroom" class="section-py showroom-section">
+  <div class="container">
+    
+    <!-- Cabecera -->
+    <div class="text-center showroom-header">
+      <div class="badge-tag badge-tag--primary">
+        Showroom & Obras Realizadas
+      </div>
+      <h2 class="heading-section showroom-header__title">
+        Espacios Renovados con Sello Nova
+      </h2>
+      <p class="subtitle-text showroom-header__subtitle">
+        Conoce algunos de nuestros proyectos residenciales más recientes en la Región de Murcia. Instalaciones limpias, sin obras invasivas y con resultados garantizados durante 10 años.
+      </p>
+    </div>
+
+    <!-- Muestrario Interactivo de Colores y Texturas -->
+    <div class="colors-palette-card card-panel">
+      <div class="palette-header">
+        <div class="palette-header__info">
+          <span class="palette-caption">Muestrario de Acabados & Texturas:</span>
+          <h3 class="palette-title">Personaliza el color de tu carpintería</h3>
+        </div>
+        <div class="active-color-badge">
+          Color seleccionado: <strong>{{ activeColor() }}</strong>
+        </div>
+      </div>
+
+      <div class="swatches-grid">
+        @for (c of finishColors; track c.name) {
+          <button 
+            type="button" 
+            class="swatch-btn" 
+            [class.swatch-btn--active]="activeColor() === c.name"
+            (click)="selectColor(c.name)">
+            <span class="swatch-circle" [style.background-color]="c.hex"></span>
+            <div class="swatch-details">
+              <span class="swatch-name">{{ c.name }}</span>
+              <span class="swatch-type">{{ c.type }}</span>
+            </div>
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Rejilla de Proyectos Realizados -->
+    <div class="projects-grid">
+      @for (project of projects; track project.id) {
+        <article class="project-card card-panel">
+          <div class="project-card__media">
+            <img 
+              [src]="project.imageUrl" 
+              [alt]="project.title" 
+              loading="lazy" 
+              class="project-card__img" />
+            <div class="project-card__location-badge">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+              </svg>
+              {{ project.location }}
+            </div>
+          </div>
+
+          <div class="project-card__body">
+            <span class="project-card__solution">{{ project.solution }}</span>
+            <h3 class="heading-card project-card__title">{{ project.title }}</h3>
+            <p class="project-card__desc">{{ project.description }}</p>
+          </div>
+        </article>
+      }
+    </div>
+
+  </div>
+</section>
