@@ -132,6 +132,28 @@
   }
 }
 
+.footer-copy-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.footer-credit {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+
+  a {
+    color: var(--color-champagne);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color var(--transition-fast), text-decoration var(--transition-fast);
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
 .footer-legal {
   display: flex;
   align-items: center;

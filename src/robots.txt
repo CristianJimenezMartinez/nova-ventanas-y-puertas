@@ -1,0 +1,6 @@
+﻿User-agent: *
+Allow: /
+
+# Sitemap oficial para Google Search Console
+Sitemap: https://novaventanasypuertas.com/sitemap.xml
+Host: https://novaventanasypuertas.com
