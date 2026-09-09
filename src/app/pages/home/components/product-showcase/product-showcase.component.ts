@@ -15,8 +15,10 @@ export class ProductShowcaseComponent {
 
   readonly categories: { key: ProductCategory | 'all'; label: string; icon: string }[] = [
     { key: 'all', label: 'Todas las Soluciones', icon: '✦' },
-    { key: 'pvc', label: 'Ventanas PVC', icon: '🪟' },
+    { key: 'pvc', label: 'PVC Alta Eficiencia', icon: '🪟' },
     { key: 'aluminio', label: 'Aluminio RPT', icon: '📐' },
+    { key: 'mixto', label: 'Mixto Alu-Madera', icon: '🌲' },
+    { key: 'madera', label: 'Madera Noble', icon: '🪵' },
     { key: 'puertas', label: 'Puertas de Entrada', icon: '🚪' },
     { key: 'cortinas', label: 'Cortinas de Cristal', icon: '💎' },
     { key: 'techos', label: 'Techos Móviles', icon: '☀️' },

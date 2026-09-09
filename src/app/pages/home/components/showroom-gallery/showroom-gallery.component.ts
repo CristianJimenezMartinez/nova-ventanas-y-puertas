@@ -16,6 +16,16 @@ interface FinishColor {
   type: string;
 }
 
+interface ShowroomSpotlight {
+  id: string;
+  title: string;
+  subtitle: string;
+  badge: string;
+  image: string;
+  description: string;
+  tags: string[];
+}
+
 @Component({
   selector: 'app-showroom-gallery',
   standalone: true,
@@ -24,6 +34,26 @@ interface FinishColor {
   styleUrls: ['./showroom-gallery.component.scss']
 })
 export class ShowroomGalleryComponent {
+  readonly showroomSpotlights: ShowroomSpotlight[] = [
+    {
+      id: 'fachada',
+      title: 'Fachada Principal & Entrada Oficial',
+      subtitle: 'Showroom Central en Molina de Segura (Murcia)',
+      badge: 'Sede Oficial',
+      image: 'assets/images/showroom-fachada.jpg',
+      description: 'Revestimiento arquitectónico en antracita mate con rótulo retroiluminado en Oro Champagne y los 5 pilares de ingeniería Nova.',
+      tags: ['Diseño', 'Calidad', 'Aislamiento', 'Seguridad', 'Eficiencia']
+    },
+    {
+      id: 'interior',
+      title: 'Exposición Interactiva de Materiales',
+      subtitle: 'Toca y Comprueba la Diferencia Térmica y Acústica',
+      badge: 'Zona de Demostración',
+      image: 'assets/images/showroom-interior.jpg',
+      description: 'Isla de exposición con los 4 materiales (Aluminio, PVC, Mixto y Madera) y bancos de prueba de apertura corredera, abatible, oscilobatiente y puertas de entrada.',
+      tags: ['Aluminio', 'PVC', 'Mixto', 'Madera', 'Aperturas']
+    }
+  ];
   readonly projects: ShowroomItem[] = [
     {
       id: 'altorreal-villa',

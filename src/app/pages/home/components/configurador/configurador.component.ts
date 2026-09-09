@@ -35,8 +35,12 @@ export class ConfiguradorComponent {
     this.quoteData.serviceType = type;
   }
 
-  setMaterial(mat: 'pvc' | 'aluminio' | 'indiferente'): void {
+  setMaterial(mat: 'pvc' | 'aluminio' | 'mixto' | 'madera' | 'indiferente'): void {
     this.quoteData.material = mat;
+  }
+
+  setOpeningType(opening: 'corredera' | 'abatible' | 'oscilobatiente' | 'puerta' | 'indiferente'): void {
+    this.quoteData.openingType = opening;
   }
 
   setPropertyType(type: 'piso' | 'chalet' | 'comercial'): void {

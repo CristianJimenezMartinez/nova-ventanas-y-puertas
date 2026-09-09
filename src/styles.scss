@@ -35,18 +35,23 @@
   --text-muted: #64748b;
   --text-inverted: #ffffff;
 
-  /* Paleta Nova (Azul Arquitectónico + Antracita + Oro NextGen) */
-  --color-primary: #0284c7;       /* Azul Nova principal */
+  /* Paleta Nova Oficial (Champagne Gold del logo + Antracita + Azul Arquitectónico) */
+  --color-primary: #0284c7;       /* Azul Nova arquitectónico */
   --color-primary-hover: #0369a1;
   --color-primary-light: rgba(2, 132, 199, 0.08);
   --color-primary-glow: rgba(2, 132, 199, 0.3);
 
-  --color-accent: #0f172a;        /* Antracita elegante */
-  --color-accent-hover: #1e293b;
+  --color-nova-gold: #c5a059;     /* Oro Champagne oficial del rótulo */
+  --color-nova-gold-hover: #dfb76c;
+  --color-nova-gold-light: rgba(197, 160, 89, 0.12);
+  --color-nova-gold-glow: rgba(197, 160, 89, 0.35);
 
-  --color-gold: #d97706;          /* Acento fondos NextGen / Passivhaus */
-  --color-gold-hover: #b45309;
-  --color-gold-light: rgba(217, 119, 6, 0.1);
+  --color-accent: #12151b;        /* Antracita mate fachada */
+  --color-accent-hover: #1e2430;
+
+  --color-gold: #c5a059;          /* Sincronizado con el oro champagne */
+  --color-gold-hover: #dfb76c;
+  --color-gold-light: rgba(197, 160, 89, 0.12);
 
   --color-success: #10b981;
   --color-whatsapp: #25d366;

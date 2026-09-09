@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 460 90" fill="none">
+  <!-- Icono Isotipo: Ventana geométrica en Oro Champagne -->
+  <g transform="translate(5, 5)">
+    <!-- Marco Exterior Cuadrado -->
+    <rect x="3" y="3" width="74" height="74" rx="4" stroke="#C5A059" stroke-width="7" />
+    <!-- Poste Central Vertical -->
+    <line x1="39" y1="3" x2="39" y2="77" stroke="#C5A059" stroke-width="7" />
+    <!-- Travesaño Horizontal Derecho -->
+    <line x1="39" y1="40" x2="77" y2="40" stroke="#C5A059" stroke-width="7" />
+  </g>
+
+  <!-- Tipografía: NOVA en mayúsculas geométricas -->
+  <text x="110" y="61" font-family="'Plus Jakarta Sans', -apple-system, sans-serif" font-size="52" font-weight="800" letter-spacing="4" fill="currentColor">NOVA</text>
+
+  <!-- Línea Divisoria Vertical -->
+  <line x1="285" y1="18" x2="285" y2="72" stroke="#C5A059" stroke-width="2.5" />
+
+  <!-- Subtítulo: VENTANAS & PUERTAS -->
+  <text x="302" y="38" font-family="'Plus Jakarta Sans', -apple-system, sans-serif" font-size="19" font-weight="700" letter-spacing="4" fill="currentColor">VENTANAS</text>
+  <text x="302" y="65" font-family="'Plus Jakarta Sans', -apple-system, sans-serif" font-size="19" font-weight="700" letter-spacing="4" fill="currentColor">&amp; PUERTAS</text>
+</svg>

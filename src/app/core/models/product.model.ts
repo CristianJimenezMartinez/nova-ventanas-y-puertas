@@ -1,4 +1,4 @@
-export type ProductCategory = 'pvc' | 'aluminio' | 'puertas' | 'cortinas' | 'techos' | 'persianas';
+export type ProductCategory = 'pvc' | 'aluminio' | 'mixto' | 'madera' | 'puertas' | 'cortinas' | 'techos' | 'persianas';
 
 export interface ProductItem {
   id: string;
@@ -22,7 +22,8 @@ export interface ProductItem {
 export interface QuoteRequest {
   propertyType: 'piso' | 'chalet' | 'comercial';
   serviceType: ProductCategory;
-  material: 'pvc' | 'aluminio' | 'indiferente';
+  material: 'pvc' | 'aluminio' | 'mixto' | 'madera' | 'indiferente';
+  openingType?: 'corredera' | 'abatible' | 'oscilobatiente' | 'puerta' | 'indiferente';
   approximateUnits: string;
   includeInstallation: boolean;
   needsNextGenHelp: boolean;

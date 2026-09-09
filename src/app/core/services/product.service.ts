@@ -97,6 +97,50 @@ export class ProductService {
       passivhausReady: false
     },
     {
+      id: 'mixto-aluwood-90',
+      category: 'mixto',
+      name: 'Nova AluWood Duo 90',
+      series: 'Mixto: Aluminio Exterior & Madera Interior',
+      headline: 'La durabilidad del aluminio exterior con la calidez noble de la madera interior',
+      description: 'El sistema más exclusivo expuesto en nuestro showroom. Marco exterior de aluminio con rotura de puente térmico y perfil interior de madera noble maciza (roble, castaño o pino tratado), sin condensaciones ni mantenimiento exterior.',
+      uwValue: '0.82 W/m²K',
+      dbValue: '46 dB',
+      profileDepth: '92 mm',
+      airPermeability: 'Clase 4 (Máxima)',
+      highlights: [
+        'Madera maciza interior tratada con barnices ecológicos al agua',
+        'Clipaje técnico de unión aluminio-madera que absorbe dilataciones',
+        'Aislamiento térmico de vanguardia apto para climas exigentes',
+        'Disponible en acabados naturales roble, haya, nogal y lacados RAL'
+      ],
+      imageUrl: 'https://images.unsplash.com/photo-1541123437800-1bb1317badc2?auto=format&fit=crop&w=1000&q=80',
+      badge: 'Showroom Destacado',
+      popular: true,
+      passivhausReady: true
+    },
+    {
+      id: 'madera-natura-78',
+      category: 'madera',
+      name: 'Nova Madera Natura 78',
+      series: 'Madera Laminada Tecnológica',
+      headline: 'Sostenibilidad natural, diseño atemporal y confort bioclimático',
+      description: 'Ventana de madera de perfil europeo laminada en 3 capas que evitan cualquier deformación. Tratamiento fungicida e hidrófugo de última generación con garantía de durabilidad extrema.',
+      uwValue: '0.90 W/m²K',
+      dbValue: '44 dB',
+      profileDepth: '78 mm',
+      airPermeability: 'Clase 4',
+      highlights: [
+        'Madera laminada certificada FSC de gestión forestal sostenible',
+        'Doble junta de estanqueidad perimetral de caucho EPDM',
+        'Herraje perimetral regulable en 3 dimensiones con microventilación',
+        'Ideal para centros históricos, chalets rústicos y casas pasivas'
+      ],
+      imageUrl: 'https://images.unsplash.com/photo-1509644851169-2acc08aa25b5?auto=format&fit=crop&w=1000&q=80',
+      badge: 'Ecológico & Noble',
+      popular: false,
+      passivhausReady: false
+    },
+    {
       id: 'door-secure-rc3',
       category: 'puertas',
       name: 'Nova Master Gate RC3',
@@ -209,6 +253,8 @@ export class ProductService {
       const typeNames: Record<ProductCategory, string> = {
         pvc: 'Ventanas de PVC',
         aluminio: 'Ventanas de Aluminio RPT',
+        mixto: 'Ventanas Mixtas (Aluminio-Madera)',
+        madera: 'Ventanas de Madera Noble Tecnológica',
         puertas: 'Puertas de Entrada / Acorazadas',
         cortinas: 'Cortinas de Cristal',
         techos: 'Techos Móviles / Pérgola',
@@ -218,6 +264,9 @@ export class ProductService {
     }
     if (quote.material) {
       message += `• Material: ${quote.material.toUpperCase()}\n`;
+    }
+    if (quote.openingType && quote.openingType !== 'indiferente') {
+      message += `• Sistema de Apertura: ${quote.openingType.toUpperCase()}\n`;
     }
     if (quote.propertyType) {
       message += `• Vivienda: ${quote.propertyType.toUpperCase()}\n`;

@@ -3,15 +3,69 @@
     
     <!-- Cabecera -->
     <div class="text-center showroom-header">
-      <div class="badge-tag badge-tag--primary">
-        Showroom & Obras Realizadas
+      <div class="badge-tag badge-tag--gold">
+        Instalaciones & Exposición Real
       </div>
       <h2 class="heading-section showroom-header__title">
-        Espacios Renovados con Sello Nova
+        Visita Nuestro Showroom Oficial
       </h2>
       <p class="subtitle-text showroom-header__subtitle">
-        Conoce algunos de nuestros proyectos residenciales más recientes en la Región de Murcia. Instalaciones limpias, sin obras invasivas y con resultados garantizados durante 10 años.
+        Conoce nuestra sede central en Molina de Segura (Murcia). Una exposición viva con bancos de prueba de aislamiento, los 4 materiales y asesoramiento técnico directo de Grupo Soto.
       </p>
+    </div>
+
+    <!-- Bloque de Showroom Oficial con las Fotos Reales -->
+    <div class="showroom-spotlight-wrapper">
+      <div class="showroom-spotlight-grid">
+        @for (spot of showroomSpotlights; track spot.id) {
+          <article class="showroom-spotlight-card card-panel">
+            <div class="spotlight-media">
+              <img 
+                [src]="spot.image" 
+                [alt]="spot.title" 
+                class="spotlight-img" />
+              <span class="spotlight-badge">{{ spot.badge }}</span>
+            </div>
+            <div class="spotlight-body">
+              <span class="spotlight-sub">{{ spot.subtitle }}</span>
+              <h3 class="heading-card spotlight-title">{{ spot.title }}</h3>
+              <p class="spotlight-desc">{{ spot.description }}</p>
+              <div class="spotlight-tags">
+                @for (tag of spot.tags; track tag) {
+                  <span class="spotlight-tag">✦ {{ tag }}</span>
+                }
+              </div>
+            </div>
+          </article>
+        }
+      </div>
+
+      <!-- Banner de Invitación al Showroom -->
+      <div class="showroom-invite-box card-panel">
+        <div class="invite-content">
+          <div class="invite-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+          </div>
+          <div class="invite-text-group">
+            <h4 class="invite-title">Experimenta la Carpintería Nova en Persona</h4>
+            <p class="invite-text">
+              Toca los perfiles de <strong>Aluminio, PVC, Mixto y Madera</strong>, verifica la suavidad de las correderas elevables y el cierre hermético de las oscilobatientes antes de decidir.
+            </p>
+          </div>
+        </div>
+        <div class="invite-actions">
+          <a 
+            href="https://wa.me/34613754271?text=Hola%20Grupo%20Soto,%20me%20gustar%C3%ADa%20agendar%20cita%20para%20visitar%20el%20Showroom%20de%20Nova%20Ventanas" 
+            target="_blank" 
+            rel="noopener" 
+            class="btn btn--whatsapp">
+            Agendar Visita al Showroom
+          </a>
+        </div>
+      </div>
     </div>
 
     <!-- Muestrario Interactivo de Colores y Texturas -->

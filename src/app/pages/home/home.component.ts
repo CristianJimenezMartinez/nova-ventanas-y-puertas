@@ -7,6 +7,7 @@ import { ProductShowcaseComponent } from './components/product-showcase/product-
 import { ConfiguradorComponent } from './components/configurador/configurador.component';
 import { PassivhausTechComponent } from './components/passivhaus-tech/passivhaus-tech.component';
 import { ShowroomGalleryComponent } from './components/showroom-gallery/showroom-gallery.component';
+import { BrandPillarsComponent } from './components/brand-pillars/brand-pillars.component';
 import { TestimonialsFaqComponent } from './components/testimonials-faq/testimonials-faq.component';
 import { FooterComponent } from './components/footer/footer.component';
 
@@ -17,6 +18,7 @@ import { FooterComponent } from './components/footer/footer.component';
     CommonModule,
     HeaderComponent,
     HeroComponent,
+    BrandPillarsComponent,
     NextGenBannerComponent,
     ProductShowcaseComponent,
     ConfiguradorComponent,

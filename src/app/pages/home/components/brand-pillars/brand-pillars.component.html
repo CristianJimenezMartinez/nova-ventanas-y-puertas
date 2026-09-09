@@ -1,0 +1,33 @@
+<section class="pillars-section">
+  <div class="container">
+    <div class="pillars-intro text-center">
+      <span class="badge-tag badge-tag--gold">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+        Los 5 Pilares de Ingeniería Nova
+      </span>
+      <h2 class="heading-section pillars-title">
+        La Esencia de Nuestra Carpintería
+      </h2>
+      <p class="subtitle-text pillars-subtitle">
+        Presentes en cada perfil, herraje y vidrio instalado en tu vivienda. El estándar oficial de nuestro showroom.
+      </p>
+    </div>
+
+    <div class="pillars-grid">
+      @for (pillar of pillars; track pillar.id) {
+        <div class="pillar-card card-panel">
+          <div class="pillar-card__icon-wrap">
+            <svg class="pillar-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path [attr.d]="pillar.iconSvg"></path>
+            </svg>
+          </div>
+          <span class="pillar-card__sub">{{ pillar.subtitle }}</span>
+          <h3 class="pillar-card__name">{{ pillar.title }}</h3>
+          <p class="pillar-card__desc">{{ pillar.desc }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
