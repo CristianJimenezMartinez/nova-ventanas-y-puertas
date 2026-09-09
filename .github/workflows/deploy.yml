@@ -33,8 +33,9 @@ jobs:
           mkdir -p package-staging
           cp -r dist/nova-ventanas-y-puertas/browser package-staging/
           cp nginx-nova.conf package-staging/
+          cp nginx-nova-http.conf package-staging/
           cd package-staging
-          tar -czf ../deploy-bundle.tar.gz browser nginx-nova.conf
+          tar -czf ../deploy-bundle.tar.gz browser nginx-nova.conf nginx-nova-http.conf
           cd ..
           rm -rf package-staging
           echo "📦 Bundle de despliegue generado con éxito:"
@@ -75,30 +76,13 @@ jobs:
             echo "${{ secrets.VPS_PASSWORD }}" | sudo -S chown -R antigravity:www-data /var/www/nova-ventanas-y-puertas
             echo "${{ secrets.VPS_PASSWORD }}" | sudo -S chmod -R 775 /var/www/nova-ventanas-y-puertas
 
-            # Verificar si existen los certificados SSL en el VPS
+            # Configuración Nginx según presencia de certificados SSL
             if [ -f /etc/letsencrypt/live/novaventanasypuertas.com/fullchain.pem ]; then
               echo "🔒 Certificado SSL detectado. Aplicando configuración HTTPS de producción..."
               echo "${{ secrets.VPS_PASSWORD }}" | sudo -S cp /var/www/nova-ventanas-y-puertas/nginx-nova.conf /etc/nginx/sites-available/novaventanasypuertas.conf
             else
-              echo "⚠️ Certificados SSL aún no expedidos. Configurando HTTP temporal para permitir verificación de Certbot..."
-              echo "${{ secrets.VPS_PASSWORD }}" | sudo -S tee /etc/nginx/sites-available/novaventanasypuertas.conf > /dev/null << 'EOF'
-server {
-    listen 80;
-    listen [::]:80;
-    server_name novaventanasypuertas.com www.novaventanasypuertas.com novaventanasypuertas.es www.novaventanasypuertas.es;
-
-    root /var/www/nova-ventanas-y-puertas/browser;
-    index index.html;
-
-    location /.well-known/acme-challenge/ {
-        root /var/www/certbot;
-    }
-
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-}
-EOF
+              echo "⚠️ Certificados SSL aún no expedidos. Aplicando configuración HTTP temporal..."
+              echo "${{ secrets.VPS_PASSWORD }}" | sudo -S cp /var/www/nova-ventanas-y-puertas/nginx-nova-http.conf /etc/nginx/sites-available/novaventanasypuertas.conf
             fi
 
             # Activar sitio en sites-enabled si aún no está enlazado
