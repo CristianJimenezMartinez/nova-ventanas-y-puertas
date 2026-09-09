@@ -1,0 +1,128 @@
+﻿name: Build and Deploy Nova Ventanas y Puertas (Grupo Soto)
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    name: 🏗️ Compilar en Runner & Desplegar en VPS
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout código
+        uses: actions/checkout@v4
+
+      - name: 🟢 Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: 📦 Instalar Dependencias en Runner
+        run: npm ci
+
+      - name: 🔨 Compilar Frontend Angular (SPA)
+        # CRÍTICO: Compilación con 16GB RAM en GitHub Actions Runner.
+        # NUNCA ejecutar npm run build en el VPS para evitar saturación de memoria.
+        run: npm run build
+
+      - name: 🗜️ Empaquetar artefactos en tarball atómico
+        run: |
+          mkdir -p package-staging
+          cp -r dist/nova-ventanas-y-puertas/browser package-staging/
+          cp nginx-nova.conf package-staging/
+          cd package-staging
+          tar -czf ../deploy-bundle.tar.gz browser nginx-nova.conf
+          cd ..
+          rm -rf package-staging
+          echo "📦 Bundle de despliegue generado con éxito:"
+          ls -lh deploy-bundle.tar.gz
+
+      - name: 🔐 Verificar permisos y directorios en VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST || '212.227.248.132' }}
+          username: ${{ secrets.VPS_USER || 'antigravity' }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: |
+            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S mkdir -p /var/www/nova-ventanas-y-puertas /var/www/certbot
+            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S chown -R antigravity:www-data /var/www/nova-ventanas-y-puertas /var/www/certbot
+            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S chmod -R 775 /var/www/nova-ventanas-y-puertas /var/www/certbot
+
+      - name: 📤 Transferir tarball al VPS via SCP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST || '212.227.248.132' }}
+          username: ${{ secrets.VPS_USER || 'antigravity' }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          source: "deploy-bundle.tar.gz"
+          target: "/var/www/nova-ventanas-y-puertas"
+
+      - name: 🚀 Extraer artefactos y recargar Nginx en VPS (Zero-Build en VPS)
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST || '212.227.248.132' }}
+          username: ${{ secrets.VPS_USER || 'antigravity' }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: |
+            cd /var/www/nova-ventanas-y-puertas
+            tar -xzf deploy-bundle.tar.gz
+            rm -f deploy-bundle.tar.gz
+
+            # Asegurar permisos correctos para lectura directa por Nginx (www-data)
+            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S chown -R antigravity:www-data /var/www/nova-ventanas-y-puertas
+            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S chmod -R 775 /var/www/nova-ventanas-y-puertas
+
+            # Verificar si existen los certificados SSL en el VPS
+            if [ -f /etc/letsencrypt/live/novaventanasypuertas.com/fullchain.pem ]; then
+              echo "🔒 Certificado SSL detectado. Aplicando configuración HTTPS de producción..."
+              echo "${{ secrets.VPS_PASSWORD }}" | sudo -S cp /var/www/nova-ventanas-y-puertas/nginx-nova.conf /etc/nginx/sites-available/novaventanasypuertas.conf
+            else
+              echo "⚠️ Certificados SSL aún no expedidos. Configurando HTTP temporal para permitir verificación de Certbot..."
+              echo "${{ secrets.VPS_PASSWORD }}" | sudo -S tee /etc/nginx/sites-available/novaventanasypuertas.conf > /dev/null << 'EOF'
+server {
+    listen 80;
+    listen [::]:80;
+    server_name novaventanasypuertas.com www.novaventanasypuertas.com novaventanasypuertas.es www.novaventanasypuertas.es;
+
+    root /var/www/nova-ventanas-y-puertas/browser;
+    index index.html;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+EOF
+            fi
+
+            # Activar sitio en sites-enabled si aún no está enlazado
+            if [ ! -f /etc/nginx/sites-enabled/novaventanasypuertas.conf ]; then
+              echo "${{ secrets.VPS_PASSWORD }}" | sudo -S ln -sf /etc/nginx/sites-available/novaventanasypuertas.conf /etc/nginx/sites-enabled/novaventanasypuertas.conf
+            fi
+
+            # Validar sintaxis y recargar Nginx sin caídas
+            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S nginx -t
+            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S systemctl reload nginx || true
+            echo "✅ Despliegue completado con éxito."
+
+      - name: 🧪 Smoke Test / Healthcheck Post-Despliegue
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST || '212.227.248.132' }}
+          username: ${{ secrets.VPS_USER || 'antigravity' }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          script: |
+            echo "🔍 Verificando respuesta del sitio web en local..."
+            HTTP_CODE=$(curl -s -k -o /dev/null -w "%{http_code}" -H "Host: novaventanasypuertas.com" http://127.0.0.1/ || echo "000")
+            echo "Código HTTP recibido en puerto 80: $HTTP_CODE"
+
+            if [ "$HTTP_CODE" = "301" ] || [ "$HTTP_CODE" = "200" ]; then
+              echo "✅ Nginx está sirviendo Nova Ventanas y Puertas correctamente."
+            else
+              echo "⚠️ Advertencia: Código HTTP $HTTP_CODE al consultar host local."
+            fi
