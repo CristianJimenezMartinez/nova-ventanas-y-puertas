@@ -1,8 +1,9 @@
-﻿name: Build and Deploy Nova Ventanas y Puertas (Grupo Soto)
+name: Build and Deploy Nova Ventanas y Puertas (Grupo Soto)
 
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -42,8 +43,8 @@ jobs:
       - name: 🔐 Verificar permisos y directorios en VPS
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.VPS_HOST || '212.227.248.132' }}
-          username: ${{ secrets.VPS_USER || 'antigravity' }}
+          host: 212.227.248.132
+          username: antigravity
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
             echo "${{ secrets.VPS_PASSWORD }}" | sudo -S mkdir -p /var/www/nova-ventanas-y-puertas /var/www/certbot
@@ -53,8 +54,8 @@ jobs:
       - name: 📤 Transferir tarball al VPS via SCP
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ secrets.VPS_HOST || '212.227.248.132' }}
-          username: ${{ secrets.VPS_USER || 'antigravity' }}
+          host: 212.227.248.132
+          username: antigravity
           password: ${{ secrets.VPS_PASSWORD }}
           source: "deploy-bundle.tar.gz"
           target: "/var/www/nova-ventanas-y-puertas"
@@ -62,8 +63,8 @@ jobs:
       - name: 🚀 Extraer artefactos y recargar Nginx en VPS (Zero-Build en VPS)
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.VPS_HOST || '212.227.248.132' }}
-          username: ${{ secrets.VPS_USER || 'antigravity' }}
+          host: 212.227.248.132
+          username: antigravity
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
             cd /var/www/nova-ventanas-y-puertas
@@ -113,8 +114,8 @@ EOF
       - name: 🧪 Smoke Test / Healthcheck Post-Despliegue
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ secrets.VPS_HOST || '212.227.248.132' }}
-          username: ${{ secrets.VPS_USER || 'antigravity' }}
+          host: 212.227.248.132
+          username: antigravity
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
             echo "🔍 Verificando respuesta del sitio web en local..."
