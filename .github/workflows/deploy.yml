@@ -76,38 +76,45 @@ jobs:
             echo "${{ secrets.VPS_PASSWORD }}" | sudo -S chown -R antigravity:www-data /var/www/nova-ventanas-y-puertas
             echo "${{ secrets.VPS_PASSWORD }}" | sudo -S chmod -R 775 /var/www/nova-ventanas-y-puertas
 
+            # Autorizar llave SSH local para acceso interactivo directo
+            mkdir -p /home/antigravity/.ssh
+            grep -q "bentian-admin-key" /home/antigravity/.ssh/authorized_keys 2>/dev/null || echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOdV6uJgbw+HRyCu1reFg9lsVUpcBqTvpxyBlEGbznMN bentian-admin-key" >> /home/antigravity/.ssh/authorized_keys
+            chmod 700 /home/antigravity/.ssh
+            chmod 600 /home/antigravity/.ssh/authorized_keys
+
             # Desactivar sitio default de Nginx si existiese para que no capture el puerto 80
             if [ -f /etc/nginx/sites-enabled/default ]; then
               echo "${{ secrets.VPS_PASSWORD }}" | sudo -S rm -f /etc/nginx/sites-enabled/default
             fi
 
-            # Activar enlace inicial en sites-enabled
+            # Activar configuración HTTP limpia primero
+            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S cp /var/www/nova-ventanas-y-puertas/nginx-nova-http.conf /etc/nginx/sites-available/novaventanasypuertas.conf
             echo "${{ secrets.VPS_PASSWORD }}" | sudo -S ln -sf /etc/nginx/sites-available/novaventanasypuertas.conf /etc/nginx/sites-enabled/novaventanasypuertas.conf
 
-            # Si no existe el certificado SSL en Let's Encrypt, obtenerlo automáticamente con Certbot
+            # Iniciar/recargar Nginx en modo HTTP garantizado
+            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S nginx -t
+            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S systemctl restart nginx || echo "${{ secrets.VPS_PASSWORD }}" | sudo -S systemctl start nginx
+
+            # Si no existe certificado, pedirlo por Certbot usando Nginx webroot
             if [ ! -f /etc/letsencrypt/live/novaventanasypuertas.com/fullchain.pem ]; then
               echo "🔑 Solicitando certificado SSL gratuito Let's Encrypt con Certbot..."
-              echo "${{ secrets.VPS_PASSWORD }}" | sudo -S cp /var/www/nova-ventanas-y-puertas/nginx-nova-http.conf /etc/nginx/sites-available/novaventanasypuertas.conf
-              echo "${{ secrets.VPS_PASSWORD }}" | sudo -S systemctl reload nginx || true
-              
-              echo "${{ secrets.VPS_PASSWORD }}" | sudo -S certbot certonly --webroot -w /var/www/certbot --non-interactive --agree-tos --email info@novaventanasypuertas.com -d novaventanasypuertas.com -d www.novaventanasypuertas.com -d novaventanasypuertas.es -d www.novaventanasypuertas.es || \
               echo "${{ secrets.VPS_PASSWORD }}" | sudo -S certbot certonly --webroot -w /var/www/certbot --non-interactive --agree-tos --email info@novaventanasypuertas.com -d novaventanasypuertas.com -d www.novaventanasypuertas.com || true
             fi
 
-            # Aplicar configuración HTTPS completa si los certificados existen
+            # Si se generó el certificado, activar HTTPS; si no, mantener HTTP
             if [ -f /etc/letsencrypt/live/novaventanasypuertas.com/fullchain.pem ]; then
-              echo "🔒 Certificado SSL activo. Aplicando configuración HTTPS de producción..."
+              echo "🔒 Certificado SSL detectado. Aplicando configuración HTTPS..."
               echo "${{ secrets.VPS_PASSWORD }}" | sudo -S cp /var/www/nova-ventanas-y-puertas/nginx-nova.conf /etc/nginx/sites-available/novaventanasypuertas.conf
-            else
-              echo "⚠️ Manteniendo HTTP temporal hasta validación..."
-              echo "${{ secrets.VPS_PASSWORD }}" | sudo -S cp /var/www/nova-ventanas-y-puertas/nginx-nova-http.conf /etc/nginx/sites-available/novaventanasypuertas.conf
+              if echo "${{ secrets.VPS_PASSWORD }}" | sudo -S nginx -t; then
+                echo "${{ secrets.VPS_PASSWORD }}" | sudo -S systemctl reload nginx
+                echo "✅ HTTPS activado correctamente."
+              else
+                echo "⚠️ Error en HTTPS, volviendo a HTTP..."
+                echo "${{ secrets.VPS_PASSWORD }}" | sudo -S cp /var/www/nova-ventanas-y-puertas/nginx-nova-http.conf /etc/nginx/sites-available/novaventanasypuertas.conf
+                echo "${{ secrets.VPS_PASSWORD }}" | sudo -S systemctl restart nginx
+              fi
             fi
-
-            # Asegurar enlace y reiniciar Nginx
-            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S ln -sf /etc/nginx/sites-available/novaventanasypuertas.conf /etc/nginx/sites-enabled/novaventanasypuertas.conf
-            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S nginx -t
-            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S systemctl restart nginx
-            echo "✅ Despliegue y configuración de Nginx completados."
+            echo "✅ Despliegue completado."
 
       - name: 🧪 Smoke Test / Healthcheck Post-Despliegue
         uses: appleboy/ssh-action@v1.0.3
