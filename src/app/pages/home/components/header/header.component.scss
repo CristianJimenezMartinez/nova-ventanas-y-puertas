@@ -6,14 +6,22 @@
   z-index: 1000;
   background: transparent;
   transition: background-color var(--transition-normal), border-color var(--transition-normal), padding var(--transition-normal);
-  padding: 1.75rem 0;
+  padding: 1.1rem 0;
+
+  @media (min-width: 768px) {
+    padding: 1.75rem 0;
+  }
 
   &--scrolled {
     background-color: rgba(13, 13, 13, 0.96);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border-subtle);
-    padding: 1.1rem 0;
+    padding: 0.85rem 0;
+
+    @media (min-width: 768px) {
+      padding: 1.1rem 0;
+    }
   }
 
   &--menu-open {
@@ -192,21 +200,21 @@
     min-height: 100%;
     height: auto;
     box-sizing: border-box;
-    padding-top: 2rem;
-    padding-bottom: 3rem;
+    padding-top: 1.5rem;
+    padding-bottom: 2.25rem;
   }
 
   &__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
   }
 
   &__links {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.15rem;
     flex-grow: 1;
     justify-content: center;
   }
@@ -214,7 +222,7 @@
   &__footer {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.25rem;
   }
 }
 
@@ -235,7 +243,7 @@
   gap: 1.25rem;
   text-align: left;
   cursor: pointer;
-  padding: 0.5rem 0;
+  padding: 0.35rem 0;
 
   .link-num {
     font-size: 0.85rem;
@@ -246,7 +254,7 @@
 
   .link-label {
     font-family: var(--font-family);
-    font-size: clamp(1.8rem, 6vw, 2.5rem);
+    font-size: clamp(1.5rem, 5vw, 2.3rem);
     font-weight: 300;
     letter-spacing: 0.05em;
     color: var(--text-primary);

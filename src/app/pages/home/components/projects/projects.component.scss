@@ -6,13 +6,15 @@
 .projects-header {
   display: flex;
   flex-direction: column;
-  gap: 2.5rem;
-  margin-bottom: 5rem;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
 
   @media (min-width: 1024px) {
     flex-direction: row;
     justify-content: space-between;
     align-items: flex-end;
+    gap: 2.5rem;
+    margin-bottom: 5rem;
   }
 
   &__title-group {
@@ -28,7 +30,7 @@
 .projects-filters {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem 0.65rem;
   flex-wrap: wrap;
 }
 
@@ -36,13 +38,18 @@
   background: none;
   border: none;
   font-family: var(--font-family);
-  font-size: 0.78rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   color: var(--text-secondary);
   cursor: pointer;
   padding: 0.25rem 0;
   transition: color var(--transition-fast);
+
+  @media (min-width: 640px) {
+    font-size: 0.78rem;
+    letter-spacing: 0.16em;
+  }
 
   &:hover {
     color: var(--text-primary);
@@ -63,10 +70,11 @@
 .projects-masonry {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2.5rem;
+  gap: 1.75rem;
 
   @media (min-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem;
   }
 }
 
@@ -90,9 +98,17 @@
 
   &__media {
     position: relative;
-    height: 380px;
+    height: 240px;
     overflow: hidden;
     background-color: var(--color-black-surface);
+
+    @media (min-width: 480px) {
+      height: 300px;
+    }
+
+    @media (min-width: 768px) {
+      height: 380px;
+    }
   }
 
   &__img {
@@ -126,10 +142,14 @@
   }
 
   &__info {
-    padding: 2rem 2.2rem;
+    padding: 1.25rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+
+    @media (min-width: 768px) {
+      padding: 2rem 2.2rem;
+    }
   }
 
   &__meta {

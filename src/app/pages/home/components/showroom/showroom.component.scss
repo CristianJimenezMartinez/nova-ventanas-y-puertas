@@ -5,7 +5,11 @@
 
 .showroom-header {
   max-width: 840px;
-  margin-bottom: 5rem;
+  margin-bottom: 2.5rem;
+
+  @media (min-width: 768px) {
+    margin-bottom: 5rem;
+  }
 
   &__title {
     margin-bottom: 1.25rem;
@@ -16,8 +20,13 @@
 .showroom-dual-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 3rem;
-  margin-bottom: 4rem;
+  gap: 2rem;
+  margin-bottom: 2.5rem;
+
+  @media (min-width: 768px) {
+    gap: 3rem;
+    margin-bottom: 4rem;
+  }
 
   @media (min-width: 900px) {
     grid-template-columns: repeat(2, 1fr);
@@ -33,9 +42,13 @@
 
   &__media {
     position: relative;
-    height: 380px;
+    height: 240px;
     overflow: hidden;
     background-color: var(--color-black);
+
+    @media (min-width: 480px) {
+      height: 320px;
+    }
 
     @media (min-width: 640px) {
       height: 440px;
@@ -69,26 +82,39 @@
   }
 
   &__body {
-    padding: 2.5rem;
+    padding: 1.5rem 1.25rem;
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+
+    @media (min-width: 640px) {
+      padding: 2.5rem;
+    }
   }
 
   &__title {
     font-family: var(--font-family);
-    font-size: 1.45rem;
+    font-size: clamp(1.25rem, 2vw, 1.45rem);
     font-weight: 400;
     letter-spacing: 0.03em;
     color: var(--text-primary);
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
+
+    @media (min-width: 640px) {
+      margin-bottom: 1rem;
+    }
   }
 
   &__desc {
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     color: var(--color-stone);
     line-height: 1.7;
-    margin-bottom: 1.75rem;
+    margin-bottom: 1.5rem;
+
+    @media (min-width: 640px) {
+      font-size: 0.95rem;
+      margin-bottom: 1.75rem;
+    }
   }
 
   &__points {
@@ -108,26 +134,34 @@
   .pt-bullet {
     color: var(--color-champagne);
     font-size: 0.7rem;
+    flex-shrink: 0;
   }
 
   .pt-text {
     font-size: 0.85rem;
     color: var(--text-primary);
+    word-break: break-word;
   }
 }
 
 .showroom-booking-bar {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  padding: 3rem;
+  gap: 1.5rem;
+  padding: 1.5rem 1.25rem;
   background-color: var(--color-black-surface);
   border: 1px solid var(--border-champagne);
+
+  @media (min-width: 640px) {
+    padding: 2.5rem 2rem;
+  }
 
   @media (min-width: 900px) {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    padding: 3rem;
+    gap: 2rem;
   }
 }
 
@@ -145,16 +179,20 @@
 
 .booking-title {
   font-family: var(--font-family);
-  font-size: clamp(1.4rem, 2.2vw, 1.9rem);
+  font-size: clamp(1.3rem, 2.2vw, 1.9rem);
   font-weight: 300;
   color: var(--text-primary);
   margin-bottom: 0.75rem;
 }
 
 .booking-desc {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   color: var(--color-stone);
   line-height: 1.65;
+
+  @media (min-width: 640px) {
+    font-size: 0.95rem;
+  }
 
   strong {
     color: var(--text-primary);
@@ -162,5 +200,22 @@
 }
 
 .booking-actions {
-  flex-shrink: 0;
+  width: 100%;
+
+  .btn {
+    width: 100%;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.35;
+  }
+
+  @media (min-width: 900px) {
+    width: auto;
+    flex-shrink: 0;
+
+    .btn {
+      width: auto;
+      white-space: nowrap;
+    }
+  }
 }

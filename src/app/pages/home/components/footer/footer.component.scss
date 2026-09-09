@@ -1,20 +1,26 @@
 .nova-footer {
   background-color: var(--color-black);
-  padding: 5rem 0 3.5rem;
+  padding: 3.5rem 0 2.5rem;
   border-top: 1px solid var(--border-subtle);
+
+  @media (min-width: 768px) {
+    padding: 5rem 0 3.5rem;
+  }
 
   &__main {
     display: flex;
     flex-direction: column;
-    gap: 3rem;
+    gap: 2rem;
     align-items: flex-start;
-    padding-bottom: 4rem;
+    padding-bottom: 2.5rem;
     border-bottom: 1px solid var(--border-subtle);
 
     @media (min-width: 1024px) {
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
+      gap: 3rem;
+      padding-bottom: 4rem;
     }
   }
 }
@@ -63,7 +69,11 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 2rem;
+  gap: 1.15rem 1.5rem;
+
+  @media (min-width: 768px) {
+    gap: 2rem;
+  }
 }
 
 .footer-link {
@@ -102,9 +112,11 @@
     color: var(--text-secondary);
     text-decoration: none;
     transition: color var(--transition-fast);
+    word-break: break-all;
 
     svg {
       color: var(--color-champagne);
+      flex-shrink: 0;
     }
 
     &:hover {
@@ -116,15 +128,18 @@
 .nova-footer__bottom {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
-  padding-top: 2.5rem;
-  font-size: 0.8rem;
+  gap: 1.25rem;
+  padding-top: 2rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
 
   @media (min-width: 768px) {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+    gap: 1.5rem;
+    padding-top: 2.5rem;
+    font-size: 0.8rem;
   }
 
   strong {
@@ -134,8 +149,9 @@
 
 .footer-legal {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem 0.75rem;
 
   a {
     color: var(--text-muted);

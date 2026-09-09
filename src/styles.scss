@@ -101,8 +101,13 @@ button, input, textarea, select {
   max-width: 1440px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+
+  @media (min-width: 640px) {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
 
   @media (min-width: 768px) {
     padding-left: 3rem;
@@ -116,12 +121,17 @@ button, input, textarea, select {
 }
 
 .section-spacing {
-  padding-top: 7rem;
-  padding-bottom: 7rem;
+  padding-top: 4.25rem;
+  padding-bottom: 4.25rem;
+
+  @media (min-width: 768px) {
+    padding-top: 6.5rem;
+    padding-bottom: 6.5rem;
+  }
 
   @media (min-width: 1024px) {
-    padding-top: 10rem;
-    padding-bottom: 10rem;
+    padding-top: 9.5rem;
+    padding-bottom: 9.5rem;
   }
 }
 
@@ -131,19 +141,25 @@ button, input, textarea, select {
 
 .label-tracked {
   display: inline-block;
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.2em;
   color: var(--color-champagne);
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.1rem;
+
+  @media (min-width: 768px) {
+    font-size: 0.75rem;
+    letter-spacing: 0.22em;
+    margin-bottom: 1.25rem;
+  }
 }
 
 .heading-display {
   font-family: var(--font-family);
-  font-size: clamp(2.4rem, 6vw, 4.8rem);
+  font-size: clamp(1.85rem, 6vw, 4.8rem);
   font-weight: 300;
-  line-height: 1.08;
+  line-height: 1.1;
   letter-spacing: -0.03em;
   color: var(--text-primary);
 
@@ -154,9 +170,9 @@ button, input, textarea, select {
 
 .heading-section {
   font-family: var(--font-family);
-  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-size: clamp(1.65rem, 4vw, 3.2rem);
   font-weight: 300;
-  line-height: 1.15;
+  line-height: 1.18;
   letter-spacing: -0.02em;
   color: var(--text-primary);
 
@@ -174,7 +190,7 @@ button, input, textarea, select {
 }
 
 .body-editorial {
-  font-size: clamp(1rem, 1.3vw, 1.2rem);
+  font-size: clamp(0.95rem, 1.3vw, 1.2rem);
   font-weight: 300;
   line-height: 1.75;
   color: var(--text-secondary);
@@ -189,16 +205,25 @@ button, input, textarea, select {
   align-items: center;
   justify-content: center;
   gap: 0.85rem;
-  padding: 1.1rem 2.4rem;
-  font-size: 0.82rem;
+  padding: 0.95rem 1.6rem;
+  font-size: 0.78rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.14em;
   border-radius: 0;
   border: 1px solid transparent;
   cursor: pointer;
   transition: all var(--transition-fast);
-  white-space: nowrap;
+  text-align: center;
+  max-width: 100%;
+  line-height: 1.35;
+
+  @media (min-width: 640px) {
+    padding: 1.1rem 2.4rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.16em;
+    white-space: nowrap;
+  }
 }
 
 .btn--champagne {
@@ -231,6 +256,9 @@ button, input, textarea, select {
   padding-left: 0;
   padding-right: 0;
   border: none;
+  white-space: normal;
+  text-align: left;
+  line-height: 1.45;
 
   &:hover {
     color: var(--color-white-warm);
