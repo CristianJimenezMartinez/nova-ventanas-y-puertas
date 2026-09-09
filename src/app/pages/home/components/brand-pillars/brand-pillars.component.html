@@ -1,33 +1,56 @@
-<section class="pillars-section">
+<section class="section-spacing values-section">
   <div class="container">
-    <div class="pillars-intro text-center">
-      <span class="badge-tag badge-tag--gold">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-        </svg>
-        Los 5 Pilares de Ingeniería Nova
-      </span>
-      <h2 class="heading-section pillars-title">
-        La Esencia de Nuestra Carpintería
+    
+    <!-- Encabezado de Sección -->
+    <div class="values-header">
+      <span class="label-tracked">INGENIERÍA &amp; FILOSOFÍA</span>
+      <h2 class="heading-section values-header__title">
+        LOS CINCO PILARES DE NOVA.
       </h2>
-      <p class="subtitle-text pillars-subtitle">
-        Presentes en cada perfil, herraje y vidrio instalado en tu vivienda. El estándar oficial de nuestro showroom.
+      <p class="body-editorial values-header__lead">
+        Inscritos en la entrada de nuestro showroom y grabados en cada perfil instalado. Cinco principios innegociables que sustentan cada proyecto de arquitectura que firmamos.
       </p>
     </div>
 
-    <div class="pillars-grid">
-      @for (pillar of pillars; track pillar.id) {
-        <div class="pillar-card card-panel">
-          <div class="pillar-card__icon-wrap">
-            <svg class="pillar-card__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path [attr.d]="pillar.iconSvg"></path>
-            </svg>
+    <!-- Narrativa Secuencial Editorial (Uno tras otro) -->
+    <div class="values-flow">
+      @for (val of values; track val.id; let idx = $index) {
+        <article class="value-item" [class.value-item--reversed]="idx % 2 !== 0">
+          
+          <!-- Lado Editorial Texto -->
+          <div class="value-item__content">
+            <div class="value-item__header">
+              <span class="val-num">{{ val.number }}</span>
+              <div class="val-line"></div>
+              <span class="val-tag">ESTÁNDAR NOVA</span>
+            </div>
+
+            <h3 class="value-item__title">{{ val.title }}</h3>
+            <p class="value-item__subtitle">{{ val.subtitle }}</p>
+            <p class="value-item__desc">{{ val.description }}</p>
+
+            <div class="value-item__highlight">
+              <span class="highlight-champagne">✦</span>
+              <span>{{ val.highlight }}</span>
+            </div>
           </div>
-          <span class="pillar-card__sub">{{ pillar.subtitle }}</span>
-          <h3 class="pillar-card__name">{{ pillar.title }}</h3>
-          <p class="pillar-card__desc">{{ pillar.desc }}</p>
-        </div>
+
+          <!-- Lado Imagen de Detalle Constructivo -->
+          <div class="value-item__media">
+            <img 
+              [src]="val.imageUrl" 
+              [alt]="val.title" 
+              loading="lazy" 
+              class="value-item__img" />
+            <div class="value-item__badge">
+              <span>PILAR</span>
+              <strong>{{ val.number }}</strong>
+            </div>
+          </div>
+
+        </article>
       }
     </div>
+
   </div>
 </section>

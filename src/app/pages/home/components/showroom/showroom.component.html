@@ -1,0 +1,65 @@
+<section id="showroom" class="section-spacing showroom-section">
+  <div class="container">
+    
+    <!-- Encabezado de Sección -->
+    <div class="showroom-header">
+      <span class="label-tracked">ESPACIO FÍSICO DE EXPERIENCIA</span>
+      <h2 class="heading-section showroom-header__title">
+        VEN A CONOCER NOVA.
+      </h2>
+      <p class="body-editorial showroom-header__lead">
+        "Esto no es simplemente una oficina. Es un espacio donde puedes tocar, comparar y experimentar nuestros productos."
+      </p>
+    </div>
+
+    <!-- Galería Principal con las Fotos Reales del Showroom -->
+    <div class="showroom-dual-grid">
+      @for (item of items; track item.id) {
+        <article class="showroom-card">
+          <div class="showroom-card__media">
+            <img 
+              [src]="item.image" 
+              [alt]="item.title" 
+              class="showroom-card__img" />
+            <span class="showroom-card__badge">{{ item.category }}</span>
+          </div>
+
+          <div class="showroom-card__body">
+            <h3 class="showroom-card__title">{{ item.title }}</h3>
+            <p class="showroom-card__desc">{{ item.description }}</p>
+
+            <div class="showroom-card__points">
+              @for (pt of item.points; track pt) {
+                <div class="pt-line">
+                  <span class="pt-bullet">✦</span>
+                  <span class="pt-text">{{ pt }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        </article>
+      }
+    </div>
+
+    <!-- Bloque de Reserva de Cita Privada -->
+    <div class="showroom-booking-bar">
+      <div class="booking-info">
+        <div class="booking-tag">SEDE OFICIAL · REGION DE MURCIA</div>
+        <h4 class="booking-title">Agenda una Visita Técnica y Personalizada</h4>
+        <p class="booking-desc">
+          Te recibimos en nuestro showroom de <strong>Molina de Segura (Murcia)</strong> con un café de cortesía para revisar los planos de tu vivienda, estudiar las mejores opciones térmicas y preparar un presupuesto exacto sin ningún compromiso.
+        </p>
+      </div>
+
+      <div class="booking-actions">
+        <button 
+          type="button" 
+          class="btn btn--champagne"
+          (click)="openAppointmentWhatsApp()">
+          AGENDAR CITA EN EL SHOWROOM →
+        </button>
+      </div>
+    </div>
+
+  </div>
+</section>

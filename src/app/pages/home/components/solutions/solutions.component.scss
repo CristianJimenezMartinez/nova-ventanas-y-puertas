@@ -1,0 +1,134 @@
+.solutions-section {
+  background-color: var(--color-black-surface);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.solutions-header {
+  max-width: 840px;
+  margin-bottom: 5rem;
+
+  &__title {
+    margin-bottom: 1.25rem;
+    color: var(--text-primary);
+  }
+}
+
+.solutions-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.75rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.solution-tile {
+  position: relative;
+  height: 480px;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: var(--color-black);
+
+  @media (min-width: 1024px) {
+    &--large {
+      grid-column: span 2;
+    }
+  }
+
+  &__media {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-slow);
+  }
+
+  &:hover &__img {
+    transform: scale(1.06);
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg, 
+      rgba(13, 13, 13, 0.2) 0%, 
+      rgba(13, 13, 13, 0.6) 60%, 
+      rgba(13, 13, 13, 0.95) 100%
+    );
+    transition: background var(--transition-normal);
+  }
+
+  &:hover &__overlay {
+    background: linear-gradient(
+      180deg, 
+      rgba(13, 13, 13, 0.35) 0%, 
+      rgba(13, 13, 13, 0.75) 50%, 
+      rgba(13, 13, 13, 0.98) 100%
+    );
+  }
+
+  &__content {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    padding: 2.2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__num {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--color-champagne);
+  }
+
+  &__arrow {
+    font-size: 1.4rem;
+    color: var(--color-champagne);
+    transition: transform var(--transition-fast);
+  }
+
+  &:hover &__arrow {
+    transform: translateX(8px);
+  }
+
+  &__bottom {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__name {
+    font-family: var(--font-family);
+    font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+    font-weight: 300;
+    letter-spacing: 0.08em;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  &__sub {
+    font-size: 0.9rem;
+    color: var(--color-stone);
+    line-height: 1.4;
+    max-width: 480px;
+  }
+}

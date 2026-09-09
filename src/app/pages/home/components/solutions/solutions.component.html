@@ -1,0 +1,49 @@
+<section id="soluciones" class="section-spacing solutions-section">
+  <div class="container">
+    
+    <!-- Encabezado de Sección -->
+    <div class="solutions-header">
+      <span class="label-tracked">CATÁLOGO ARQUITECTÓNICO</span>
+      <h2 class="heading-section solutions-header__title">
+        SOLUCIONES PARA CADA ESPACIO.
+      </h2>
+      <p class="body-editorial solutions-header__lead">
+        Geometrías puras, perfiles esbeltos y hermeticidad extrema. Cada sistema está ideado para resolver las demandas estéticas y térmicas de la edificación contemporánea.
+      </p>
+    </div>
+
+    <!-- Rejilla de Categorías con Imágenes Dominantes -->
+    <div class="solutions-grid">
+      @for (item of solutions; track item.id; let i = $index) {
+        <article 
+          class="solution-tile" 
+          [class.solution-tile--large]="i === 0 || i === 4"
+          (click)="scrollToConfigurator()">
+          
+          <div class="solution-tile__media">
+            <img 
+              [src]="item.imageUrl" 
+              [alt]="item.title" 
+              loading="lazy" 
+              class="solution-tile__img" />
+            <div class="solution-tile__overlay"></div>
+          </div>
+
+          <div class="solution-tile__content">
+            <div class="solution-tile__top">
+              <span class="solution-tile__num">0{{ i + 1 }}</span>
+              <span class="solution-tile__arrow">→</span>
+            </div>
+
+            <div class="solution-tile__bottom">
+              <h3 class="solution-tile__name">{{ item.title }}</h3>
+              <p class="solution-tile__sub">{{ item.subtitle }}</p>
+            </div>
+          </div>
+
+        </article>
+      }
+    </div>
+
+  </div>
+</section>

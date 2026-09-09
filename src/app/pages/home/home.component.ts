@@ -2,13 +2,15 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HeaderComponent } from './components/header/header.component';
 import { HeroComponent } from './components/hero/hero.component';
-import { NextGenBannerComponent } from './components/nextgen-banner/nextgen-banner.component';
-import { ProductShowcaseComponent } from './components/product-showcase/product-showcase.component';
-import { ConfiguradorComponent } from './components/configurador/configurador.component';
-import { PassivhausTechComponent } from './components/passivhaus-tech/passivhaus-tech.component';
-import { ShowroomGalleryComponent } from './components/showroom-gallery/showroom-gallery.component';
+import { DetailsComponent } from './components/details/details.component';
+import { SolutionsComponent } from './components/solutions/solutions.component';
+import { MaterialsComponent } from './components/materials/materials.component';
+import { SolutionFinderComponent } from './components/solution-finder/solution-finder.component';
 import { BrandPillarsComponent } from './components/brand-pillars/brand-pillars.component';
-import { TestimonialsFaqComponent } from './components/testimonials-faq/testimonials-faq.component';
+import { ArchitectureComponent } from './components/architecture/architecture.component';
+import { ProjectsComponent } from './components/projects/projects.component';
+import { ShowroomComponent } from './components/showroom/showroom.component';
+import { FinalCtaComponent } from './components/final-cta/final-cta.component';
 import { FooterComponent } from './components/footer/footer.component';
 
 @Component({
@@ -18,13 +20,15 @@ import { FooterComponent } from './components/footer/footer.component';
     CommonModule,
     HeaderComponent,
     HeroComponent,
+    DetailsComponent,
+    SolutionsComponent,
+    MaterialsComponent,
+    SolutionFinderComponent,
     BrandPillarsComponent,
-    NextGenBannerComponent,
-    ProductShowcaseComponent,
-    ConfiguradorComponent,
-    PassivhausTechComponent,
-    ShowroomGalleryComponent,
-    TestimonialsFaqComponent,
+    ArchitectureComponent,
+    ProjectsComponent,
+    ShowroomComponent,
+    FinalCtaComponent,
     FooterComponent
   ],
   templateUrl: './home.component.html',

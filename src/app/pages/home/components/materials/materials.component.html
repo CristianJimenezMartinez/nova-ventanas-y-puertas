@@ -1,0 +1,83 @@
+<section id="materiales" class="section-spacing materials-section">
+  <div class="container">
+    
+    <!-- Encabezado Editorial -->
+    <div class="materials-header">
+      <span class="label-tracked">SHOWROOM DE MATERIAS PRIMAS</span>
+      <h2 class="heading-section materials-header__title">
+        CUATRO MATERIALES. UNA SOLUCIÓN PARA CADA ESPACIO.
+      </h2>
+      <p class="body-editorial materials-header__lead">
+        En nuestro showroom no creemos en soluciones universales. Compara el tacto, la transmitancia térmica y la resistencia estructural de cada material noble.
+      </p>
+    </div>
+
+    <!-- Barra de Selección Interactiva de Materiales -->
+    <div class="material-nav-tabs">
+      @for (mat of materials; track mat.id) {
+        <button 
+          type="button" 
+          class="mat-tab-btn" 
+          [class.mat-tab-btn--active]="activeMaterialId() === mat.id"
+          (click)="selectMaterial(mat.id)">
+          <span class="mat-tab-btn__name">{{ mat.name }}</span>
+          <span class="mat-tab-btn__line"></span>
+        </button>
+      }
+    </div>
+
+    <!-- Escenario Interactivo Digital del Material -->
+    <div class="material-stage">
+      
+      <!-- Fondo Fotográfico del Material Seleccionado -->
+      <div class="material-stage__media">
+        <img 
+          [src]="activeMaterial().imageUrl" 
+          [alt]="activeMaterial().name" 
+          class="material-stage__img" />
+        <div class="material-stage__overlay"></div>
+      </div>
+
+      <!-- Contenido Superpuesto Arquitectónico -->
+      <div class="material-stage__content">
+        <div class="material-stage__badge">
+          <span>MATERIA NOBLE:</span>
+          <strong>{{ activeMaterial().name }}</strong>
+        </div>
+
+        <h3 class="material-stage__headline">
+          {{ activeMaterial().headline }}
+        </h3>
+
+        <p class="material-stage__desc">
+          {{ activeMaterial().description }}
+        </p>
+
+        <!-- Virtudes Técnicas -->
+        <div class="material-stage__features">
+          @for (feat of activeMaterial().features; track feat) {
+            <div class="mat-feat">
+              <span class="mat-feat__bullet">―</span>
+              <span class="mat-feat__text">{{ feat }}</span>
+            </div>
+          }
+        </div>
+
+        <blockquote class="material-stage__quote">
+          "{{ activeMaterial().quote }}"
+        </blockquote>
+
+        <div class="material-stage__actions">
+          <button 
+            type="button" 
+            class="btn btn--champagne"
+            (click)="scrollToConfigurator()">
+            CONFIGURAR EN {{ activeMaterial().name }}
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>

@@ -1,6 +1,5 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, HostListener, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ThemeService } from '../../../../core/services/theme.service';
 
 @Component({
   selector: 'app-header',
@@ -10,8 +9,14 @@ import { ThemeService } from '../../../../core/services/theme.service';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent {
-  readonly themeService = inject(ThemeService);
+  readonly isScrolled = signal<boolean>(false);
   readonly isMobileMenuOpen = signal<boolean>(false);
+
+  @HostListener('window:scroll')
+  onWindowScroll(): void {
+    const scrollOffset = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    this.isScrolled.set(scrollOffset > 50);
+  }
 
   toggleMobileMenu(): void {
     this.isMobileMenuOpen.update(v => !v);
@@ -25,13 +30,7 @@ export class HeaderComponent {
     this.closeMobileMenu();
     const element = document.getElementById(sectionId);
     if (element) {
-      const headerOffset = 80;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
+      element.scrollIntoView({ behavior: 'smooth' });
     }
   }
 }

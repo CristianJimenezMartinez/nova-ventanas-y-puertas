@@ -1,0 +1,77 @@
+.arch-statement-section {
+  position: relative;
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background-color: var(--color-black);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.arch-statement-media {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.arch-statement-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.arch-statement-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg, 
+    rgba(13, 13, 13, 0.95) 0%, 
+    rgba(13, 13, 13, 0.75) 55%, 
+    rgba(13, 13, 13, 0.4) 100%
+  );
+
+  @media (max-width: 768px) {
+    background: rgba(13, 13, 13, 0.9);
+  }
+}
+
+.arch-statement-container {
+  position: relative;
+  z-index: 2;
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+}
+
+.arch-statement-box {
+  max-width: 780px;
+}
+
+.arch-statement-title {
+  margin-bottom: 1.75rem;
+  color: var(--text-primary);
+}
+
+.arch-statement-lead {
+  font-family: var(--font-family);
+  font-size: clamp(1.25rem, 2vw, 1.6rem);
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--color-champagne);
+  font-style: italic;
+  margin-bottom: 1.5rem;
+}
+
+.arch-statement-desc {
+  font-size: 1.05rem;
+  line-height: 1.75;
+  color: var(--color-stone);
+  margin-bottom: 2.75rem;
+  max-width: 660px;
+}
+
+.arch-statement-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}

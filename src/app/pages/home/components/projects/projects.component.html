@@ -1,0 +1,84 @@
+<section id="proyectos" class="section-spacing projects-section">
+  <div class="container">
+    
+    <!-- Encabezado de Sección & Filtros -->
+    <div class="projects-header">
+      <div class="projects-header__title-group">
+        <span class="label-tracked">OBRAS &amp; REALIZACIONES</span>
+        <h2 class="heading-section projects-title">
+          PROYECTOS. ESPACIOS DISEÑADOS PARA DURAR.
+        </h2>
+        <p class="body-editorial projects-subtitle">
+          Viviendas unifamiliares, rehabilitaciones bioclimáticas y áticos panorámicos donde cada cerramiento eleva el estándar del hábitat.
+        </p>
+      </div>
+
+      <!-- Filtros de Categoría -->
+      <div class="projects-filters">
+        <button 
+          type="button" 
+          class="filter-link"
+          [class.filter-link--active]="activeFilter() === 'todos'"
+          (click)="setFilter('todos')">
+          TODOS
+        </button>
+        <span class="filter-sep">/</span>
+        <button 
+          type="button" 
+          class="filter-link"
+          [class.filter-link--active]="activeFilter() === 'viviendas'"
+          (click)="setFilter('viviendas')">
+          VIVIENDAS
+        </button>
+        <span class="filter-sep">/</span>
+        <button 
+          type="button" 
+          class="filter-link"
+          [class.filter-link--active]="activeFilter() === 'reformas'"
+          (click)="setFilter('reformas')">
+          REFORMAS
+        </button>
+        <span class="filter-sep">/</span>
+        <button 
+          type="button" 
+          class="filter-link"
+          [class.filter-link--active]="activeFilter() === 'grandes-formatos'"
+          (click)="setFilter('grandes-formatos')">
+          GRANDES FORMATOS
+        </button>
+      </div>
+    </div>
+
+    <!-- Galería Editorial / Masonry -->
+    <div class="projects-masonry">
+      @for (proj of filteredProjects(); track proj.id; let i = $index) {
+        <article 
+          class="project-tile"
+          [class.project-tile--wide]="i % 3 === 0"
+          (click)="scrollToConfigurator()">
+          
+          <div class="project-tile__media">
+            <img 
+              [src]="proj.imageUrl" 
+              [alt]="proj.title" 
+              loading="lazy" 
+              class="project-tile__img" />
+            <div class="project-tile__overlay"></div>
+            <span class="project-tile__year">{{ proj.year }}</span>
+          </div>
+
+          <div class="project-tile__info">
+            <div class="project-tile__meta">
+              <span class="meta-location">{{ proj.location }}</span>
+              <span class="meta-sep">―</span>
+              <span class="meta-systems">{{ proj.systems }}</span>
+            </div>
+            <h3 class="project-tile__title">{{ proj.title }}</h3>
+          </div>
+
+        </article>
+      }
+    </div>
+
+  </div>
+</section>

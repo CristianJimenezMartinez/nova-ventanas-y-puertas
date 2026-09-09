@@ -1,0 +1,226 @@
+.finder-section {
+  background-color: var(--color-black-surface);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.finder-header {
+  max-width: 860px;
+  margin-bottom: 4.5rem;
+
+  &__title {
+    margin-bottom: 1.25rem;
+    color: var(--text-primary);
+  }
+}
+
+.finder-box {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3.5rem;
+  background-color: var(--color-black);
+  border: 1px solid var(--border-subtle);
+  padding: 2rem;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: 1.2fr 1fr;
+    padding: 3.5rem;
+    gap: 4.5rem;
+  }
+}
+
+.finder-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.finder-step {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  &__num {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    color: var(--color-champagne);
+  }
+
+  &__title {
+    font-family: var(--font-family);
+    font-size: 1.2rem;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    color: var(--text-primary);
+  }
+}
+
+.pill-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+
+  &--grid {
+    display: grid;
+    grid-template-columns: 1fr;
+
+    @media (min-width: 640px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+}
+
+.finder-pill {
+  background: var(--color-black-surface);
+  border: 1px solid var(--border-subtle);
+  padding: 1rem 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  cursor: pointer;
+  text-align: left;
+  transition: all var(--transition-fast);
+
+  .pill-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1.5px solid var(--text-muted);
+    flex-shrink: 0;
+    transition: all var(--transition-fast);
+  }
+
+  &:hover {
+    border-color: rgba(198, 173, 130, 0.4);
+    color: var(--text-primary);
+  }
+
+  &--active {
+    border-color: var(--color-champagne);
+    color: var(--text-primary);
+    background-color: rgba(198, 173, 130, 0.06);
+
+    .pill-dot {
+      border-color: var(--color-champagne);
+      background-color: var(--color-champagne);
+    }
+  }
+}
+
+.city-input {
+  background: var(--color-black-surface);
+  border: 1px solid var(--border-subtle);
+  padding: 1rem 1.25rem;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color var(--transition-fast);
+
+  &:focus {
+    border-color: var(--color-champagne);
+  }
+}
+
+.finder-result {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-black-surface);
+  border: 1px solid var(--border-subtle);
+  overflow: hidden;
+}
+
+.result-media {
+  position: relative;
+  height: 240px;
+  overflow: hidden;
+}
+
+.result-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.result-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(23, 23, 23, 0.9) 100%);
+}
+
+.result-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  padding: 0.4rem 0.8rem;
+  background-color: var(--color-black);
+  color: var(--color-champagne);
+  border: 1px solid var(--border-champagne);
+}
+
+.result-content {
+  padding: 2.2rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.result-kicker {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--color-champagne);
+  margin-bottom: 0.5rem;
+}
+
+.result-title {
+  font-family: var(--font-family);
+  font-size: 1.3rem;
+  font-weight: 400;
+  line-height: 1.35;
+  color: var(--text-primary);
+  margin-bottom: 1.75rem;
+}
+
+.result-specs {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  margin-bottom: 2.2rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.result-spec-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.85rem;
+
+  .spec-label {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    letter-spacing: 0.05em;
+  }
+
+  .spec-val {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .text-champagne {
+    color: var(--color-champagne);
+  }
+}
+
+.w-100 {
+  width: 100%;
+}

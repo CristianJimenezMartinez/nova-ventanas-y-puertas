@@ -1,0 +1,74 @@
+<section id="detalles" class="section-spacing details-section">
+  <div class="container">
+    
+    <!-- Manifiesto Editorial de Entrada -->
+    <div class="details-manifesto">
+      <span class="label-tracked">PRECISIÓN ARQUITECTÓNICA</span>
+      <h2 class="heading-section details-manifesto__title">
+        LA DIFERENCIA ESTÁ EN LOS DETALLES.
+      </h2>
+      <p class="body-editorial details-manifesto__lead">
+        Una ventana nunca es simplemente una ventana. Es la proporción exacta con el muro, la pureza con la que entra la luz matinal, la hermeticidad invisible que frena el ruido de la ciudad, el tacto frío del aluminio cepillado o la calidez orgánica de una madera noble.
+      </p>
+      <div class="details-attributes">
+        <span class="attr-pill">PROPORCIÓN</span>
+        <span class="attr-dot">·</span>
+        <span class="attr-pill">LUZ NATURAL</span>
+        <span class="attr-dot">·</span>
+        <span class="attr-pill">AISLAMIENTO</span>
+        <span class="attr-dot">·</span>
+        <span class="attr-pill">HERRAJES OCULTOS</span>
+        <span class="attr-dot">·</span>
+        <span class="attr-pill">FLUIDEZ</span>
+        <span class="attr-dot">·</span>
+        <span class="attr-pill">INTEGRACIÓN</span>
+      </div>
+    </div>
+
+    <!-- Tres Grandes Bloques Visuales Editoriales -->
+    <div class="details-blocks">
+      @for (block of blocks; track block.id; let idx = $index) {
+        <article class="detail-block" [class.detail-block--reversed]="idx % 2 !== 0">
+          
+          <!-- Gran Fotografía Arquitectónica -->
+          <div class="detail-block__media">
+            <img 
+              [src]="block.imageUrl" 
+              [alt]="block.title" 
+              loading="lazy" 
+              class="detail-block__img" />
+            <span class="detail-block__watermark">{{ block.number }}</span>
+          </div>
+
+          <!-- Información Editorial -->
+          <div class="detail-block__content">
+            <span class="detail-block__num">{{ block.number }} / 03</span>
+            <h3 class="detail-block__title">{{ block.title }}</h3>
+            <div class="detail-block__caption">{{ block.caption }}</div>
+            
+            <p class="detail-block__lead">{{ block.lead }}</p>
+            <p class="detail-block__desc">{{ block.description }}</p>
+
+            <div class="detail-block__specs">
+              @for (spec of block.specs; track spec) {
+                <div class="spec-line">
+                  <span class="spec-line__bullet">―</span>
+                  <span class="spec-line__text">{{ spec }}</span>
+                </div>
+              }
+            </div>
+
+            <button 
+              type="button" 
+              class="btn btn--ghost" 
+              (click)="scrollToSection('configurador')">
+              SOLICITAR ASESORAMIENTO PARA {{ block.title }} →
+            </button>
+          </div>
+
+        </article>
+      }
+    </div>
+
+  </div>
+</section>

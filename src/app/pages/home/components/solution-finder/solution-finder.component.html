@@ -1,0 +1,161 @@
+<section id="configurador" class="section-spacing finder-section">
+  <div class="container">
+    
+    <!-- Encabezado -->
+    <div class="finder-header">
+      <span class="label-tracked">SELECTOR INTERACTIVO</span>
+      <h2 class="heading-section finder-header__title">
+        ENCUENTRA TU SOLUCIÓN.
+      </h2>
+      <p class="body-editorial finder-header__lead">
+        Define el elemento arquitectónico y tu máxima prioridad de confort. Nuestro configurador seleccionará la combinación de perfilería, vidrio y acabado óptima para tu espacio.
+      </p>
+    </div>
+
+    <!-- Contenedor del Selector -->
+    <div class="finder-box">
+      
+      <!-- Panel de Opciones de Selección -->
+      <div class="finder-inputs">
+        
+        <!-- Pregunta 1 -->
+        <div class="finder-step">
+          <span class="finder-step__num">PASO 01</span>
+          <h3 class="finder-step__title">¿QUÉ ESTÁS BUSCANDO?</h3>
+          
+          <div class="pill-group">
+            <button 
+              type="button" 
+              class="finder-pill"
+              [class.finder-pill--active]="selectedNeed() === 'ventana'"
+              (click)="setNeed('ventana')">
+              <span class="pill-dot"></span>
+              <span>VENTANA</span>
+            </button>
+
+            <button 
+              type="button" 
+              class="finder-pill"
+              [class.finder-pill--active]="selectedNeed() === 'puerta'"
+              (click)="setNeed('puerta')">
+              <span class="pill-dot"></span>
+              <span>PUERTA</span>
+            </button>
+
+            <button 
+              type="button" 
+              class="finder-pill"
+              [class.finder-pill--active]="selectedNeed() === 'cerramiento'"
+              (click)="setNeed('cerramiento')">
+              <span class="pill-dot"></span>
+              <span>CERRAMIENTO</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Pregunta 2 -->
+        <div class="finder-step">
+          <span class="finder-step__num">PASO 02</span>
+          <h3 class="finder-step__title">¿QUÉ ES LO MÁS IMPORTANTE PARA TI?</h3>
+          
+          <div class="pill-group pill-group--grid">
+            <button 
+              type="button" 
+              class="finder-pill"
+              [class.finder-pill--active]="selectedPriority() === 'aislamiento'"
+              (click)="setPriority('aislamiento')">
+              <span class="pill-dot"></span>
+              <span>AISLAMIENTO ACÚSTICO / TÉRMICO</span>
+            </button>
+
+            <button 
+              type="button" 
+              class="finder-pill"
+              [class.finder-pill--active]="selectedPriority() === 'diseno'"
+              (click)="setPriority('diseno')">
+              <span class="pill-dot"></span>
+              <span>DISEÑO &amp; HOJA OCULTA</span>
+            </button>
+
+            <button 
+              type="button" 
+              class="finder-pill"
+              [class.finder-pill--active]="selectedPriority() === 'seguridad'"
+              (click)="setPriority('seguridad')">
+              <span class="pill-dot"></span>
+              <span>SEGURIDAD ANTIRROBO RC3</span>
+            </button>
+
+            <button 
+              type="button" 
+              class="finder-pill"
+              [class.finder-pill--active]="selectedPriority() === 'eficiencia'"
+              (click)="setPriority('eficiencia')">
+              <span class="pill-dot"></span>
+              <span>EFICIENCIA PASSIVHAUS &amp; NEXTGEN</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Municipio de referencia -->
+        <div class="finder-step">
+          <label class="finder-step__num" for="cityInput">UBICACIÓN DEL PROYECTO</label>
+          <input 
+            id="cityInput"
+            type="text" 
+            [(ngModel)]="clientCity" 
+            class="city-input"
+            placeholder="Ej: Molina de Segura, Murcia, Alicante..." />
+        </div>
+
+      </div>
+
+      <!-- Panel de Recomendación Visual: TU SOLUCIÓN NOVA -->
+      <div class="finder-result">
+        
+        <div class="result-media">
+          <img 
+            [src]="recommendation().imageUrl" 
+            [alt]="recommendation().title" 
+            class="result-img" />
+          <div class="result-overlay"></div>
+          <span class="result-badge">RECOMENDACIÓN ARQUITECTÓNICA</span>
+        </div>
+
+        <div class="result-content">
+          <span class="result-kicker">TU SOLUCIÓN NOVA</span>
+          <h4 class="result-title">{{ recommendation().title }}</h4>
+          
+          <div class="result-specs">
+            <div class="result-spec-row">
+              <span class="spec-label">Sistema:</span>
+              <strong class="spec-val">{{ recommendation().system }}</strong>
+            </div>
+            <div class="result-spec-row">
+              <span class="spec-label">Material:</span>
+              <strong class="spec-val">{{ recommendation().material }}</strong>
+            </div>
+            <div class="result-spec-row">
+              <span class="spec-label">Acabado aconsejado:</span>
+              <strong class="spec-val">{{ recommendation().finish }}</strong>
+            </div>
+            <div class="result-spec-row">
+              <span class="spec-label">Ventaja clave:</span>
+              <strong class="spec-val text-champagne">{{ recommendation().benefit }}</strong>
+            </div>
+          </div>
+
+          <button 
+            type="button" 
+            class="btn btn--champagne w-100"
+            (click)="requestInfo()">
+            SOLICITAR INFORMACIÓN Y MEDICIÓN GRATUITA →
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
