@@ -76,24 +76,38 @@ jobs:
             echo "${{ secrets.VPS_PASSWORD }}" | sudo -S chown -R antigravity:www-data /var/www/nova-ventanas-y-puertas
             echo "${{ secrets.VPS_PASSWORD }}" | sudo -S chmod -R 775 /var/www/nova-ventanas-y-puertas
 
-            # Configuración Nginx según presencia de certificados SSL
+            # Desactivar sitio default de Nginx si existiese para que no capture el puerto 80
+            if [ -f /etc/nginx/sites-enabled/default ]; then
+              echo "${{ secrets.VPS_PASSWORD }}" | sudo -S rm -f /etc/nginx/sites-enabled/default
+            fi
+
+            # Activar enlace inicial en sites-enabled
+            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S ln -sf /etc/nginx/sites-available/novaventanasypuertas.conf /etc/nginx/sites-enabled/novaventanasypuertas.conf
+
+            # Si no existe el certificado SSL en Let's Encrypt, obtenerlo automáticamente con Certbot
+            if [ ! -f /etc/letsencrypt/live/novaventanasypuertas.com/fullchain.pem ]; then
+              echo "🔑 Solicitando certificado SSL gratuito Let's Encrypt con Certbot..."
+              echo "${{ secrets.VPS_PASSWORD }}" | sudo -S cp /var/www/nova-ventanas-y-puertas/nginx-nova-http.conf /etc/nginx/sites-available/novaventanasypuertas.conf
+              echo "${{ secrets.VPS_PASSWORD }}" | sudo -S systemctl reload nginx || true
+              
+              echo "${{ secrets.VPS_PASSWORD }}" | sudo -S certbot certonly --webroot -w /var/www/certbot --non-interactive --agree-tos --email info@novaventanasypuertas.com -d novaventanasypuertas.com -d www.novaventanasypuertas.com -d novaventanasypuertas.es -d www.novaventanasypuertas.es || \
+              echo "${{ secrets.VPS_PASSWORD }}" | sudo -S certbot certonly --webroot -w /var/www/certbot --non-interactive --agree-tos --email info@novaventanasypuertas.com -d novaventanasypuertas.com -d www.novaventanasypuertas.com || true
+            fi
+
+            # Aplicar configuración HTTPS completa si los certificados existen
             if [ -f /etc/letsencrypt/live/novaventanasypuertas.com/fullchain.pem ]; then
-              echo "🔒 Certificado SSL detectado. Aplicando configuración HTTPS de producción..."
+              echo "🔒 Certificado SSL activo. Aplicando configuración HTTPS de producción..."
               echo "${{ secrets.VPS_PASSWORD }}" | sudo -S cp /var/www/nova-ventanas-y-puertas/nginx-nova.conf /etc/nginx/sites-available/novaventanasypuertas.conf
             else
-              echo "⚠️ Certificados SSL aún no expedidos. Aplicando configuración HTTP temporal..."
+              echo "⚠️ Manteniendo HTTP temporal hasta validación..."
               echo "${{ secrets.VPS_PASSWORD }}" | sudo -S cp /var/www/nova-ventanas-y-puertas/nginx-nova-http.conf /etc/nginx/sites-available/novaventanasypuertas.conf
             fi
 
-            # Activar sitio en sites-enabled si aún no está enlazado
-            if [ ! -f /etc/nginx/sites-enabled/novaventanasypuertas.conf ]; then
-              echo "${{ secrets.VPS_PASSWORD }}" | sudo -S ln -sf /etc/nginx/sites-available/novaventanasypuertas.conf /etc/nginx/sites-enabled/novaventanasypuertas.conf
-            fi
-
-            # Validar sintaxis y recargar Nginx sin caídas
+            # Asegurar enlace y reiniciar Nginx
+            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S ln -sf /etc/nginx/sites-available/novaventanasypuertas.conf /etc/nginx/sites-enabled/novaventanasypuertas.conf
             echo "${{ secrets.VPS_PASSWORD }}" | sudo -S nginx -t
-            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S systemctl reload nginx || true
-            echo "✅ Despliegue completado con éxito."
+            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S systemctl restart nginx
+            echo "✅ Despliegue y configuración de Nginx completados."
 
       - name: 🧪 Smoke Test / Healthcheck Post-Despliegue
         uses: appleboy/ssh-action@v1.0.3
@@ -102,12 +116,7 @@ jobs:
           username: antigravity
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
-            echo "🔍 Verificando respuesta del sitio web en local..."
-            HTTP_CODE=$(curl -s -k -o /dev/null -w "%{http_code}" -H "Host: novaventanasypuertas.com" http://127.0.0.1/ || echo "000")
-            echo "Código HTTP recibido en puerto 80: $HTTP_CODE"
-
-            if [ "$HTTP_CODE" = "301" ] || [ "$HTTP_CODE" = "200" ]; then
-              echo "✅ Nginx está sirviendo Nova Ventanas y Puertas correctamente."
-            else
-              echo "⚠️ Advertencia: Código HTTP $HTTP_CODE al consultar host local."
-            fi
+            echo "🔍 Probando respuesta HTTP local en el VPS:"
+            curl -s -I -H "Host: novaventanasypuertas.com" http://127.0.0.1/
+            echo "🔍 Probando respuesta HTTPS local en el VPS:"
+            curl -s -k -I https://127.0.0.1/ -H "Host: novaventanasypuertas.com" || true
