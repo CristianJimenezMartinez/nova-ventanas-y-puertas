@@ -243,11 +243,29 @@
 
 .menu-contact-info {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 0.5rem;
   font-size: 0.85rem;
   color: var(--text-muted);
   border-top: 1px solid var(--border-subtle);
   padding-top: 1.5rem;
+
+  @media (min-width: 480px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.menu-contact-link {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+
+  &:hover {
+    color: var(--color-champagne);
+  }
 }
 
 .w-100 {

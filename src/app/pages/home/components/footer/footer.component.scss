@@ -83,6 +83,36 @@
   }
 }
 
+.footer-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+
+  @media (min-width: 640px) {
+    flex-direction: row;
+    gap: 1.5rem;
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+
+    svg {
+      color: var(--color-champagne);
+    }
+
+    &:hover {
+      color: var(--color-champagne);
+    }
+  }
+}
+
 .nova-footer__bottom {
   display: flex;
   flex-direction: column;
