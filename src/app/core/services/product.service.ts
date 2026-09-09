@@ -24,7 +24,7 @@ export class ProductService {
         'Herraje perimetral de seguridad con bulones tipo champiñón',
         'Compatible con doble y triple acristalamiento bajo emisivo'
       ],
-      imageUrl: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?auto=format&fit=crop&w=1000&q=80',
+      imageUrl: 'assets/images/material-pvc.jpg',
       badge: 'Más Vendida',
       popular: true,
       passivhausReady: false
@@ -47,7 +47,7 @@ export class ProductService {
         'Triple vidrio con gas Argón y tratamiento bajo emisivo y control solar',
         'Máxima reducción acústica frente al tráfico pesado'
       ],
-      imageUrl: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1000&q=80',
+      imageUrl: 'assets/images/pilar-eficiencia.jpg',
       badge: 'Estándar Passivhaus',
       popular: true,
       passivhausReady: true
@@ -69,7 +69,7 @@ export class ProductService {
         'Acabados anodizados, lacados texturados y bicolores',
         'Herrajes ocultos integrados para diseño vanguardista'
       ],
-      imageUrl: 'https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?auto=format&fit=crop&w=1000&q=80',
+      imageUrl: 'assets/images/material-aluminio.jpg',
       badge: 'Diseño Vanguardia',
       popular: true,
       passivhausReady: false
@@ -91,7 +91,7 @@ export class ProductService {
         'Solapamiento central extrafino de 45 mm para máxima transparencia',
         'Capacidad de acristalamiento de hasta 52 mm de espesor'
       ],
-      imageUrl: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1000&q=80',
+      imageUrl: 'assets/images/solution-correderas.jpg',
       badge: 'Ventanales Panorámicos',
       popular: false,
       passivhausReady: false
@@ -113,7 +113,7 @@ export class ProductService {
         'Aislamiento térmico de vanguardia apto para climas exigentes',
         'Disponible en acabados naturales roble, haya, nogal y lacados RAL'
       ],
-      imageUrl: 'https://images.unsplash.com/photo-1541123437800-1bb1317badc2?auto=format&fit=crop&w=1000&q=80',
+      imageUrl: 'assets/images/material-mixto.jpg',
       badge: 'Showroom Destacado',
       popular: true,
       passivhausReady: true
@@ -135,7 +135,7 @@ export class ProductService {
         'Herraje perimetral regulable en 3 dimensiones con microventilación',
         'Ideal para centros históricos, chalets rústicos y casas pasivas'
       ],
-      imageUrl: 'https://images.unsplash.com/photo-1509644851169-2acc08aa25b5?auto=format&fit=crop&w=1000&q=80',
+      imageUrl: 'assets/images/material-madera.jpg',
       badge: 'Ecológico & Noble',
       popular: false,
       passivhausReady: false
@@ -157,7 +157,7 @@ export class ProductService {
         'Aislamiento acústico y térmico superior al de puertas convencionales',
         'Acabados en imitación madera, porcelánico, piedra y aluminio lacado'
       ],
-      imageUrl: 'https://images.unsplash.com/photo-1517457373958-b7bdd4587205?auto=format&fit=crop&w=1000&q=80',
+      imageUrl: 'assets/images/pilar-seguridad.jpg',
       badge: 'Seguridad RC3',
       popular: true,
       passivhausReady: false
@@ -179,7 +179,7 @@ export class ProductService {
         'Juntas de policarbonato transparente con protección UV',
         'Instalación rápida sin necesidad de realizar obras complejas'
       ],
-      imageUrl: 'https://images.unsplash.com/photo-1600585154526-990dced4db0d?auto=format&fit=crop&w=1000&q=80',
+      imageUrl: 'assets/images/glass-terrace.jpg',
       badge: 'Vistas 360°',
       popular: false,
       passivhausReady: false
@@ -201,7 +201,7 @@ export class ProductService {
         'Integración perfecta con cortinas de cristal y luces LED perimetrales',
         'Canalización oculta de desagüe pluvial'
       ],
-      imageUrl: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=1000&q=80',
+      imageUrl: 'assets/images/grand-format.jpg',
       badge: 'Solución Exterior',
       popular: false,
       passivhausReady: false
@@ -223,7 +223,7 @@ export class ProductService {
         'Mosquitera plisada o enrollable oculta en el mismo registro',
         'Lamas autoblocantes de seguridad antirrobo'
       ],
-      imageUrl: 'https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1000&q=80',
+      imageUrl: 'assets/images/window-detail.jpg',
       badge: 'Aislamiento Monoblock',
       popular: false,
       passivhausReady: true
