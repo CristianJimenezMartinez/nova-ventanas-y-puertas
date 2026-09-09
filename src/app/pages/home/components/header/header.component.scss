@@ -16,6 +16,13 @@
     padding: 1.1rem 0;
   }
 
+  &--menu-open {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-bottom-color: transparent !important;
+    background-color: transparent !important;
+  }
+
   &__inner {
     display: flex;
     align-items: center;
@@ -163,17 +170,28 @@
 
 .fullscreen-menu {
   position: fixed;
-  inset: 0;
-  background-color: var(--bg-primary);
-  z-index: 2000;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background-color: #0D0D0D;
+  z-index: 99999;
   display: flex;
   flex-direction: column;
-  animation: fadeIn 0.3s ease-out forwards;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  animation: fadeIn 0.25s ease-out forwards;
 
   &__inner {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    min-height: 100%;
+    height: auto;
+    box-sizing: border-box;
     padding-top: 2rem;
     padding-bottom: 3rem;
   }

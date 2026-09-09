@@ -1,4 +1,4 @@
-import { Component, HostListener, signal } from '@angular/core';
+import { Component, HostListener, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss']
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnDestroy {
   readonly isScrolled = signal<boolean>(false);
   readonly isMobileMenuOpen = signal<boolean>(false);
 
@@ -19,11 +19,14 @@ export class HeaderComponent {
   }
 
   toggleMobileMenu(): void {
-    this.isMobileMenuOpen.update(v => !v);
+    const next = !this.isMobileMenuOpen();
+    this.isMobileMenuOpen.set(next);
+    this.updateBodyScrollLock(next);
   }
 
   closeMobileMenu(): void {
     this.isMobileMenuOpen.set(false);
+    this.updateBodyScrollLock(false);
   }
 
   scrollToSection(sectionId: string): void {
@@ -32,5 +35,21 @@ export class HeaderComponent {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  }
+
+  private updateBodyScrollLock(locked: boolean): void {
+    if (typeof document !== 'undefined') {
+      if (locked) {
+        document.body.style.overflow = 'hidden';
+        document.body.style.touchAction = 'none';
+      } else {
+        document.body.style.overflow = '';
+        document.body.style.touchAction = '';
+      }
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.updateBodyScrollLock(false);
   }
 }
