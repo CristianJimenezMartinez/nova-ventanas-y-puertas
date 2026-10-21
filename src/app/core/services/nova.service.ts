@@ -1,35 +1,42 @@
-import { Injectable, signal } from '@angular/core';
-import { 
-  SolutionCategory, 
-  MaterialOption, 
-  BrandValue, 
-  ArchitecturalProject, 
-  SolutionRecommendation 
+import { Injectable } from '@angular/core';
+import {
+  SolutionCategory,
+  MaterialOption,
+  BrandValue,
+  ArchitecturalProject,
+  SolutionRecommendation,
+  NovaTechnicalSeries,
+  NovaPdfCatalog,
+  NovaTechnicalFaq,
+  WebLeadSubmission
 } from '../models/nova.model';
+import {
+  NOVA_PDF_CATALOGS_DATA,
+  NOVA_RECOMMENDATIONS_MAP,
+  NOVA_TECHNICAL_FAQS_DATA,
+  NOVA_TECHNICAL_SERIES_DATA
+} from './nova-catalog.data';
 
 @Injectable({
   providedIn: 'root'
 })
 export class NovaService {
-  /* ========================================================================
-     Soluciones para Cada Espacio
-     ======================================================================== */
   readonly solutions: SolutionCategory[] = [
     {
       id: 'ventanas',
       title: 'VENTANAS',
       subtitle: 'Luz, proporción y confort en cada espacio',
-      description: 'Perfilería de sección mínima con hoja oculta que diluye los límites del marco. Máxima entrada de luz solar con aislamiento térmico y acústico insuperable.',
+      description: 'Perfilería de sección mínima con hoja oculta que diluye los límites del marco. Máxima entrada de luz solar con aislamiento térmico y acústico certificado.',
       imageUrl: 'assets/images/solution-ventanas.jpg',
-      specs: ['Transmitancia Uw hasta 0.72 W/m²K', 'Atenuación acústica hasta -48 dB', 'Hoja oculta de 50 mm']
+      specs: ['Transmitancia Uw hasta 0.72 W/m²K', 'Atenuación acústica Rw hasta 47 dB', 'Hoja oculta de 50 mm · Clase 4 (UNE-EN 12207)']
     },
     {
       id: 'puertas',
       title: 'PUERTAS',
       subtitle: 'La primera impresión de tu arquitectura',
-      description: 'Puertas de entrada pivotantes de gran escala y acorazadas certificadas RC3. Integración de paneles enrasados de piedra, aluminio y maderas nobles.',
+      description: 'Puertas de entrada pivotantes de gran escala y acorazadas certificadas DIN EN 1627 RC2/RC3. Integración de paneles enrasados de piedra, aluminio y maderas nobles.',
       imageUrl: 'assets/images/solution-puertas.jpg',
-      specs: ['Bisagras pivotantes invisibles', 'Certificación antiefracción RC3', 'Aislamiento térmico perimetral']
+      specs: ['Bisagras pivotantes invisibles', 'Seguridad certificada DIN EN 1627 RC3', 'Paneles enrasados con umbral magnético']
     },
     {
       id: 'correderas',
@@ -37,35 +44,32 @@ export class NovaService {
       subtitle: 'Fluidez y solera a cota cero',
       description: 'Sistemas elevables y minimalistas con hojas de hasta 400 kg que se desplazan con suavidad milimétrica. El suelo interior y la terraza se convierten en un único plano continuo.',
       imageUrl: 'assets/images/solution-correderas.jpg',
-      specs: ['Guía empotrada a ras de pavimento', 'Nudo central de solo 25 mm', 'Aperturas de esquina sin poste']
+      specs: ['Guía empotrada a ras de pavimento', 'Nudo central minimalista de 25 mm', 'Aperturas de esquina a 90° sin poste']
     },
     {
       id: 'cerramientos',
       title: 'CERRAMIENTOS',
       subtitle: 'Disolver los límites entre interior y exterior',
-      description: 'Cortinas de cristal sin perfiles verticales y techos móviles de cristal bioclimático que permiten habitar la terraza durante las cuatro estaciones del año.',
+      description: 'Cortinas de cristal sin perfiles verticales y techos bioclimáticos motorizados que permiten habitar el porche y la terraza durante las cuatro estaciones del año.',
       imageUrl: 'assets/images/glass-terrace.jpg',
-      specs: ['Apertura total 100% abatible', 'Vidrio templado securizado 10 mm', 'Estanqueidad certificada']
+      specs: ['Apertura total 100% abatible', 'Vidrio templado de seguridad 10 mm', 'Resistencia al viento Clase C4 (UNE-EN 12210)']
     },
     {
       id: 'grandes-formatos',
       title: 'GRANDES FORMATOS',
       subtitle: 'Superficies acristaladas de escala monumental',
-      description: 'Vidrios de suelo a techo sin travesaños intermedios. Ingeniería estructural para viviendas de diseño contemporáneo que exigen vistas panorámicas limpias.',
+      description: 'Vidrios de suelo a techo sin travesaños intermedios. Ingeniería estructural conforme al CTE DB-SUA para viviendas contemporáneas que exigen vistas panorámicas limpias.',
       imageUrl: 'assets/images/grand-format.jpg',
-      specs: ['Acristalamientos de hasta 6 metros', 'Triple vidrio bajo emisivo con argón', 'Control solar selectivo']
+      specs: ['Acristalamientos de hasta 6 metros', 'Triple vidrio bajo emisivo con gas Argón', 'Control solar selectivo para clima mediterráneo']
     }
   ];
 
-  /* ========================================================================
-     Los Cuatro Materiales (Showroom Oficial)
-     ======================================================================== */
   readonly materials: MaterialOption[] = [
     {
       id: 'aluminio',
       name: 'ALUMINIO',
       headline: 'Líneas limpias. Grandes dimensiones. Máxima libertad arquitectónica.',
-      description: 'La aleación de aluminio con rotura de puente térmico (RPT) de última generación permite secciones de perfil ultrafinas, soportando grandes pesos de vidrio con una estabilidad dimensional inalterable.',
+      description: 'La aleación de aluminio arquitectónico 6060-T66 con rotura de puente térmico (RPT) permite secciones de perfil ultrafinas, soportando grandes pesos de vidrio con una estabilidad dimensional inalterable.',
       imageUrl: 'assets/images/material-aluminio.jpg',
       features: ['Perfilería de hoja oculta de solo 50 mm vista', 'Poliamidas aislantes tubulares de hasta 35 mm', 'Acabados anodizados y lacados Qualicoat Seaside'],
       quote: 'El lenguaje predilecto de la arquitectura contemporánea.'
@@ -74,34 +78,35 @@ export class NovaService {
       id: 'pvc',
       name: 'PVC',
       headline: 'Hermeticidad absoluta. Eficiencia Passivhaus. Confort inalterable.',
-      description: 'Formulado con perfilería alemana de 76 a 88 mm de profundidad y soldadura de esquina invisible. Su baja conductividad natural garantiza el mayor rendimiento térmico del mercado para viviendas de consumo casi nulo.',
+      description: 'Formulado con perfilería multicámara de 76 a 82 mm de profundidad (Espesor Clase A según UNE-EN 12608) y soldadura de esquina V-Perfect. Su baja conductividad natural garantiza el mayor rendimiento térmico del mercado.',
       imageUrl: 'assets/images/material-pvc.jpg',
-      features: ['Hasta 7 cámaras interiores de aislamiento térmico', 'Triple junta de estanqueidad perimetral de EPDM', 'Uw certificable hasta 0.72 W/m²K para estándar Passivhaus'],
+      features: ['Hasta 7 cámaras interiores y triple junta de EPDM', 'Perfilería Clase A (espesor de pared exterior ≥ 3.0 mm)', 'Uw certificable hasta 0.72 W/m²K para estándar Passivhaus'],
       quote: 'El estándar definitivo de silencio y eficiencia energética.'
     },
     {
       id: 'mixto',
       name: 'MIXTO',
       headline: 'La durabilidad indestructible exterior con la calidez noble interior.',
-      description: 'La solución más sofisticada exhibida en nuestro showroom. Estructura exterior de aluminio resistente a la intemperie unida mecánicamente a una sección interior de madera noble maciza tratada con barnices ecológicos.',
+      description: 'La solución más sofisticada exhibida en nuestro showroom. Estructura exterior de aluminio resistente a la intemperie unida mediante clipaje elástico a una sección interior de madera noble maciza.',
       imageUrl: 'assets/images/material-mixto.jpg',
-      features: ['Clipaje técnico que absorbe dilataciones diferenciales', 'Sin condensaciones ni mantenimiento exterior', 'Interior en roble, castaño o pino seleccionado'],
+      features: ['Clipaje técnico que absorbe dilataciones diferenciales', 'Sin condensaciones ni mantenimiento exterior', 'Interior en roble europeo, nogal o fresno seleccionado'],
       quote: 'Elegancia interior y resistencia exterior sin compromisos.'
     },
     {
       id: 'madera',
       name: 'MADERA',
       headline: 'Sostenibilidad orgánica. Confort bioclimático. Belleza atemporal.',
-      description: 'Madera laminada de perfil europeo tratada contra hongos y humedad con procesos ecológicos. Un material vivo que aporta una calidez insustituible a rehabilitaciones de patrimonio y viviendas singulares.',
+      description: 'Madera laminada de perfil europeo tratada con lasures ecológicos al agua. Un material vivo que aporta una calidez insustituible a rehabilitaciones de patrimonio y viviendas singulares.',
       imageUrl: 'assets/images/material-madera.jpg',
       features: ['Madera laminada en 3 capas que previene torsiones', 'Certificación forestal sostenible FSC / PEFC', 'Atenuación acústica natural superior'],
       quote: 'La autenticidad noble de la materia viva.'
     }
   ];
 
-  /* ========================================================================
-     Los 5 Valores de NOVA (Columna del Showroom)
-     ======================================================================== */
+  readonly technicalSeries: NovaTechnicalSeries[] = NOVA_TECHNICAL_SERIES_DATA;
+  readonly pdfCatalogs: NovaPdfCatalog[] = NOVA_PDF_CATALOGS_DATA;
+  readonly technicalFaqs: NovaTechnicalFaq[] = NOVA_TECHNICAL_FAQS_DATA;
+
   readonly values: BrandValue[] = [
     {
       id: 'diseno',
@@ -110,49 +115,46 @@ export class NovaService {
       subtitle: 'La arquitectura empieza mucho antes de colocar una ventana',
       description: 'Cada sección, perfil y ensamblaje se concibe para integrarse en las líneas de la vivienda. Eliminamos lo superfluo para que la luz y el paisaje sean los auténticos protagonistas.',
       imageUrl: 'assets/images/pilar-diseno.jpg',
-      highlight: 'Líneas mínimas, hoja oculta y proporciones perfectas.'
+      highlight: 'Líneas mínimas, hoja oculta de 50 mm y proporciones puras.'
     },
     {
       id: 'calidad',
       number: '02',
       title: 'CALIDAD',
       subtitle: 'Precisión artesanal e ingeniería europea certificada',
-      description: 'Soldaduras de esquina invisibles, herrajes alemanes de altísima durabilidad y ensayos en banco de pruebas que garantizan un comportamiento impecable tras más de 40 años de uso.',
+      description: 'Soldaduras de esquina invisibles, herrajes europeos de altísima durabilidad y ensayos en banco de pruebas que garantizan un comportamiento impecable tras décadas de uso.',
       imageUrl: 'assets/images/pilar-calidad.jpg',
-      highlight: 'Marcado CE, ISO 9001 y 10 años de garantía directa.'
+      highlight: 'Marcado CE, UNE-EN 14351-1 y 10 años de garantía directa.'
     },
     {
       id: 'aislamiento',
       number: '03',
       title: 'AISLAMIENTO',
       subtitle: 'Silencio acústico y templanza térmica en cualquier estación',
-      description: 'Rotura de puente térmico avanzada, triple junta y vidrios selectivos con cámara rellena de gas Argón. El ruido del tráfico o la canícula estival se detienen por completo en la fachada.',
+      description: 'Rotura de puente térmico avanzada, triple junta de EPDM y vidrios selectivos con cámara rellena de gas Argón. El ruido exterior y el calor estival se detienen en la fachada.',
       imageUrl: 'assets/images/pilar-aislamiento.jpg',
-      highlight: 'Atenuación de hasta -48 dB y transmisión térmica de 0.72 W/m²K.'
+      highlight: 'Atenuación acústica de hasta 47 dB y transmitancia Uw desde 0.72 W/m²K.'
     },
     {
       id: 'seguridad',
       number: '04',
       title: 'SEGURIDAD',
       subtitle: 'Tranquilidad invisible protegiendo lo más valioso',
-      description: 'Puntos de cierre perimetrales con bulones tipo champiñón de acero templado, cerraduras multipunto automáticas y vidrios laminados antirrobo homologados RC2 y RC3.',
+      description: 'Puntos de cierre perimetrales con bulones octogonales tipo champiñón de acero templado, cerraduras multipunto automáticas y vidrios laminados antirrobo homologados RC2 y RC3.',
       imageUrl: 'assets/images/pilar-seguridad.jpg',
-      highlight: 'Resistencia contra efracción certificada según normativa europea EN 1627.'
+      highlight: 'Resistencia contra efracción certificada según normativa DIN EN 1627.'
     },
     {
       id: 'eficiencia',
       number: '05',
       title: 'EFICIENCIA ENERGÉTICA',
-      subtitle: 'Consumo casi nulo y compromiso sostenible con el entorno',
-      description: 'Reducción de hasta un 65% en la factura de climatización. Nuestras carpinterías son aptas para el estándar Passivhaus y gestionamos íntegramente las subvenciones europeas Next Generation.',
+      subtitle: 'Consumo casi nulo y cumplimiento estricto del CTE DB-HE',
+      description: 'Reducción drástica de la demanda de climatización en invierno y verano. Carpinterías aptas para estándar Passivhaus y deducciones fiscales en el IRPF por mejora de eficiencia energética.',
       imageUrl: 'assets/images/pilar-eficiencia.jpg',
-      highlight: 'Ahorro energético medible y hasta 4.000 € de subvención directa.'
+      highlight: 'Ahorro energético certificable y apto para deducción fiscal IRPF (20% al 60%).'
     }
   ];
 
-  /* ========================================================================
-     Proyectos Arquitectónicos Realizados
-     ======================================================================== */
   readonly projects: ArchitecturalProject[] = [
     {
       id: 'casa-mediterranea',
@@ -160,7 +162,7 @@ export class NovaService {
       location: 'Alicante / Costa Blanca',
       category: 'grandes-formatos',
       categoryLabel: 'Grandes Formatos',
-      systems: 'Correderas Elevables · Aluminio RPT Oculto',
+      systems: 'NOVA HORIZON LIFT Cota Cero · Aluminio RPT Minimal',
       imageUrl: 'assets/images/project-mediterranea.jpg',
       year: '2025'
     },
@@ -170,7 +172,7 @@ export class NovaService {
       location: 'Molina de Segura (Murcia)',
       category: 'viviendas',
       categoryLabel: 'Viviendas',
-      systems: 'Ventanas Nova Passiv 88 · Triple Vidrio Control Solar',
+      systems: 'NOVA THERM 82 Triple Junta · Triple Vidrio Control Solar',
       imageUrl: 'assets/images/project-altorreal.jpg',
       year: '2025'
     },
@@ -180,7 +182,7 @@ export class NovaService {
       location: 'Murcia Capital',
       category: 'reformas',
       categoryLabel: 'Reformas',
-      systems: 'Cortinas de Cristal Panorama · Techo Bioclimático',
+      systems: 'NOVA PANORAMA Glass · Pérgola Bioclimática Motorizada',
       imageUrl: 'assets/images/project-atico.jpg',
       year: '2026'
     },
@@ -190,82 +192,45 @@ export class NovaService {
       location: 'Cieza (Murcia)',
       category: 'reformas',
       categoryLabel: 'Reformas',
-      systems: 'Carpintería Mixta Aluminio-Madera · NextGen EU',
+      systems: 'NOVA HYBRID WOOD 90 Aluminio-Madera · Estándar ECCN',
       imageUrl: 'assets/images/project-cieza.jpg',
       year: '2025'
     }
   ];
 
-  /* ========================================================================
-     Recomendador de Solución (Selector Visual)
-     ======================================================================== */
-  getRecommendation(need: 'ventana' | 'puerta' | 'cerramiento', priority: 'aislamiento' | 'diseno' | 'seguridad' | 'eficiencia'): SolutionRecommendation {
-    const recommendations: Record<string, SolutionRecommendation> = {
-      'ventana-aislamiento': {
-        title: 'TU SOLUCIÓN NOVA: Ventana Passiv 88 con Triple Vidrio Acústico',
-        system: 'PVC Alemán de 7 Cámaras con 88 mm de Profundidad',
-        material: 'PVC con Soldadura Invisible',
-        finish: 'Gris Antracita 7016 Texturado',
-        benefit: 'Aislamiento acústico extremo de 48 dB y transmisión térmica Uw de 0.72 W/m²K.',
-        imageUrl: 'assets/images/material-pvc.jpg'
-      },
-      'ventana-diseno': {
-        title: 'TU SOLUCIÓN NOVA: Ventana de Aluminio de Hoja Oculta',
-        system: 'Aluminio con Rotura de Puente Térmico Minimal',
-        material: 'Aluminio RPT Arquitectónico',
-        finish: 'Negro Azabache Mate con herrajes integrados',
-        benefit: 'Sección vista frontal de solo 50 mm para máxima entrada de luz natural.',
-        imageUrl: 'assets/images/material-aluminio.jpg'
-      },
-      'ventana-seguridad': {
-        title: 'TU SOLUCIÓN NOVA: Ventana Acorazada de Seguridad RC2/RC3',
-        system: 'Herrajes Perimetrales con Bloqueo Automático',
-        material: 'Aluminio o PVC Reforzado con Acero',
-        finish: 'Gris Grafito Anodizado',
-        benefit: 'Bulones tipo champiñón antipalanca y vidrio laminar de seguridad antirrobo.',
-        imageUrl: 'assets/images/pilar-seguridad.jpg'
-      },
-      'ventana-eficiencia': {
-        title: 'TU SOLUCIÓN NOVA: Sistema Certificado Passivhaus Ready',
-        system: 'Ventana Termoaislante con Subvención Next Generation',
-        material: 'PVC / Mixto de Alta Densidad',
-        finish: 'Blanco Cálido o Roble Natural',
-        benefit: 'Reduce el consumo de climatización en un 65% y califica para ayudas europeas.',
-        imageUrl: 'assets/images/pilar-eficiencia.jpg'
-      },
-      'puerta-seguridad': {
-        title: 'TU SOLUCIÓN NOVA: Puerta de Entrada Acorazada Master Gate RC3',
-        system: 'Estructura de Acero con Escudo Magnético y Núcleo Aislante',
-        material: 'Aluminio Lacado con Alma de Acero',
-        finish: 'Antracita Mate con tirador vertical de latón cepillado',
-        benefit: 'Protección antiefracción certificada y aislamiento térmico de clase superior.',
-        imageUrl: 'assets/images/pivot-door.jpg'
-      },
-      'puerta-diseno': {
-        title: 'TU SOLUCIÓN NOVA: Puerta Pivotante Monumental a Cota Cero',
-        system: 'Eje Pivotante Oculto de Gran Formato',
-        material: 'Panel Mixto Aluminio y Madera Noble',
-        finish: 'Madera de Roble Tostado y Perfilería Negra',
-        benefit: 'Apertura fluida en hojas de hasta 3 metros de altura sin bisagras visibles.',
-        imageUrl: 'assets/images/solution-puertas.jpg'
-      },
-      'cerramiento-diseno': {
-        title: 'TU SOLUCIÓN NOVA: Corredera Elevable Panorámica Horizon Slide',
-        system: 'Solera Empotrada a Ras de Suelo y Nudo Central Mínimo',
-        material: 'Aluminio RPT de Gran Resistencia',
-        finish: 'Negro Mate Arquitectónico',
-        benefit: 'Conexión limpia entre salón y jardín con deslizamiento suave con un solo dedo.',
-        imageUrl: 'assets/images/solution-correderas.jpg'
-      }
-    };
-
+  getRecommendation(
+    need: 'ventana' | 'puerta' | 'cerramiento',
+    priority: 'aislamiento' | 'diseno' | 'seguridad' | 'eficiencia'
+  ): SolutionRecommendation {
     const key = `${need}-${priority}`;
-    return recommendations[key] || recommendations['ventana-diseno'];
+    return NOVA_RECOMMENDATIONS_MAP[key] ?? NOVA_RECOMMENDATIONS_MAP['ventana-diseno'];
   }
 
-  generateWhatsAppUrl(rec: SolutionRecommendation, clientCity = 'Murcia'): string {
+  generateWhatsAppUrl(rec: SolutionRecommendation, lead?: Partial<WebLeadSubmission>): string {
     const phone = '34613754271';
-    const message = `Hola NOVA Ventanas & Puertas,\n\nHe configurado mi proyecto en la web y me interesa:\n• Solución: ${rec.title}\n• Sistema: ${rec.system}\n• Material y Acabado: ${rec.material} (${rec.finish})\n• Ubicación: ${clientCity}\n\n¿Podrían darme asesoramiento técnico y visita de medición para mi vivienda? Gracias.`;
+    const city = lead?.city || 'Murcia';
+    const nameLine = lead?.fullName ? `• Cliente: ${lead.fullName} (${lead.phone || ''})\n` : '';
+    const projectLine = lead?.projectType ? `• Tipo de proyecto: ${lead.projectType}\n` : '';
+    const message =
+      `Hola NOVA Ventanas & Puertas,\n\n` +
+      `He configurado mi proyecto en la web y solicito estudio técnico:\n` +
+      nameLine +
+      projectLine +
+      `• Solución: ${rec.title}\n` +
+      `• Sistema: ${rec.system}\n` +
+      `• Material y Acabado: ${rec.material} (${rec.finish})\n` +
+      `• Ubicación: ${city}\n\n` +
+      `¿Podrían agendar asesoramiento técnico y medición para mi proyecto? Gracias.`;
+    return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+  }
+
+  generateCatalogWhatsAppUrl(catalog: NovaPdfCatalog): string {
+    const phone = '34613754271';
+    const message =
+      `Hola NOVA Ventanas & Puertas,\n\n` +
+      `Solicito el envío del dossier técnico en español:\n` +
+      `• ${catalog.requestSubject}\n\n` +
+      `Muchas gracias.`;
     return `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
   }
 }

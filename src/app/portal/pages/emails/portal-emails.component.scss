@@ -1,0 +1,284 @@
+.mail-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.mail-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--p-border);
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+}
+
+.mail-title {
+  font-size: 1.55rem;
+  font-weight: 300;
+  color: var(--p-text);
+  margin-top: 0.3rem;
+}
+
+.mail-banner {
+  background: rgba(46, 155, 104, 0.14);
+  border: 1px solid #2E9B68;
+  color: var(--p-text);
+  padding: 0.85rem 1.15rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.accounts-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+
+  @media (min-width: 900px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.account-card {
+  background: var(--p-surface);
+  border: 1px solid var(--p-border);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+  }
+
+  .dept-tag {
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: var(--p-accent);
+  }
+
+  .conn-pill {
+    font-size: 0.64rem;
+    font-weight: 700;
+    color: #2E9B68;
+  }
+
+  .acc-email {
+    font-size: 0.92rem;
+    color: var(--p-text);
+  }
+
+  .acc-alias {
+    font-size: 0.78rem;
+    color: var(--p-text-sec);
+  }
+
+  .acc-servers {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding-top: 0.5rem;
+    margin-top: 0.35rem;
+    border-top: 1px solid var(--p-border);
+    font-size: 0.7rem;
+    color: var(--p-text-muted);
+  }
+}
+
+.mail-split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+
+  @media (min-width: 1100px) {
+    grid-template-columns: 1.2fr 1fr;
+  }
+}
+
+.mail-panel {
+  background: var(--p-surface);
+  border: 1px solid var(--p-border);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  &__head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-bottom: 0.9rem;
+    border-bottom: 1px solid var(--p-border);
+
+    h2 {
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--p-text);
+      margin-top: 0.25rem;
+    }
+  }
+}
+
+.tpl-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.tpl-btn {
+  background: var(--p-card);
+  border: 1px solid var(--p-border);
+  color: var(--p-accent);
+  font-family: var(--font-family);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0.45rem 0.75rem;
+  cursor: pointer;
+}
+
+.compose-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.85rem;
+
+  @media (min-width: 640px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+
+    span {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--p-text-sec);
+    }
+  }
+
+  .span-2 {
+    @media (min-width: 640px) {
+      grid-column: span 2;
+    }
+  }
+}
+
+.mail-input {
+  background: var(--p-input-bg);
+  border: 1px solid var(--p-border);
+  color: var(--p-text);
+  font-family: var(--font-family);
+  font-size: 0.84rem;
+  padding: 0.68rem 0.85rem;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.msg-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.msg-item {
+  background: var(--p-card);
+  border: 1px solid var(--p-border);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  &__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .doc-pill {
+    font-size: 0.64rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--p-accent);
+    color: var(--p-accent);
+  }
+
+  .msg-date {
+    font-size: 0.68rem;
+    color: #2E9B68;
+    font-weight: 600;
+  }
+
+  .msg-subj {
+    font-size: 0.88rem;
+    color: var(--p-text);
+  }
+
+  .msg-meta {
+    font-size: 0.72rem;
+    color: var(--p-text-sec);
+  }
+
+  .msg-snip {
+    font-size: 0.78rem;
+    color: var(--p-text-muted);
+    margin: 0.2rem 0 0;
+    line-height: 1.45;
+  }
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 13, 13, 0.85);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.modal-box {
+  background: var(--p-surface);
+  border: 1px solid var(--p-accent);
+  max-width: 620px;
+  width: 100%;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  h3 {
+    font-size: 1.1rem;
+    color: var(--p-text);
+    margin-top: 0.25rem;
+  }
+}
+
+.modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.w-100 {
+  width: 100%;
+}

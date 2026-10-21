@@ -1,0 +1,140 @@
+<div class="wh-page">
+  <div class="wh-header">
+    <div>
+      <span class="label-tracked">RECEPCIÓN DE FÁBRICA, CONTROL DE CABALLETES Y EXPEDICIÓN</span>
+      <h1 class="wh-title">ALMACÉN LOGÍSTICO (4 CIRCUITOS) &amp; PASO DIRECTO A FACTURA</h1>
+    </div>
+
+    <div class="wh-header__right tabular-nums">
+      <label class="dias-box">
+        <span>DÍAS DE PAGO AL FACTURAR (diasPago ?? 0):</span>
+        <input type="number" [(ngModel)]="diasPagoDirectInvoice" min="0" max="120" class="wh-input" />
+      </label>
+    </div>
+  </div>
+
+  @if (lastGeneratedInvoiceMsg()) {
+    <div class="wh-banner">
+      <span>{{ lastGeneratedInvoiceMsg() }}</span>
+      <a routerLink="/portal/facturacion" class="wh-banner__link">VER EN LIBRO VERIFACTU →</a>
+    </div>
+  }
+
+  <!-- Filtros de los 4 Circuitos Reales de Carpintería -->
+  <div class="circuit-filters">
+    <button type="button" class="circuit-btn" [class.circuit-btn--active]="selectedCircuit() === 'TODOS'" (click)="setCircuit('TODOS')">
+      TODOS LOS CIRCUITOS ({{ store.warehouseOrders().length }})
+    </button>
+    <button type="button" class="circuit-btn" [class.circuit-btn--active]="selectedCircuit() === 'FABRICA_TERMINADA'" (click)="setCircuit('FABRICA_TERMINADA')">
+      1. FÁBRICA TERMINADA
+    </button>
+    <button type="button" class="circuit-btn" [class.circuit-btn--active]="selectedCircuit() === 'SUMINISTRO_SIN_MONTAJE'" (click)="setCircuit('SUMINISTRO_SIN_MONTAJE')">
+      2. SOLO SUMINISTRO SIN MONTAJE (RECOGIDA ALMACÉN)
+    </button>
+    <button type="button" class="circuit-btn" [class.circuit-btn--active]="selectedCircuit() === 'KIT_CAJON_MOSQUITERA'" (click)="setCircuit('KIT_CAJON_MOSQUITERA')">
+      3. MULTI-PROVEEDOR (CARP. + VIDRIO + CAJÓN)
+    </button>
+    <button type="button" class="circuit-btn" [class.circuit-btn--active]="selectedCircuit() === 'BARRAS_TALLER'" (click)="setCircuit('BARRAS_TALLER')">
+      4. PERFILES EN BARRAS / TALLER
+    </button>
+  </div>
+
+  <!-- Tarjetas de Caballetes y Expedientes en Almacén -->
+  <div class="orders-grid">
+    @for (ord of filteredOrders(); track ord.id) {
+      <article class="order-card tabular-nums">
+        <div class="order-card__top">
+          <div>
+            <span class="ord-code">{{ ord.orderCode }} · {{ ord.deliveryNoteCode }}</span>
+            <h2 class="ord-client">{{ ord.clientName }}</h2>
+            <p class="ord-address">{{ ord.workAddress }}</p>
+          </div>
+          <div class="caballete-tag">
+            <span>UBICACIÓN FÍSICA</span>
+            <strong>{{ ord.assignedCaballete }}</strong>
+          </div>
+        </div>
+
+        <!-- Semáforo de Recepción de las 4 Partidas del Pedido -->
+        <div class="reception-box">
+          <span class="reception-box__title">CHECKLIST DE RECEPCIÓN DE MERCANCÍA EN NAVE (CLIC PARA MARCAR ENTRADA):</span>
+          <div class="reception-grid">
+            <button
+              type="button"
+              class="part-pill"
+              [class.part-pill--ok]="ord.carpentryReceived"
+              (click)="togglePart(ord.id, 'carpentryReceived')">
+              <span>{{ ord.carpentryReceived ? '✓' : '○' }}</span>
+              <span>1. CARPINTERÍA</span>
+            </button>
+
+            <button
+              type="button"
+              class="part-pill"
+              [class.part-pill--ok]="ord.glassReceived"
+              (click)="togglePart(ord.id, 'glassReceived')">
+              <span>{{ ord.glassReceived ? '✓' : '○' }}</span>
+              <span>2. VIDRIOS</span>
+            </button>
+
+            <button
+              type="button"
+              class="part-pill"
+              [class.part-pill--ok]="ord.shutterMotorReceived"
+              (click)="togglePart(ord.id, 'shutterMotorReceived')">
+              <span>{{ ord.shutterMotorReceived ? '✓' : '○' }}</span>
+              <span>3. CAJÓN / MOTOR</span>
+            </button>
+
+            <button
+              type="button"
+              class="part-pill"
+              [class.part-pill--ok]="ord.accessoriesReceived"
+              (click)="togglePart(ord.id, 'accessoriesReceived')">
+              <span>{{ ord.accessoriesReceived ? '✓' : '○' }}</span>
+              <span>4. HERRAJES / REMATES</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Separación Estricta: Estado Operativo vs Estado Financiero (REGLA 5) -->
+        <div class="dual-state-row">
+          <div class="state-cell">
+            <span class="state-lbl">ESTADO OPERATIVO (ALMACÉN / OBRA)</span>
+            <select
+              class="wh-select"
+              [ngModel]="ord.operationalStatus"
+              (ngModelChange)="changeStatus(ord.id, $event)">
+              <option value="EN_FABRICACION">EN FABRICACIÓN</option>
+              <option value="RECIBIDO_PARCIAL">RECIBIDO PARCIAL EN ALMACÉN</option>
+              <option value="COMPLETO_EN_ALMACEN">100% COMPLETO EN CABALLETE</option>
+              <option value="LISTO_RECOGIDA_ENTREGA">LISTO RECOGIDA / ENTREGA SIN MONTAJE</option>
+              <option value="EN_OBRA">EN OBRA / EN MONTAJE</option>
+              <option value="INSTALADO">INSTALADO Y REMATADO</option>
+            </select>
+          </div>
+
+          <div class="state-cell">
+            <span class="state-lbl">ESTADO FINANCIERO INDEPENDIENTE</span>
+            <strong class="fin-badge">{{ ord.financialStatus }}</strong>
+          </div>
+
+          <div class="state-cell">
+            <span class="state-lbl">IMPORTE DEL PEDIDO ({{ ord.unitsCount }} HUECOS)</span>
+            <strong class="amount-val">{{ ord.totalAmountEur | number:'1.2-2' }} €</strong>
+          </div>
+        </div>
+
+        <!-- Botón Siempre Activo de Paso Directo de Almacén a Factura (REGLA CRÍTICA 5) -->
+        <div class="order-card__actions">
+          <button
+            type="button"
+            class="btn btn--champagne w-100"
+            (click)="emitInvoiceFromWarehouse(ord)">
+            EMITIR FACTURA VERIFACTU DIRECTAMENTE DESDE ALMACÉN ({{ ord.totalAmountEur | number:'1.2-2' }} €) →
+          </button>
+        </div>
+      </article>
+    }
+  </div>
+</div>

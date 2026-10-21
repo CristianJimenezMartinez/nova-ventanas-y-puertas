@@ -22,18 +22,19 @@
 | Proyecto / Dominio | Tipo | Backend (PM2) | Puerto Interno | Base de Datos | Directorio en VPS | Estado |
 |---|---|---|---|---|---|---|
 | **Nova Web Pública**<br>`novaventanasypuertas.com`<br>`novaventanasypuertas.es` | **SPA Estática (Nginx Directo)** | *Ninguno (0 MB RAM)* | `80 / 443` (Nginx) | *No requiere* | `/var/www/nova-ventanas-y-puertas/browser` | ✅ En Producción (SSL Let's Encrypt activo) |
-| **Nova Portal Multitenant**<br>`portal.novaventanasypuertas.com` | **SPA Backoffice + API NestJS** | `nova-api` *(Reservado)* | `3004` *(Reservado)* | `db_nova` *(Reservada)* | `/var/www/nova-portal/browser`<br>`/var/www/nova-portal/api` | 📋 Planificado en [Plan Maestro](PLAN_MAESTRO_ARQUITECTURA_NOVA.md) (100% Portable de VPS) |
-| **Serenity Wellness Center**<br>`serenitywellnesscenter.es` | SSR Angular + NestJS | `serenity-api` (id: 3) | `3001` | `db_serenity` | `/var/www/Serenity` | ✅ En Producción (SSL Let's Encrypt activo) |
+| **Nova Portal Multitenant**<br>Hoy: `novaventanasypuertas.com/portal`<br>Futuro: `portal.novaventanasypuertas.com` | **SPA Backoffice + API NestJS** | `nova-api` *(Reservado)* | **`3006`** *(100% Libre)* | `db_nova` *(Reservada)* | `/var/www/nova-ventanas-y-puertas`<br>`/var/www/nova-portal/api` | 📋 Listo para desplegar sin subdominio hoy y migrar a otro VPS cuando se desee |
+| **Serenity Wellness Center**<br>`serenitywellnesscenter.es` | SSR Angular + NestJS | `serenity-api` (id: 2) | `3001` | `db_serenity` | `/var/www/Serenity` | ✅ En Producción (SSL Let's Encrypt activo) |
 | **División del Automóvil**<br>`gruposotodivisiondelautomovil.es` | SSR Angular + NestJS | `automovil-api` (id: 0) | `3002` | `db_automovil` | `/var/www/Automovil` | ✅ En Producción (SSL Let's Encrypt activo) |
-| **Hub Central**<br>`hub.gruposoto.es` | API NestJS | `hub-api` (id: 2) | `3003` | `db_hub` | `/var/www/Hub` | ✅ En Producción (SSL Let's Encrypt activo) |
+| **Hub Central**<br>`hub.gruposoto.es` | API NestJS | `hub-api` (id: 1) | `3003` | `db_hub` | `/var/www/Hub` | ✅ En Producción (SSL Let's Encrypt activo) |
+| **División Electricidad**<br>`electricidad` | API NestJS | `electricidad-api` (id: 4) | `3004` | `db_electricidad` | `/var/www/Electricidad` | ✅ En Producción |
+| **Poseidón**<br>`poseidon` | API NestJS | `poseidon-backend` (id: 3) | `3005` | `db_poseidon` | `/var/www/poseidon` | ✅ En Producción |
 | **Grupo Soto Corporativo**<br>`gruposoto.es` | Portal Web | En Nginx / SSR | `3000 / 4000` | `gruposoto` | `/var/www/GrupoSoto` | ✅ En Producción (SSL Let's Encrypt activo) |
 
 ---
 
 ## 🔒 3. Nginx: Sitios Activos y Planificados (`/etc/nginx/sites-enabled/`)
-1. `gruposoto-apps.conf` ➔ Proxy inverso hacia los backends NestJS (puertos `3000`, `3001`, `3002`, `3003`).
-2. `novaventanasypuertas.conf` ➔ Servicio estático HTTP/2 HTTPS optimizado con Gzip, caché de 1 año para assets con hash y fallback de SPA (`try_files $uri $uri/ /index.html;`).
-3. `portal-novaventanasypuertas.conf` *(Planificado Etapa 2)* ➔ Subdominio `portal.novaventanasypuertas.com` con cabecera `X-Robots-Tag: noindex, nofollow`, sirviendo el frontend del backoffice y redirigiendo `/api/v1/*` al puerto interno `3004` (`nova-api`).
+1. `gruposoto-apps.conf` ➔ Proxy inverso hacia los backends NestJS (puertos `3000`, `3001`, `3002`, `3003`, `3004`, `3005`).
+2. `novaventanasypuertas.conf` ➔ Servicio estático HTTP/2 HTTPS para `novaventanasypuertas.com` y proxy inverso de `/api/v1/*` hacia el puerto interno **`3006`** (`nova-api`). Soporta acceso inmediato en `/portal` hoy mismo sin necesidad de crear el subdominio DNS todavía, y está preparado para conmutar a `portal.novaventanasypuertas.com` o a un nuevo VPS en cualquier momento.
 
 ---
 

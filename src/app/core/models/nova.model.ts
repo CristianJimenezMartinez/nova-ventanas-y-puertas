@@ -46,3 +46,48 @@ export interface SolutionRecommendation {
   benefit: string;
   imageUrl: string;
 }
+
+export interface NovaTechnicalSeries {
+  id: string;
+  code: string;
+  name: string;
+  category: 'PVC' | 'ALUMINIO' | 'MIXTO' | 'PUERTAS' | 'CERRAMIENTOS';
+  depthMm: string;
+  uwValue: string;
+  acousticRw: string;
+  airTightness: string;
+  securityClass: string;
+  normative: string;
+  summary: string;
+  highlights: string[];
+}
+
+export interface NovaPdfCatalog {
+  id: string;
+  code: string;
+  title: string;
+  subtitle: string;
+  pages: number;
+  category: string;
+  specs: string[];
+  requestSubject: string;
+}
+
+export interface NovaTechnicalFaq {
+  id: string;
+  question: string;
+  answer: string;
+  normativeTag: string;
+}
+
+export interface WebLeadSubmission {
+  fullName: string;
+  phone: string;
+  email: string;
+  city: string;
+  projectType: 'OBRA_NUEVA' | 'REFORMA_INTEGRAL' | 'SUSTITUCION_VENTANAS' | 'ARQUITECTURA_PROFESIONAL';
+  need: 'ventana' | 'puerta' | 'cerramiento';
+  priority: 'aislamiento' | 'diseno' | 'seguridad' | 'eficiencia';
+  recommendedSystem: string;
+  notes?: string;
+}

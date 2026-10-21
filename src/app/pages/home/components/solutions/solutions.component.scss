@@ -142,12 +142,43 @@
 
   &__sub {
     font-size: 0.88rem;
-    color: var(--color-stone);
+    color: var(--color-champagne);
+    font-weight: 500;
     line-height: 1.4;
-    max-width: 480px;
+    max-width: 520px;
+    margin-bottom: 0.45rem;
 
     @media (min-width: 640px) {
-      font-size: 0.9rem;
+      font-size: 0.92rem;
     }
   }
+
+  &__desc {
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    max-width: 540px;
+    margin-bottom: 0.85rem;
+    display: none;
+
+    @media (min-width: 640px) {
+      display: block;
+    }
+  }
+
+  &__specs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+}
+
+.solution-spec-pill {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--text-primary);
+  background: rgba(13, 13, 13, 0.78);
+  border: 1px solid var(--border-champagne);
+  padding: 0.28rem 0.6rem;
 }

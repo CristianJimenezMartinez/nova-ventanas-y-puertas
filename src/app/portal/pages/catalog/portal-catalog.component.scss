@@ -1,0 +1,350 @@
+.cat-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+.cat-header {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--p-border);
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+}
+
+.cat-title {
+  font-size: 1.55rem;
+  font-weight: 300;
+  color: var(--p-text);
+  margin-top: 0.3rem;
+}
+
+.cat-banner {
+  background: rgba(198, 173, 130, 0.14);
+  border: 1px solid var(--p-accent);
+  color: var(--p-text);
+  padding: 0.9rem 1.2rem;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.series-tabs {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1200px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.series-tab {
+  background: var(--p-surface);
+  border: 1px solid var(--p-border);
+  padding: 1rem 1.15rem;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  cursor: pointer;
+  font-family: var(--font-family);
+
+  .tab-code {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: var(--p-accent);
+  }
+
+  .tab-name {
+    font-size: 0.85rem;
+    color: var(--p-text);
+    line-height: 1.35;
+  }
+
+  &--active {
+    border-color: var(--p-accent);
+    background: var(--p-card);
+  }
+}
+
+.cat-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+
+  @media (min-width: 1180px) {
+    grid-template-columns: 1.45fr 1fr;
+  }
+}
+
+.cat-panel {
+  background: var(--p-surface);
+  border: 1px solid var(--p-border);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+
+  &__head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--p-border);
+
+    h2 {
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--p-text);
+      margin-top: 0.25rem;
+    }
+  }
+}
+
+.mode-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.mode-pill {
+  background: var(--p-card);
+  border: 1px solid var(--p-border);
+  color: var(--p-text);
+  font-family: var(--font-family);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0.45rem 0.8rem;
+  cursor: pointer;
+
+  &--online {
+    border-color: #2E9B68;
+    color: #2E9B68;
+  }
+}
+
+.matrix-scroll {
+  overflow-x: auto;
+}
+
+.matrix-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+
+  th,
+  td {
+    border: 1px solid var(--p-border);
+    padding: 0.65rem 0.75rem;
+    text-align: right;
+  }
+
+  thead th {
+    background: var(--p-card);
+    color: var(--p-accent);
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
+  .corner-th,
+  .row-th {
+    text-align: left;
+    background: var(--p-card);
+    color: var(--p-text);
+    font-weight: 700;
+  }
+}
+
+.rules-bar {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  padding-top: 0.75rem;
+
+  .rule-item {
+    background: var(--p-card);
+    border: 1px solid var(--p-border);
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+
+    .rule-lbl {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--p-text-sec);
+    }
+
+    strong {
+      font-size: 0.82rem;
+      color: var(--p-text);
+    }
+  }
+}
+
+.cat-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.tool-box {
+  background: var(--p-surface);
+  border: 1px solid var(--p-border);
+  padding: 1.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+
+  h3 {
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: var(--p-text);
+  }
+
+  p {
+    font-size: 0.8rem;
+    color: var(--p-text-sec);
+    line-height: 1.5;
+    margin: 0;
+  }
+}
+
+.tool-inline {
+  display: flex;
+  gap: 0.65rem;
+}
+
+.tool-input,
+.tool-textarea {
+  background: var(--p-input-bg);
+  border: 1px solid var(--p-border);
+  color: var(--p-text);
+  font-family: var(--font-family);
+  font-size: 0.85rem;
+  padding: 0.7rem 0.9rem;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+
+  &:focus {
+    border-color: var(--p-accent);
+  }
+}
+
+.glass-mini-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.glass-mini-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem;
+  background: var(--p-card);
+  border: 1px solid var(--p-border);
+
+  strong {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--p-text);
+  }
+
+  span {
+    font-size: 0.7rem;
+    color: var(--p-text-sec);
+  }
+
+  .glass-price {
+    color: var(--p-accent);
+    white-space: nowrap;
+  }
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(13, 13, 13, 0.85);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.modal-box {
+  background: var(--p-surface);
+  border: 1px solid var(--p-accent);
+  max-width: 560px;
+  width: 100%;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  h3 {
+    font-size: 1.15rem;
+    color: var(--p-text);
+    margin-top: 0.25rem;
+  }
+}
+
+.modal-close {
+  background: none;
+  border: 1px solid var(--p-border);
+  color: var(--p-text);
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+}
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+
+    span {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      color: var(--p-text-sec);
+    }
+  }
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.w-100 {
+  width: 100%;
+}

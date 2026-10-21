@@ -1,0 +1,58 @@
+import { Component, computed, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { PortalStoreService } from '../../services/portal-store.service';
+import {
+  WarehouseCircuitType,
+  WarehouseOperationalStatus,
+  WarehouseOrder
+} from '../../models/portal.models';
+
+@Component({
+  selector: 'app-portal-warehouse',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule],
+  templateUrl: './portal-warehouse.component.html',
+  styleUrls: ['./portal-warehouse.component.scss']
+})
+export class PortalWarehouseComponent {
+  readonly store = inject(PortalStoreService);
+
+  readonly selectedCircuit = signal<'TODOS' | WarehouseCircuitType>('TODOS');
+  readonly diasPagoDirectInvoice = signal<number>(0);
+  readonly lastGeneratedInvoiceMsg = signal<string>('');
+
+  readonly filteredOrders = computed<WarehouseOrder[]>(() => {
+    const c = this.selectedCircuit();
+    if (c === 'TODOS') return this.store.warehouseOrders();
+    return this.store.warehouseOrders().filter(o => o.circuitType === c);
+  });
+
+  setCircuit(c: 'TODOS' | WarehouseCircuitType): void {
+    this.selectedCircuit.set(c);
+  }
+
+  togglePart(
+    orderId: string,
+    part: 'carpentryReceived' | 'glassReceived' | 'shutterMotorReceived' | 'accessoriesReceived'
+  ): void {
+    this.store.toggleWarehouseComponentReception(orderId, part);
+  }
+
+  changeStatus(orderId: string, status: WarehouseOperationalStatus): void {
+    this.store.updateWarehouseStatus(orderId, status);
+  }
+
+  /**
+   * REGLA CRÍTICA 5: Jamás ocultar ni bloquear el botón de Emitir Factura desde Almacén.
+   * Permite facturar tanto suministros sin montaje (recogida en almacén) como pedidos en curso.
+   */
+  emitInvoiceFromWarehouse(order: WarehouseOrder): void {
+    const safeDias = this.diasPagoDirectInvoice() ?? 0;
+    const inv = this.store.issueInvoiceDirectlyFromWarehouse(order, safeDias);
+    this.lastGeneratedInvoiceMsg.set(
+      `✓ Factura Oficial VeriFactu ${inv.seriesAndNumber} generada desde Almacén (${order.assignedCaballete}) · Huella SHA-256: ${inv.currentHash64.slice(0, 16)}...`
+    );
+  }
+}

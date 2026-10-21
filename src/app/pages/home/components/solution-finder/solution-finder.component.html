@@ -3,12 +3,12 @@
     
     <!-- Encabezado -->
     <div class="finder-header">
-      <span class="label-tracked">SELECTOR INTERACTIVO</span>
+      <span class="label-tracked">SELECTOR INTERACTIVO &amp; ESTUDIO DE OBRA</span>
       <h2 class="heading-section finder-header__title">
         ENCUENTRA TU SOLUCIÓN.
       </h2>
       <p class="body-editorial finder-header__lead">
-        Define el elemento arquitectónico y tu máxima prioridad de confort. Nuestro configurador seleccionará la combinación de perfilería, vidrio y acabado óptima para tu espacio.
+        Define el elemento arquitectónico, tu prioridad técnica y los datos de tu proyecto. Nuestro sistema prescribirá la serie óptima conforme al CTE y registrará tu solicitud para Oficina Técnica.
       </p>
     </div>
 
@@ -20,8 +20,8 @@
         
         <!-- Pregunta 1 -->
         <div class="finder-step">
-          <span class="finder-step__num">PASO 01</span>
-          <h3 class="finder-step__title">¿QUÉ ESTÁS BUSCANDO?</h3>
+          <span class="finder-step__num tabular-nums">PASO 01</span>
+          <h3 class="finder-step__title">¿QUÉ ELEMENTO ARQUITECTÓNICO BUSCAS?</h3>
           
           <div class="pill-group">
             <button 
@@ -39,7 +39,7 @@
               [class.finder-pill--active]="selectedNeed() === 'puerta'"
               (click)="setNeed('puerta')">
               <span class="pill-dot"></span>
-              <span>PUERTA</span>
+              <span>PUERTA DE ENTRADA</span>
             </button>
 
             <button 
@@ -48,15 +48,15 @@
               [class.finder-pill--active]="selectedNeed() === 'cerramiento'"
               (click)="setNeed('cerramiento')">
               <span class="pill-dot"></span>
-              <span>CERRAMIENTO</span>
+              <span>CORREDERA / CERRAMIENTO</span>
             </button>
           </div>
         </div>
 
         <!-- Pregunta 2 -->
         <div class="finder-step">
-          <span class="finder-step__num">PASO 02</span>
-          <h3 class="finder-step__title">¿QUÉ ES LO MÁS IMPORTANTE PARA TI?</h3>
+          <span class="finder-step__num tabular-nums">PASO 02</span>
+          <h3 class="finder-step__title">¿CUÁL ES LA PRIORIDAD TÉCNICA DEL PROYECTO?</h3>
           
           <div class="pill-group pill-group--grid">
             <button 
@@ -74,7 +74,7 @@
               [class.finder-pill--active]="selectedPriority() === 'diseno'"
               (click)="setPriority('diseno')">
               <span class="pill-dot"></span>
-              <span>DISEÑO &amp; HOJA OCULTA</span>
+              <span>DISEÑO MINIMAL &amp; HOJA OCULTA</span>
             </button>
 
             <button 
@@ -83,7 +83,7 @@
               [class.finder-pill--active]="selectedPriority() === 'seguridad'"
               (click)="setPriority('seguridad')">
               <span class="pill-dot"></span>
-              <span>SEGURIDAD ANTIRROBO RC3</span>
+              <span>SEGURIDAD ANTIRROBO RC2 / RC3</span>
             </button>
 
             <button 
@@ -92,20 +92,41 @@
               [class.finder-pill--active]="selectedPriority() === 'eficiencia'"
               (click)="setPriority('eficiencia')">
               <span class="pill-dot"></span>
-              <span>EFICIENCIA PASSIVHAUS &amp; NEXTGEN</span>
+              <span>PASSIVHAUS &amp; DEDUCCIÓN IRPF</span>
             </button>
           </div>
         </div>
 
-        <!-- Municipio de referencia -->
+        <!-- Paso 3: Datos del Proyecto para Oficina Técnica CRM -->
         <div class="finder-step">
-          <label class="finder-step__num" for="cityInput">UBICACIÓN DEL PROYECTO</label>
-          <input 
-            id="cityInput"
-            type="text" 
-            [(ngModel)]="clientCity" 
-            class="city-input"
-            placeholder="Ej: Molina de Segura, Murcia, Alicante..." />
+          <span class="finder-step__num tabular-nums">PASO 03 · DATOS PARA ESTUDIO TÉCNICO</span>
+          <div class="lead-form-grid">
+            <div class="lead-field">
+              <label for="leadName">NOMBRE O ESTUDIO DE ARQUITECTURA</label>
+              <input id="leadName" type="text" [(ngModel)]="clientName" class="city-input" placeholder="Ej: D. Carlos Martínez / Estudio Arq." />
+            </div>
+            <div class="lead-field">
+              <label for="leadPhone">TELÉFONO DIRECTO</label>
+              <input id="leadPhone" type="tel" [(ngModel)]="clientPhone" class="city-input tabular-nums" placeholder="+34 600 00 00 00" />
+            </div>
+            <div class="lead-field">
+              <label for="leadEmail">CORREO ELECTRÓNICO</label>
+              <input id="leadEmail" type="email" [(ngModel)]="clientEmail" class="city-input" placeholder="nombre@dominio.es" />
+            </div>
+            <div class="lead-field">
+              <label for="cityInput">MUNICIPIO DE LA OBRA</label>
+              <input id="cityInput" type="text" [(ngModel)]="clientCity" class="city-input" placeholder="Molina de Segura, Murcia, Alicante..." />
+            </div>
+            <div class="lead-field lead-field--full">
+              <label for="projectTypeSelect">TIPOLOGÍA DE ACTUACIÓN</label>
+              <select id="projectTypeSelect" [(ngModel)]="projectType" class="city-input">
+                <option value="OBRA_NUEVA">Vivienda Unifamiliar de Obra Nueva</option>
+                <option value="REFORMA_INTEGRAL">Reforma Integral de Vivienda (IVA Reducido 10%)</option>
+                <option value="SUSTITUCION_VENTANAS">Sustitución de Carpintería por Eficiencia Energética</option>
+                <option value="ARQUITECTURA_PROFESIONAL">Prescripción para Estudio de Arquitectura / Promotora</option>
+              </select>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -119,38 +140,53 @@
             [alt]="recommendation().title" 
             class="result-img" />
           <div class="result-overlay"></div>
-          <span class="result-badge">RECOMENDACIÓN ARQUITECTÓNICA</span>
+          <span class="result-badge">PRESCRIPCIÓN TÉCNICA NOVA</span>
         </div>
 
         <div class="result-content">
-          <span class="result-kicker">TU SOLUCIÓN NOVA</span>
+          <span class="result-kicker">SISTEMA RECOMENDADO (12 COMBINACIONES CTE)</span>
           <h4 class="result-title">{{ recommendation().title }}</h4>
           
           <div class="result-specs">
             <div class="result-spec-row">
-              <span class="spec-label">Sistema:</span>
+              <span class="spec-label">Sistema Técnico:</span>
               <strong class="spec-val">{{ recommendation().system }}</strong>
             </div>
             <div class="result-spec-row">
-              <span class="spec-label">Material:</span>
+              <span class="spec-label">Composición:</span>
               <strong class="spec-val">{{ recommendation().material }}</strong>
             </div>
             <div class="result-spec-row">
-              <span class="spec-label">Acabado aconsejado:</span>
+              <span class="spec-label">Acabado sugerido:</span>
               <strong class="spec-val">{{ recommendation().finish }}</strong>
             </div>
             <div class="result-spec-row">
-              <span class="spec-label">Ventaja clave:</span>
-              <strong class="spec-val text-champagne">{{ recommendation().benefit }}</strong>
+              <span class="spec-label">Prestación certificada:</span>
+              <strong class="spec-val text-champagne tabular-nums">{{ recommendation().benefit }}</strong>
             </div>
           </div>
 
-          <button 
-            type="button" 
-            class="btn btn--champagne w-100"
-            (click)="requestInfo()">
-            SOLICITAR INFORMACIÓN Y MEDICIÓN GRATUITA →
-          </button>
+          @if (leadSubmitted()) {
+            <div class="lead-success-banner">
+              <strong>✓ SOLICITUD REGISTRADA EN OFICINA TÉCNICA NOVA</strong>
+              <span>Un ingeniero de presupuestación contactará contigo en menos de 24h laborables.</span>
+            </div>
+          }
+
+          <div class="result-actions">
+            <button 
+              type="button" 
+              class="btn btn--champagne w-100"
+              (click)="submitLeadToCrm()">
+              REGISTRAR PROYECTO Y SOLICITAR MEDICIÓN →
+            </button>
+            <button 
+              type="button" 
+              class="btn btn--outline w-100"
+              (click)="openWhatsAppDirect()">
+              ENVIAR CONFIGURACIÓN POR WHATSAPP DIRECTO
+            </button>
+          </div>
         </div>
 
       </div>

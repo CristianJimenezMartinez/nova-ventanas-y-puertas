@@ -4,10 +4,10 @@
     <div class="nova-footer__main">
       
       <!-- Logotipo Oficial NOVA -->
-      <a href="#" class="footer-brand" (click)="$event.preventDefault(); scrollToSection('hero')">
+      <a href="#hero" class="footer-brand" (click)="$event.preventDefault(); scrollToSection('hero')">
         <div class="footer-brand__icon-wrap">
           <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" class="footer-brand__icon">
-            <rect x="5" y="5" width="70" height="70" rx="3" stroke="#C6AD82" stroke-width="6" />
+            <rect x="5" y="5" width="70" height="70" stroke="#C6AD82" stroke-width="6" />
             <line x1="40" y1="5" x2="40" y2="75" stroke="#C6AD82" stroke-width="6" />
             <line x1="40" y1="40" x2="75" y2="40" stroke="#C6AD82" stroke-width="6" />
           </svg>
@@ -19,25 +19,26 @@
       </a>
 
       <!-- Enlaces de Navegación Arquitectónicos -->
-      <nav class="footer-nav">
-        <button type="button" class="footer-link" (click)="scrollToSection('detalles')">VENTANAS</button>
-        <button type="button" class="footer-link" (click)="scrollToSection('soluciones')">PUERTAS</button>
-        <button type="button" class="footer-link" (click)="scrollToSection('materiales')">SOLUCIONES</button>
+      <nav class="footer-nav" aria-label="Navegación pie de página">
+        <button type="button" class="footer-link" (click)="scrollToSection('soluciones')">SOLUCIONES</button>
+        <button type="button" class="footer-link" (click)="scrollToSection('materiales')">MATERIALES</button>
+        <button type="button" class="footer-link" (click)="scrollToSection('sistemas')">SISTEMAS &amp; CATÁLOGOS</button>
         <button type="button" class="footer-link" (click)="scrollToSection('proyectos')">PROYECTOS</button>
-        <button type="button" class="footer-link" (click)="scrollToSection('showroom')">NOSOTROS</button>
+        <button type="button" class="footer-link" (click)="scrollToSection('showroom')">SHOWROOM</button>
         <button type="button" class="footer-link" (click)="scrollToSection('contacto')">CONTACTO</button>
+        <a routerLink="/portal" class="footer-link footer-link--portal">ÁREA PROFESIONAL</a>
       </nav>
 
       <!-- Contacto Directo -->
       <div class="footer-contact">
         <a href="mailto:info@novaventanasypuertas.com" class="footer-contact__link">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+            <rect width="20" height="16" x="2" y="4"></rect>
             <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
           </svg>
           info&#64;novaventanasypuertas.com
         </a>
-        <a href="tel:+34613754271" class="footer-contact__link">
+        <a href="tel:+34613754271" class="footer-contact__link tabular-nums">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
           </svg>
@@ -50,17 +51,58 @@
     <!-- Barra Inferior Legal & Copyright -->
     <div class="nova-footer__bottom">
       <span class="footer-copy">
-        © {{ currentYear }} NOVA VENTANAS &amp; PUERTAS. Una empresa de <strong>Grupo Soto</strong>. Todos los derechos reservados.
+        © {{ currentYear }} NOVA VENTANAS &amp; PUERTAS. Una división de <strong>GRUPO SOTO EMPRESARIAL SL</strong> · Molina de Segura (Murcia). Todos los derechos reservados.
       </span>
 
       <div class="footer-legal">
-        <a href="https://gruposoto.es/aviso-legal" target="_blank" rel="noopener">Aviso Legal</a>
+        <button type="button" class="legal-btn" (click)="openLegal('aviso')">Aviso Legal</button>
         <span class="legal-sep">·</span>
-        <a href="https://gruposoto.es/politica-privacidad" target="_blank" rel="noopener">Privacidad</a>
+        <button type="button" class="legal-btn" (click)="openLegal('privacidad')">Política de Privacidad</button>
         <span class="legal-sep">·</span>
-        <a href="https://gruposoto.es/politica-cookies" target="_blank" rel="noopener">Cookies</a>
+        <button type="button" class="legal-btn" (click)="openLegal('cookies')">Política de Cookies</button>
       </div>
     </div>
 
   </div>
+
+  <!-- Modal Legal Arquitectónico Autónomo -->
+  @if (activeLegalModal()) {
+    <div class="legal-modal-backdrop" (click)="closeLegal()">
+      <div class="legal-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+        <div class="legal-modal__header">
+          <div>
+            <span class="label-tracked">INFORMACIÓN LEGAL Y CUMPLIMIENTO NORMATIVO</span>
+            <h3 class="legal-modal__title">
+              @if (activeLegalModal() === 'aviso') { AVISO LEGAL Y CONDICIONES DE USO }
+              @if (activeLegalModal() === 'privacidad') { POLÍTICA DE PRIVACIDAD Y PROTECCIÓN DE DATOS (RGPD) }
+              @if (activeLegalModal() === 'cookies') { POLÍTICA DE COOKIES TÉCNICAS }
+            </h3>
+          </div>
+          <button type="button" class="legal-modal__close" (click)="closeLegal()" aria-label="Cerrar modal">✕</button>
+        </div>
+
+        <div class="legal-modal__body">
+          @if (activeLegalModal() === 'aviso') {
+            <p><strong>1. Titularidad del Sitio Web (LSSI-CE):</strong> En cumplimiento del artículo 10 de la Ley 34/2002, de 11 de julio, de Servicios de la Sociedad de la Información y de Comercio Electrónico, se informa que el titular del dominio <code>novaventanasypuertas.com</code> es <strong>GRUPO SOTO EMPRESARIAL SL</strong> (División NOVA Ventanas &amp; Puertas), con domicilio en Polígono Industrial La Serreta, 30500 Molina de Segura, Región de Murcia (España), correo electrónico <code>info&#64;novaventanasypuertas.com</code> y teléfono <code>+34 613 75 42 71</code>.</p>
+            <p><strong>2. Objeto y Propiedad Intelectual:</strong> El presente portal expone las soluciones técnicas de carpintería arquitectónica de aluminio RPT, PVC Clase A, sistemas mixtos y cerramientos de NOVA. Todos los diseños, fichas técnicas y contenidos están protegidos por la normativa de propiedad intelectual e industrial.</p>
+            <p><strong>3. Certificaciones y Normativa:</strong> Las especificaciones térmicas (Uw), acústicas (Rw) y de seguridad (DIN EN 1627 RC2/RC3) están sujetas a las dimensiones de cada hueco de obra y a la composición de vidrio seleccionada en el presupuesto técnico definitivo conforme al Código Técnico de la Edificación (CTE).</p>
+          }
+          @if (activeLegalModal() === 'privacidad') {
+            <p><strong>1. Responsable del Tratamiento:</strong> GRUPO SOTO EMPRESARIAL SL — División NOVA Ventanas &amp; Puertas (Pol. Ind. La Serreta, 30500 Molina de Segura, Murcia · <code>info&#64;novaventanasypuertas.com</code>).</p>
+            <p><strong>2. Finalidad del Tratamiento:</strong> Los datos facilitados a través del Configurador de Soluciones y formularios de contacto (nombre, teléfono, correo electrónico, municipio y tipología de obra) se tratan exclusivamente para elaborar el estudio técnico y presupuesto solicitado, agendar visitas de medición en obra o cita en el Showroom y gestionar la relación precontractual y contractual.</p>
+            <p><strong>3. Legitimación y Conservación:</strong> La base legal es el consentimiento expreso del interesado y la aplicación de medidas precontractuales (art. 6.1.a y 6.1.b del RGPD). Los datos se conservarán durante la vigencia de la propuesta técnica y los plazos legales de garantía constructiva (Ley de Ordenación de la Edificación y normativa tributaria VeriFactu).</p>
+            <p><strong>4. Derechos ARCO-POL:</strong> Puede ejercer sus derechos de acceso, rectificación, supresión, oposición, limitación y portabilidad escribiendo a <code>info&#64;novaventanasypuertas.com</code>.</p>
+          }
+          @if (activeLegalModal() === 'cookies') {
+            <p><strong>1. Uso de Cookies Estricyamente Técnicas:</strong> Este sitio web utiliza únicamente almacenamiento técnico local necesario para el funcionamiento de la sesión, preferencias de tema visual y configuración del recomendador arquitectónico.</p>
+            <p><strong>2. Sin Rastreo Publicitario Intrusivo:</strong> NOVA Ventanas &amp; Puertas no comercializa datos de navegación con terceros ni instala cookies publicitarias invasivas de perfilado comportamental.</p>
+          }
+        </div>
+
+        <div class="legal-modal__footer">
+          <button type="button" class="btn btn--champagne" (click)="closeLegal()">ENTENDIDO Y CERRAR</button>
+        </div>
+      </div>
+    </div>
+  }
 </footer>

@@ -4,11 +4,13 @@ Estas reglas son de **cumplimiento obligatorio y automático** para el agente pr
 
 ---
 
-## 🚨 REGLA CRÍTICA 1: Despliegue Exclusivo por GitHub Actions (PROHIBIDO Compilar o Hacer Deploy Directo en el VPS)
+## 🚨 REGLA CRÍTICA 1: Despliegue Exclusivo por GitHub Actions y Protección de RAM del VPS (3.8 GiB)
 1. El servidor VPS de producción (`212.227.248.132`) cuenta con **3.8 GiB de RAM** compartidos entre PostgreSQL, Nginx y varios backends en PM2.
 2. **QUEDA TERMINANTEMENTE PROHIBIDO** ejecutar `npm run build`, `ng build`, `npx prisma migrate dev`, `npm install` pesados o hacer despliegues directos manuales dentro del VPS que consuman RAM/CPU y puedan tumbar el servidor (Linux OOM-Killer).
 3. **Todo cambio que vaya a producción DEBE subirse mediante `git commit` y `git push origin main`** para que **GitHub Actions** (en su runner de 16 GB de RAM) ejecute la compilación y transfiera únicamente el paquete compilado (`deploy-bundle.tar.gz`) al VPS.
-4. Por SSH en el VPS solo se permiten comandos ligeros de diagnóstico, lectura de logs, creación de esquemas SQL ligeros o recarga de configuración (`nginx -t && systemctl reload nginx`, `pm2 reload`).
+4. **PROHIBIDO usar Puppeteer / Playwright / Chromium Headless en el VPS para generar PDFs:** Un navegador headless consume 400–600 MB de RAM por PDF y tumba el VPS. Todos los PDFs (Presupuestos, Pedidos a Fábrica, Albaranes y Facturas) DEBEN generarse con motores vectoriales nativos ultraligeros (`pdfmake` / `PDFKit` / `jspdf` + `svg2pdf`, que consumen `< 5 MB` de RAM).
+5. **Archivos Pesados (`> 50 MB`) fuera de Git:** Los catálogos PDF pesados deben optimizarse y servirse desde `/var/www/nova-storage/catalogs/` por Nginx directo (GitHub rechaza archivos `> 100 MB`).
+6. Por SSH en el VPS solo se permiten comandos ligeros de diagnóstico, lectura de logs, creación de esquemas SQL ligeros, configuración de Swap o recarga de servicios (`nginx -t && systemctl reload nginx`, `pm2 reload`).
 
 ---
 

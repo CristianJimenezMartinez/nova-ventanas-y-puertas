@@ -5,6 +5,7 @@ import { HeroComponent } from './components/hero/hero.component';
 import { DetailsComponent } from './components/details/details.component';
 import { SolutionsComponent } from './components/solutions/solutions.component';
 import { MaterialsComponent } from './components/materials/materials.component';
+import { TechnicalCatalogComponent } from './components/technical-catalog/technical-catalog.component';
 import { SolutionFinderComponent } from './components/solution-finder/solution-finder.component';
 import { BrandPillarsComponent } from './components/brand-pillars/brand-pillars.component';
 import { ArchitectureComponent } from './components/architecture/architecture.component';
@@ -23,6 +24,7 @@ import { FooterComponent } from './components/footer/footer.component';
     DetailsComponent,
     SolutionsComponent,
     MaterialsComponent,
+    TechnicalCatalogComponent,
     SolutionFinderComponent,
     BrandPillarsComponent,
     ArchitectureComponent,

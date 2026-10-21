@@ -63,6 +63,14 @@ body {
   overflow-x: hidden;
 }
 
+section[id] {
+  scroll-margin-top: 88px;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
 img, picture, video, svg {
   display: block;
   max-width: 100%;

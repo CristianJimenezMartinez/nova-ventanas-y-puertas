@@ -1,0 +1,142 @@
+<section id="sistemas" class="section-spacing tech-catalog-section">
+  <div class="container">
+
+    <!-- 1. ENCABEZADO DE GAMAS TÉCNICAS PROPIAS NOVA -->
+    <div class="tech-header">
+      <div class="tech-header__left">
+        <span class="label-tracked">INGENIERÍA CERTIFICADA · CTE &amp; MARCADO CE</span>
+        <h2 class="heading-section tech-header__title">
+          SISTEMAS TÉCNICOS PROPIOS NOVA.
+        </h2>
+        <p class="body-editorial tech-header__lead">
+          Prescripción arquitectónica respaldada por ensayos oficiales europeos (UNE-EN 14351-1, DIN EN 1627 RC2/RC3 y Código Técnico de la Edificación DB-HE / DB-HR / DB-SUA).
+        </p>
+      </div>
+
+      <!-- Filtros de Serie -->
+      <div class="tech-filters" role="tablist" aria-label="Filtrar sistemas técnicos por familia">
+        <button type="button" class="tech-filter-btn" [class.tech-filter-btn--active]="selectedCategory() === 'TODAS'" (click)="setCategory('TODAS')">TODOS</button>
+        <button type="button" class="tech-filter-btn" [class.tech-filter-btn--active]="selectedCategory() === 'ALUMINIO'" (click)="setCategory('ALUMINIO')">ALUMINIO RPT</button>
+        <button type="button" class="tech-filter-btn" [class.tech-filter-btn--active]="selectedCategory() === 'PVC'" (click)="setCategory('PVC')">PVC CLASE A</button>
+        <button type="button" class="tech-filter-btn" [class.tech-filter-btn--active]="selectedCategory() === 'MIXTO'" (click)="setCategory('MIXTO')">MIXTO</button>
+        <button type="button" class="tech-filter-btn" [class.tech-filter-btn--active]="selectedCategory() === 'PUERTAS'" (click)="setCategory('PUERTAS')">PUERTAS RC3</button>
+        <button type="button" class="tech-filter-btn" [class.tech-filter-btn--active]="selectedCategory() === 'CERRAMIENTOS'" (click)="setCategory('CERRAMIENTOS')">BIOCLIMÁTICA</button>
+      </div>
+    </div>
+
+    <!-- 2. REJILLA DE LAS 6 SERIES TÉCNICAS NOVA -->
+    <div class="series-grid">
+      @for (serie of filteredSeries(); track serie.id) {
+        <article class="serie-card">
+          <div class="serie-card__top">
+            <span class="serie-code">{{ serie.code }}</span>
+            <span class="serie-norm">{{ serie.normative }}</span>
+          </div>
+
+          <h3 class="serie-title">{{ serie.name }}</h3>
+          <p class="serie-summary">{{ serie.summary }}</p>
+
+          <!-- Tabla Técnica Tabular-Nums -->
+          <div class="serie-specs tabular-nums">
+            <div class="spec-cell">
+              <span class="spec-cell__label">SECCIÓN / PROFUNDIDAD</span>
+              <strong class="spec-cell__val">{{ serie.depthMm }}</strong>
+            </div>
+            <div class="spec-cell">
+              <span class="spec-cell__label">TRANSMITANCIA TÉRMICA</span>
+              <strong class="spec-cell__val spec-cell__val--champagne">{{ serie.uwValue }}</strong>
+            </div>
+            <div class="spec-cell">
+              <span class="spec-cell__label">ATENUACIÓN ACÚSTICA</span>
+              <strong class="spec-cell__val">{{ serie.acousticRw }}</strong>
+            </div>
+            <div class="spec-cell">
+              <span class="spec-cell__label">SEGURIDAD / HERMETICIDAD</span>
+              <strong class="spec-cell__val">{{ serie.securityClass }}</strong>
+            </div>
+          </div>
+
+          <ul class="serie-highlights">
+            @for (hl of serie.highlights; track hl) {
+              <li>
+                <span class="hl-dot">✦</span>
+                <span>{{ hl }}</span>
+              </li>
+            }
+          </ul>
+
+          <div class="serie-card__footer">
+            <button type="button" class="btn btn--outline w-100" (click)="scrollToConfigurator()">
+              CONFIGURAR Y PRESUPUESTAR ESTA SERIE →
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+
+    <!-- 3. DOSSIERS TÉCNICOS Y CATÁLOGOS EN ESPAÑOL -->
+    <div id="catalogos" class="catalogs-block">
+      <div class="catalogs-block__header">
+        <div>
+          <span class="label-tracked">DOCUMENTACIÓN OFICIAL TRADUCIDA AL ESPAÑOL</span>
+          <h3 class="catalogs-block__title">DOSSIERS TÉCNICOS Y CARTAS DE ACABADOS</h3>
+        </div>
+        <span class="catalogs-block__badge tabular-nums">4 DOCUMENTOS · 262 PÁGINAS TÉCNICAS</span>
+      </div>
+
+      <div class="catalogs-grid">
+        @for (cat of pdfCatalogs; track cat.id) {
+          <article class="catalog-card">
+            <div class="catalog-card__meta">
+              <span class="catalog-code">{{ cat.code }}</span>
+              <span class="catalog-pages tabular-nums">{{ cat.pages }} PÁGS.</span>
+            </div>
+            <h4 class="catalog-title">{{ cat.title }}</h4>
+            <p class="catalog-sub">{{ cat.subtitle }}</p>
+            <div class="catalog-tags">
+              @for (sp of cat.specs; track sp) {
+                <span class="catalog-tag">{{ sp }}</span>
+              }
+            </div>
+            <button type="button" class="catalog-btn" (click)="requestCatalog(cat)">
+              <span>SOLICITAR DOSSIER PDF EN ESPAÑOL</span>
+              <span>→</span>
+            </button>
+          </article>
+        }
+      </div>
+    </div>
+
+    <!-- 4. PREGUNTAS FRECUENTES DE INGENIERÍA (FAQS) -->
+    <div id="faqs" class="faqs-block">
+      <div class="faqs-block__header">
+        <span class="label-tracked">ASESORAMIENTO TÉCNICO &amp; NORMATIVA</span>
+        <h3 class="faqs-block__title">PREGUNTAS FRECUENTES DE ARQUITECTURA Y EFICIENCIA</h3>
+      </div>
+
+      <div class="faqs-list">
+        @for (faq of technicalFaqs; track faq.id) {
+          <div class="faq-item" [class.faq-item--open]="openFaqId() === faq.id">
+            <button
+              type="button"
+              class="faq-trigger"
+              (click)="toggleFaq(faq.id)"
+              [attr.aria-expanded]="openFaqId() === faq.id">
+              <div class="faq-trigger__left">
+                <span class="faq-norm-tag">{{ faq.normativeTag }}</span>
+                <span class="faq-question">{{ faq.question }}</span>
+              </div>
+              <span class="faq-icon">{{ openFaqId() === faq.id ? '−' : '+' }}</span>
+            </button>
+            @if (openFaqId() === faq.id) {
+              <div class="faq-body">
+                <p>{{ faq.answer }}</p>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+</section>

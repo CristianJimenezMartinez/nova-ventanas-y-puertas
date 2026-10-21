@@ -1,0 +1,122 @@
+<div class="dash-page">
+  <!-- Cabecera Ejecutiva -->
+  <div class="dash-header">
+    <div>
+      <span class="label-tracked">CUADRO DE MANDO INTEGRAL · {{ store.currentUser().roleLabel }}</span>
+      <h1 class="dash-title">RESUMEN OPERATIVO Y TÉCNICO NOVA</h1>
+    </div>
+    <div class="dash-actions">
+      <a routerLink="/portal/presupuestos" class="btn btn--champagne">
+        + NUEVO PRESUPUESTO POR HUECOS
+      </a>
+      <a routerLink="/portal/almacen" class="btn btn--outline">
+        RECEPCIÓN ALMACÉN / CABALLETES
+      </a>
+    </div>
+  </div>
+
+  <!-- Tarjetas KPI Tabular-Nums -->
+  <div class="kpi-grid tabular-nums">
+    <div class="kpi-card">
+      <span class="kpi-label">SERIES Y MATRICES 2D ACTIVAS</span>
+      <strong class="kpi-value">{{ store.catalogSeries().length }} SERIES</strong>
+      <span class="kpi-sub">Tarifas autogestionables + Carga Excel</span>
+    </div>
+
+    <div class="kpi-card">
+      <span class="kpi-label">PEDIDOS EN ALMACÉN / CABALLETES</span>
+      <strong class="kpi-value kpi-value--champagne">{{ store.warehouseOrders().length }} EXPEDIENTES</strong>
+      <span class="kpi-sub">4 Circuitos (incluye directo Almacén → Factura)</span>
+    </div>
+
+    <div class="kpi-card">
+      <span class="kpi-label">FACTURACIÓN ENCADENADA VERIFACTU</span>
+      <strong class="kpi-value">{{ store.totalInvoicedEur() | number:'1.2-2' }} €</strong>
+      <span class="kpi-sub">Cobrado: {{ store.totalCollectedEur() | number:'1.2-2' }} € · Huella SHA-256</span>
+    </div>
+
+    <div class="kpi-card">
+      <span class="kpi-label">CUENTAS SMTP / IMAP CONECTADAS</span>
+      <strong class="kpi-value">{{ store.emailAccounts().length }} BUZONES</strong>
+      <span class="kpi-sub">Envío directo de Presupuestos y Facturas</span>
+    </div>
+  </div>
+
+  <!-- Dos Columnas: Leads de la Web Pública + Estado de Almacén -->
+  <div class="dash-columns">
+    <!-- Columna 1: Leads entrantes desde el Configurador de la Web Pública -->
+    <section class="dash-panel">
+      <div class="dash-panel__head">
+        <div>
+          <span class="label-tracked">CONEXIÓN EN TIEMPO REAL CON WEB PÚBLICA</span>
+          <h2>SOLICITUDES Y LEADS TÉCNICOS ({{ store.leads().length }})</h2>
+        </div>
+        <a routerLink="/portal/presupuestos" class="panel-link">PASAR A PRESUPUESTO →</a>
+      </div>
+
+      <div class="table-wrap">
+        <table class="portal-table tabular-nums">
+          <thead>
+            <tr>
+              <th>CLIENTE / ESTUDIO</th>
+              <th>MUNICIPIO</th>
+              <th>SISTEMA PRESCRITO</th>
+              <th>ESTADO</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (lead of store.leads(); track lead.id) {
+              <tr>
+                <td>
+                  <strong>{{ lead.fullName }}</strong>
+                  <div class="cell-sub">{{ lead.phone }} · {{ lead.email }}</div>
+                </td>
+                <td>{{ lead.city }}</td>
+                <td>{{ lead.recommendedSystem }}</td>
+                <td>
+                  <span class="status-pill">{{ lead.status }}</span>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Columna 2: Accesos Directos a los Módulos Críticos -->
+    <section class="dash-panel">
+      <div class="dash-panel__head">
+        <div>
+          <span class="label-tracked">ARQUITECTURA MODULAR</span>
+          <h2>FLUJOS CRÍTICOS DEL PORTAL</h2>
+        </div>
+      </div>
+
+      <div class="module-cards">
+        <a routerLink="/portal/catalogo" class="module-card">
+          <span class="module-card__num tabular-nums">MÓDULO 01</span>
+          <strong>Autogestión de Catálogo, Vidrios y Matrices 2D</strong>
+          <p>Añade series nuevas, pega tablas desde Excel, aplica subidas masivas (+X%) y alterna entre tarifa con o sin vidrio base.</p>
+        </a>
+
+        <a routerLink="/portal/presupuestos" class="module-card">
+          <span class="module-card__num tabular-nums">MÓDULO 02</span>
+          <strong>Configurador por Huecos + Croquis Vectorial UNE-EN 12519</strong>
+          <p>Dibuja en vivo la mano de apertura vista desde el interior, valida seguridad CTE DB-SUA 2 y calcula la regla del 40% para IVA 10%.</p>
+        </a>
+
+        <a routerLink="/portal/almacen" class="module-card">
+          <span class="module-card__num tabular-nums">MÓDULO 03</span>
+          <strong>Almacén, Caballetes y Facturación Directa sin Montaje</strong>
+          <p>Controla recepción de carpintería, vidrios y motores, y emite factura VeriFactu directamente desde almacén en ventas de mostrador/B2B.</p>
+        </a>
+
+        <a routerLink="/portal/facturacion" class="module-card">
+          <span class="module-card__num tabular-nums">MÓDULO 04</span>
+          <strong>Facturación Construcción &amp; VeriFactu Evolutivo (3 Modos)</strong>
+          <p>Huella SHA-256 encadenada, descarga XML oficial AEAT, Pack Gestoría CSV y Cofre de Certificado .P12 para envío directo.</p>
+        </a>
+      </div>
+    </section>
+  </div>
+</div>

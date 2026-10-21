@@ -1,9 +1,8 @@
-﻿/* TEAM */
-Lead Full Stack Developer & UI/UX Architect: Cristian Jiménez Martínez
-LinkedIn: https://www.linkedin.com/in/cristian-jimenez-martinez/
-Email: info@novaventanasypuertas.com / cayser1996@gmail.com
-Location: Murcia, España
-Company: Grupo Soto / NOVA Ventanas & Puertas
+/* TEAM */
+Engineering & Architecture Team: Grupo Soto / NOVA Ventanas & Puertas
+Contact: info@novaventanasypuertas.com
+Location: Polígono Industrial La Serreta, 30500 Molina de Segura, Murcia, España
+Company: GRUPO SOTO EMPRESARIAL SL — División NOVA Ventanas & Puertas
 
 /* SITE */
 Standards: HTML5, CSS3, SCSS, TypeScript, Angular 18 (Standalone, Signals)
