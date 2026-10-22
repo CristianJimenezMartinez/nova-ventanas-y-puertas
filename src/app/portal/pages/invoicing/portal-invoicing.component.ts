@@ -25,20 +25,36 @@ export class PortalInvoicingComponent {
   readonly selectedXmlPreview = signal<string>('');
   readonly feedbackMsg = signal<string>('');
 
-  // Campos para emitir factura manual / anticipo / certificación / rectificativa
+  // Campos limpios para emitir factura manual / anticipo / certificación / rectificativa
   readonly newInvoiceType = signal<'F1_ORDINARIA' | 'ANTICIPO_OBRA' | 'CERTIFICACION' | 'R1_RECTIFICATIVA'>('F1_ORDINARIA');
-  readonly newOrderCode = signal<string>('PED-2026-0115');
-  readonly newClientName = signal<string>('Promociones Residenciales Levante SL');
-  readonly newClientNif = signal<string>('B73491820');
-  readonly newDescription = signal<string>('Certificación Carpintería Arquitectónica NOVA · Fase 1');
+  readonly newOrderCode = signal<string>('');
+  readonly newClientName = signal<string>('');
+  readonly newClientNif = signal<string>('');
+  readonly newDescription = signal<string>('');
   readonly newDiasPago = signal<number>(0);
-  readonly newBaseImponible = signal<number>(4800);
+  readonly newBaseImponible = signal<number>(0);
   readonly newVatRate = signal<21 | 10 | 0>(10);
   readonly newRetencion5Pct = signal<boolean>(false);
 
   // Campos para el Cofre de Certificado Digital (.p12 / .pfx)
-  readonly certFilenameInput = signal<string>('Certificado_Representante_GRUPO_SOTO_2026.p12');
-  readonly certSubjectInput = signal<string>('CN=GRUPO SOTO EMPRESARIAL SL - NIF B73849102 (FNMT)');
+  readonly certFilenameInput = signal<string>('');
+  readonly certSubjectInput = signal<string>('');
+
+  loadFromWarehouseOrder(orderId: string): void {
+    const ord = this.store.warehouseOrders().find(o => o.id === orderId);
+    if (!ord) return;
+    this.newOrderCode.set(ord.orderCode);
+    this.newClientName.set(ord.clientName);
+    this.newClientNif.set(ord.clientNif);
+    this.newDescription.set(`Pedido ${ord.orderCode} · ${ord.workAddress}`);
+    const vatPct: 21 | 10 = ord.circuitType === 'SUMINISTRO_SIN_MONTAJE' ? 21 : 10;
+    this.newVatRate.set(vatPct);
+    this.newBaseImponible.set(Math.round((ord.totalAmountEur / (1 + vatPct / 100)) * 100) / 100);
+  }
+
+  deleteInvoice(id: string): void {
+    this.store.removeInvoice(id);
+  }
 
   setVeriFactuMode(mode: VeriFactuVaultConfig['activeMode']): void {
     this.store.verifactuVault.update(v => ({ ...v, activeMode: mode }));

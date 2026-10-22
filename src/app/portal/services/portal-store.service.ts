@@ -1,31 +1,15 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import {
-  CatalogSeries,
-  CrmLeadItem,
-  EmailAccountConfig,
-  EmailMessageItem,
-  GlassComposition,
-  PortalQuote,
-  PortalThemeMode,
-  PortalUser,
-  ShutterAndSolarOption,
-  UserRole,
-  VeriFactuInvoice,
-  VeriFactuVaultConfig,
-  WarehouseOperationalStatus,
-  WarehouseOrder
+  CatalogSeries, CrmLeadItem, EmailAccountConfig, EmailMessageItem,
+  GlassComposition, PortalQuote, PortalThemeMode, PortalUser,
+  ShutterAndSolarOption, UserRole, VeriFactuInvoice, VeriFactuVaultConfig,
+  WarehouseOperationalStatus, WarehouseOrder
 } from '../models/portal.models';
 import {
-  INITIAL_CATALOG_SERIES,
-  INITIAL_CRM_LEADS,
-  INITIAL_EMAIL_ACCOUNTS,
-  INITIAL_EMAIL_MESSAGES,
-  INITIAL_GLASS_COMPOSITIONS,
-  INITIAL_SHUTTER_OPTIONS,
-  INITIAL_WAREHOUSE_ORDERS,
-  buildSeedChainedInvoices,
-  buildSeedQuotes
+  INITIAL_CATALOG_SERIES, INITIAL_CRM_LEADS, INITIAL_EMAIL_ACCOUNTS,
+  INITIAL_EMAIL_MESSAGES, INITIAL_GLASS_COMPOSITIONS, INITIAL_SHUTTER_OPTIONS,
+  INITIAL_WAREHOUSE_ORDERS, buildSeedChainedInvoices, buildSeedQuotes
 } from './portal-seed.data';
 import { VeriFactuXmlService } from './verifactu-xml.service';
 import { PricingMatrixEngineService } from './pricing-matrix-engine.service';
@@ -113,10 +97,11 @@ export class PortalStoreService {
               this.emailAccounts.set(hasGerencia ? loaded : [INITIAL_EMAIL_ACCOUNTS[0], ...loaded]);
             }
             if (Array.isArray(st['emailMessages'])) this.emailMessages.set(st['emailMessages'] as EmailMessageItem[]);
+            if (Array.isArray(st['leads'])) this.leads.set(st['leads'] as CrmLeadItem[]);
           } else {
             this.persistStateToPostgresDb();
           }
-          if (Array.isArray(res.leads)) {
+          if (Array.isArray(res.leads) && res.leads.length > 0 && this.leads().length === 0) {
             this.leads.set(res.leads);
           }
           this.dbSyncedStatus.set('SINCRONIZADO_DB_NOVA');
@@ -228,12 +213,7 @@ export class PortalStoreService {
       list.map(s =>
         s.id !== seriesId
           ? s
-          : {
-              ...s,
-              matrixTariffPrices: s.matrixTariffPrices.map(row =>
-                row.map(cell => Math.round(cell * factor * 100) / 100)
-              )
-            }
+          : { ...s, matrixTariffPrices: s.matrixTariffPrices.map(row => row.map(cell => Math.round(cell * factor * 100) / 100)) }
       )
     );
     this.persistStateToPostgresDb();
@@ -243,17 +223,9 @@ export class PortalStoreService {
     const rows = rawText
       .trim()
       .split(/\r?\n/)
-      .map(line =>
-        line
-          .trim()
-          .split(/[\t;,\s]+/)
-          .map(v => Number(v.replace(',', '.')))
-          .filter(n => !Number.isNaN(n) && n > 0)
-      )
+      .map(line => line.trim().split(/[\t;,\s]+/).map(v => Number(v.replace(',', '.'))).filter(n => !Number.isNaN(n) && n > 0))
       .filter(r => r.length >= 2);
-
     if (rows.length < 2) return false;
-
     this.catalogSeries.update(list =>
       list.map(s => {
         if (s.id !== seriesId) return s;
@@ -413,17 +385,43 @@ export class PortalStoreService {
     this.persistStateToPostgresDb();
   }
 
+  removeInvoice(invoiceId: string): void {
+    this.invoices.update(list => list.filter(i => i.id !== invoiceId));
+    this.persistStateToPostgresDb();
+  }
+
+  saveQuoteOnly(quote: PortalQuote): void {
+    this.quotes.update(list => [quote, ...list.filter(q => q.id !== quote.id)]);
+    this.persistStateToPostgresDb();
+  }
+
+  removeQuote(quoteId: string): void {
+    this.quotes.update(list => list.filter(q => q.id !== quoteId));
+    this.persistStateToPostgresDb();
+  }
+
+  addManualWarehouseOrder(order: WarehouseOrder): void {
+    this.warehouseOrders.update(list => [order, ...list]);
+    this.persistStateToPostgresDb();
+  }
+
+  removeWarehouseOrder(orderId: string): void {
+    this.warehouseOrders.update(list => list.filter(o => o.id !== orderId));
+    this.persistStateToPostgresDb();
+  }
+
   saveQuoteAndConvertToOrder(quote: PortalQuote): void {
-    this.quotes.update(list => [quote, ...list]);
+    this.quotes.update(list => [quote, ...list.filter(q => q.id !== quote.id)]);
+    const seq = 1 + this.warehouseOrders().length;
     const newOrder: WarehouseOrder = {
       id: `ord-${Date.now()}`,
-      orderCode: `PED-2026-0${115 + this.warehouseOrders().length}`,
+      orderCode: `PED-2026-${String(seq).padStart(3, '0')}`,
       quoteCode: quote.code,
-      clientName: quote.clientName,
-      clientNif: quote.clientNif,
-      workAddress: quote.workAddress,
+      clientName: quote.clientName || 'Cliente',
+      clientNif: quote.clientNif || '',
+      workAddress: quote.workAddress || '',
       circuitType: quote.projectType === 'SOLO_SUMINISTRO' ? 'SUMINISTRO_SIN_MONTAJE' : 'FABRICA_TERMINADA',
-      assignedCaballete: `CABALLETE A-0${this.warehouseOrders().length + 4}`,
+      assignedCaballete: `CABALLETE A-${String(seq).padStart(2, '0')}`,
       unitsCount: quote.holes.reduce((acc, h) => acc + h.quantity, 0),
       totalAmountEur: quote.totalPvpEur,
       carpentryReceived: false,
@@ -432,7 +430,7 @@ export class PortalStoreService {
       accessoriesReceived: false,
       operationalStatus: 'EN_FABRICACION',
       financialStatus: 'PENDIENTE_FACTURAR',
-      deliveryNoteCode: `ALB-2026-009${this.warehouseOrders().length + 5}`,
+      deliveryNoteCode: `ALB-2026-${String(seq).padStart(3, '0')}`,
       updatedAtIso: new Date().toISOString()
     };
     this.warehouseOrders.update(list => [newOrder, ...list]);
@@ -448,6 +446,11 @@ export class PortalStoreService {
     };
     this.leads.update(list => [item, ...list]);
     this.http.post('/api/v1/leads', item).subscribe({ error: () => {} });
+    this.persistStateToPostgresDb();
+  }
+
+  removeLead(leadId: string): void {
+    this.leads.update(list => list.filter(l => l.id !== leadId));
     this.persistStateToPostgresDb();
   }
 

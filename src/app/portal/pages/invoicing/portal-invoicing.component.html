@@ -38,6 +38,13 @@
           </tr>
         </thead>
         <tbody>
+          @if (store.invoices().length === 0) {
+            <tr>
+              <td colspan="7" class="cell-sub" style="padding:1.25rem 0.75rem;">
+                No hay facturas emitidas todavía. Puedes emitir una factura desde «Almacén» o pulsar «+ Nueva factura».
+              </td>
+            </tr>
+          }
           @for (inv of store.invoices(); track inv.id) {
             <tr>
               <td>
@@ -83,6 +90,9 @@
                       ✓ Cobrar
                     </button>
                   }
+                  <button type="button" class="mini-btn" (click)="deleteInvoice(inv.id)" aria-label="Eliminar factura">
+                    ✕
+                  </button>
                 </div>
               </td>
             </tr>
@@ -111,6 +121,17 @@
         </div>
 
         <div class="modal-grid tabular-nums">
+          @if (store.warehouseOrders().length > 0) {
+            <label class="span-2">
+              <span>Cargar datos desde pedido de almacén (opcional)</span>
+              <select class="inv-input" (change)="loadFromWarehouseOrder($any($event.target).value)">
+                <option value="">-- Rellenar manualmente --</option>
+                @for (ord of store.warehouseOrders(); track ord.id) {
+                  <option [value]="ord.id">{{ ord.orderCode }} · {{ ord.clientName }} ({{ ord.totalAmountEur | number:'1.2-2' }} €)</option>
+                }
+              </select>
+            </label>
+          }
           <label>
             <span>Tipo</span>
             <select [(ngModel)]="newInvoiceType" class="inv-input">
@@ -125,12 +146,12 @@
             <input type="number" [(ngModel)]="newDiasPago" min="0" max="180" class="inv-input" />
           </label>
           <label>
-            <span>Cliente</span>
-            <input type="text" [(ngModel)]="newClientName" class="inv-input" />
+            <span>Cliente / Empresa</span>
+            <input type="text" [(ngModel)]="newClientName" class="inv-input" placeholder="Nombre o razón social" />
           </label>
           <label>
             <span>NIF / CIF</span>
-            <input type="text" [(ngModel)]="newClientNif" class="inv-input" />
+            <input type="text" [(ngModel)]="newClientNif" class="inv-input" placeholder="NIF / CIF" />
           </label>
           <label>
             <span>Base imponible (€)</span>
@@ -146,7 +167,7 @@
           </label>
           <label class="span-2">
             <span>Concepto / Obra</span>
-            <input type="text" [(ngModel)]="newDescription" class="inv-input" />
+            <input type="text" [(ngModel)]="newDescription" class="inv-input" placeholder="Descripción de los trabajos o suministro" />
           </label>
           <label class="span-2 check-row">
             <input type="checkbox" [(ngModel)]="newRetencion5Pct" />

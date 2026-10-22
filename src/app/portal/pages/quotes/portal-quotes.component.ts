@@ -29,37 +29,51 @@ export class PortalQuotesComponent {
   private readonly sanitizer = inject(DomSanitizer);
   private readonly router = inject(Router);
 
-  // Datos de Cabecera del Presupuesto
-  readonly clientName = signal<string>('Residencial Mirador de Altorreal · D. Javier Soto');
-  readonly clientNif = signal<string>('48621904K');
-  readonly clientPhone = signal<string>('+34 619 82 34 10');
-  readonly clientEmail = signal<string>('javier.soto@arquitecturamurcia.es');
-  readonly workAddress = signal<string>('Av. de los Pinos 19, Altorreal · Molina de Segura');
+  // Datos de Cabecera del Presupuesto (sin datos ficticios)
+  readonly activeQuoteId = signal<string>('');
+  readonly activeQuoteCode = signal<string>('');
+  readonly clientName = signal<string>('');
+  readonly clientNif = signal<string>('');
+  readonly clientPhone = signal<string>('');
+  readonly clientEmail = signal<string>('');
+  readonly workAddress = signal<string>('');
   readonly projectType = signal<'OBRA_NUEVA' | 'REFORMA_VIVIENDA' | 'SOLO_SUMINISTRO'>('REFORMA_VIVIENDA');
   readonly isHabitualResidence = signal<boolean>(true);
   readonly clientSigned10PercentDeclaration = signal<boolean>(true);
-  readonly installationLaborPvpEur = signal<number>(1650);
-  readonly auxiliaryMeansPvpEur = signal<number>(280);
+  readonly installationLaborPvpEur = signal<number>(0);
+  readonly auxiliaryMeansPvpEur = signal<number>(0);
 
   // Parámetros del Hueco en Configuración Activa
-  readonly roomLocation = signal<string>('Salón Principal · Ventanal Jardín');
+  readonly roomLocation = signal<string>('Ventana 1');
   readonly selectedSeriesId = signal<string>(this.store.catalogSeries()[0].id);
   readonly openingHand = signal<OpeningHandCode>('DERECHA_INTERIOR');
-  readonly widthMm = signal<number>(1400);
-  readonly heightMm = signal<number>(1400);
-  readonly quantity = signal<number>(2);
-  readonly finishCategory = signal<FinishColorCategory>('FOLIO_2_CARAS');
-  readonly selectedGlassId = signal<string>(this.store.glassCompositions()[1].id);
-  readonly selectedShutterId = signal<string>(this.store.shutterOptions()[1].id);
-  readonly hasMotor = signal<boolean>(true);
-  readonly tapajuntasMm = signal<0 | 40 | 60 | 80>(60);
-  readonly hasPremarco = signal<boolean>(true);
-  readonly hasDesmontaje = signal<boolean>(true);
+  readonly widthMm = signal<number>(1200);
+  readonly heightMm = signal<number>(1200);
+  readonly quantity = signal<number>(1);
+  readonly finishCategory = signal<FinishColorCategory>('BLANCO_ESTANDAR');
+  readonly selectedGlassId = signal<string>(this.store.glassCompositions()[0].id);
+  readonly selectedShutterId = signal<string>(this.store.shutterOptions()[0].id);
+  readonly hasMotor = signal<boolean>(false);
+  readonly tapajuntasMm = signal<0 | 40 | 60 | 80>(40);
+  readonly hasPremarco = signal<boolean>(false);
+  readonly hasDesmontaje = signal<boolean>(false);
   readonly isLowSillUnder900Mm = signal<boolean>(false);
 
   // Lista de Huecos del Presupuesto
-  readonly holes = signal<QuoteHoleLine[]>([...this.store.quotes()[0].holes]);
+  readonly holes = signal<QuoteHoleLine[]>([]);
   readonly statusMessage = signal<string>('');
+
+  constructor() {
+    const draft = this.store.security.pendingQuoteDraft();
+    if (draft) {
+      this.clientName.set(draft.clientName);
+      this.clientPhone.set(draft.clientPhone);
+      this.clientEmail.set(draft.clientEmail);
+      this.workAddress.set(draft.workAddress);
+      this.projectType.set(draft.projectType);
+      this.store.security.pendingQuoteDraft.set(null);
+    }
+  }
 
   readonly activeSeries = computed(() =>
     this.store.catalogSeries().find(s => s.id === this.selectedSeriesId()) || this.store.catalogSeries()[0]
@@ -145,14 +159,15 @@ export class PortalQuotesComponent {
   private buildCurrentQuoteSnapshot(): PortalQuote {
     const totals = this.quoteTotals();
     const assessment = this.vatAssessment();
+    const seq = 1 + this.store.quotes().length;
     return {
-      id: `quo-${Date.now()}`,
-      code: `PRE-2026-0${210 + this.store.quotes().length}`,
-      clientName: this.clientName(),
-      clientNif: this.clientNif(),
-      clientPhone: this.clientPhone(),
-      clientEmail: this.clientEmail(),
-      workAddress: this.workAddress(),
+      id: this.activeQuoteId() || `quo-${Date.now()}`,
+      code: this.activeQuoteCode() || `PRE-2026-${String(seq).padStart(3, '0')}`,
+      clientName: this.clientName().trim() || 'Cliente',
+      clientNif: this.clientNif().trim(),
+      clientPhone: this.clientPhone().trim(),
+      clientEmail: this.clientEmail().trim(),
+      workAddress: this.workAddress().trim(),
       projectType: this.projectType(),
       isHabitualResidence: this.isHabitualResidence(),
       clientSigned10PercentDeclaration: this.clientSigned10PercentDeclaration(),
@@ -165,9 +180,50 @@ export class PortalQuotesComponent {
       subtotalPvpEur: totals.base,
       vatAmountEur: totals.vatEur,
       totalPvpEur: totals.totalEur,
-      status: 'ACEPTADO_EN_PEDIDO',
+      status: 'ENVIADO',
       createdAtIso: new Date().toISOString()
     };
+  }
+
+  saveCurrentQuote(): void {
+    const q = this.buildCurrentQuoteSnapshot();
+    this.activeQuoteId.set(q.id);
+    this.activeQuoteCode.set(q.code);
+    this.store.saveQuoteOnly(q);
+    this.statusMessage.set(`✓ Presupuesto ${q.code} (${q.clientName}) guardado.`);
+  }
+
+  resetQuoteForm(): void {
+    this.activeQuoteId.set('');
+    this.activeQuoteCode.set('');
+    this.clientName.set('');
+    this.clientNif.set('');
+    this.clientPhone.set('');
+    this.clientEmail.set('');
+    this.workAddress.set('');
+    this.holes.set([]);
+    this.installationLaborPvpEur.set(0);
+    this.auxiliaryMeansPvpEur.set(0);
+    this.statusMessage.set('Formulario limpio para nuevo presupuesto.');
+  }
+
+  loadSavedQuote(q: PortalQuote): void {
+    this.activeQuoteId.set(q.id);
+    this.activeQuoteCode.set(q.code);
+    this.clientName.set(q.clientName);
+    this.clientNif.set(q.clientNif);
+    this.clientPhone.set(q.clientPhone);
+    this.clientEmail.set(q.clientEmail);
+    this.workAddress.set(q.workAddress);
+    this.projectType.set(q.projectType);
+    this.holes.set([...q.holes]);
+    this.installationLaborPvpEur.set(q.installationLaborPvpEur);
+    this.auxiliaryMeansPvpEur.set(q.auxiliaryMeansPvpEur);
+    this.statusMessage.set(`✓ Presupuesto ${q.code} cargado en el editor.`);
+  }
+
+  deleteSavedQuote(id: string): void {
+    this.store.removeQuote(id);
   }
 
   downloadQuotePdf(): void {
@@ -180,6 +236,7 @@ export class PortalQuotesComponent {
 
   sendQuoteByEmail(): void {
     const q = this.buildCurrentQuoteSnapshot();
+    this.store.saveQuoteOnly(q);
     this.store.security.pendingEmailDraft.set({
       recipientName: q.clientName,
       recipientEmail: q.clientEmail,
@@ -191,7 +248,7 @@ export class PortalQuotesComponent {
   }
 
   approveAndSendToWarehouse(): void {
-    const newQuote = this.buildCurrentQuoteSnapshot();
+    const newQuote = { ...this.buildCurrentQuoteSnapshot(), status: 'ACEPTADO_EN_PEDIDO' as const };
     this.store.saveQuoteAndConvertToOrder(newQuote);
     this.router.navigate(['/portal/almacen']);
   }

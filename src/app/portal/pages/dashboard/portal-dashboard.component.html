@@ -2,17 +2,18 @@
   <div class="dash-header">
     <h1>Resumen general</h1>
     <div class="dash-actions">
-      <a routerLink="/portal/documentacion" class="btn btn--outline">Ver guía de uso</a>
+      <button type="button" class="btn btn--outline" (click)="showNewLeadModal.set(true)">
+        + Nuevo cliente / solicitud
+      </button>
       <a routerLink="/portal/presupuestos" class="btn btn--champagne">+ Nuevo presupuesto</a>
       <a routerLink="/portal/almacen" class="btn btn--outline">Ver almacén</a>
     </div>
   </div>
 
-  <!-- Indicadores principales (sin subtítulos repetitivos) -->
   <div class="kpi-grid tabular-nums">
     <div class="kpi-card">
-      <span class="kpi-label">Series en catálogo</span>
-      <strong class="kpi-value">{{ store.catalogSeries().length }}</strong>
+      <span class="kpi-label">Presupuestos guardados</span>
+      <strong class="kpi-value">{{ store.quotes().length }}</strong>
     </div>
 
     <div class="kpi-card">
@@ -31,12 +32,13 @@
     </div>
   </div>
 
-  <!-- Dos tablas operativas limpias: Solicitudes Web y Pedidos en Almacén -->
   <div class="dash-columns">
     <section class="dash-panel">
       <div class="dash-panel__head">
         <h2>Solicitudes de clientes ({{ store.leads().length }})</h2>
-        <a routerLink="/portal/presupuestos" class="panel-link">Crear presupuesto →</a>
+        <button type="button" class="panel-link" style="background:none;border:none;cursor:pointer;" (click)="showNewLeadModal.set(true)">
+          + Añadir cliente
+        </button>
       </div>
 
       <div class="table-wrap">
@@ -44,12 +46,19 @@
           <thead>
             <tr>
               <th>Cliente</th>
-              <th>Municipio</th>
-              <th>Sistema solicitado</th>
-              <th>Estado</th>
+              <th>Municipio / Obra</th>
+              <th>Trabajo</th>
+              <th>Acciones</th>
             </tr>
           </thead>
           <tbody>
+            @if (store.leads().length === 0) {
+              <tr>
+                <td colspan="4" class="cell-sub" style="padding:1.25rem 0.75rem;">
+                  No hay solicitudes registradas. Pulsa «+ Nuevo cliente / solicitud» para registrar una.
+                </td>
+              </tr>
+            }
             @for (lead of store.leads(); track lead.id) {
               <tr>
                 <td>
@@ -59,9 +68,14 @@
                 <td>{{ lead.city }}</td>
                 <td>{{ lead.recommendedSystem }}</td>
                 <td>
-                  <span class="badge-info">
-                    {{ lead.status === 'VISITA_AGENDADA' ? 'Visita agendada' : lead.status === 'PRESUPUESTADO' ? 'Presupuestado' : 'Nuevo' }}
-                  </span>
+                  <div style="display:flex;gap:0.4rem;">
+                    <button type="button" class="dash-mini-btn dash-mini-btn--gold" (click)="createQuoteFromLead(lead)">
+                      Presupuestar →
+                    </button>
+                    <button type="button" class="dash-mini-btn" (click)="deleteLead(lead.id)" aria-label="Eliminar">
+                      ✕
+                    </button>
+                  </div>
                 </td>
               </tr>
             }
@@ -87,6 +101,13 @@
             </tr>
           </thead>
           <tbody>
+            @if (store.warehouseOrders().length === 0) {
+              <tr>
+                <td colspan="4" class="cell-sub" style="padding:1.25rem 0.75rem;">
+                  No hay pedidos activos en almacén.
+                </td>
+              </tr>
+            }
             @for (ord of store.warehouseOrders(); track ord.id) {
               <tr>
                 <td>
@@ -97,7 +118,7 @@
                 <td>{{ ord.assignedCaballete }}</td>
                 <td>
                   <span [class]="ord.operationalStatus === 'RECIBIDO_PARCIAL' ? 'badge-warn' : 'badge-ok'">
-                    {{ ord.operationalStatus === 'COMPLETO_EN_ALMACEN' ? 'Completo' : ord.operationalStatus === 'LISTO_RECOGIDA_ENTREGA' ? 'Listo entrega' : 'Parcial' }}
+                    {{ ord.operationalStatus === 'COMPLETO_EN_ALMACEN' ? 'Completo' : ord.operationalStatus === 'LISTO_RECOGIDA_ENTREGA' ? 'Listo entrega' : 'En curso' }}
                   </span>
                 </td>
               </tr>
@@ -107,4 +128,49 @@
       </div>
     </section>
   </div>
+
+  @if (showNewLeadModal()) {
+    <div class="dash-modal-backdrop" (click)="showNewLeadModal.set(false)">
+      <div class="dash-modal" (click)="$event.stopPropagation()">
+        <div class="dash-modal__head">
+          <h3>Nuevo cliente / solicitud</h3>
+          <button type="button" class="dash-mini-btn" (click)="showNewLeadModal.set(false)">✕</button>
+        </div>
+        <div class="dash-modal__grid">
+          <label class="span-2">
+            <span>Nombre o empresa</span>
+            <input type="text" [(ngModel)]="newLeadName" class="dash-input" placeholder="Nombre del cliente o empresa" />
+          </label>
+          <label>
+            <span>Teléfono</span>
+            <input type="text" [(ngModel)]="newLeadPhone" class="dash-input" placeholder="+34 600 00 00 00" />
+          </label>
+          <label>
+            <span>Correo electrónico</span>
+            <input type="email" [(ngModel)]="newLeadEmail" class="dash-input" placeholder="cliente@correo.es" />
+          </label>
+          <label>
+            <span>Municipio / Dirección</span>
+            <input type="text" [(ngModel)]="newLeadCity" class="dash-input" placeholder="Murcia" />
+          </label>
+          <label>
+            <span>Tipo de trabajo</span>
+            <select [(ngModel)]="newLeadType" class="dash-input">
+              <option value="REFORMA_VIVIENDA">Reforma con instalación</option>
+              <option value="OBRA_NUEVA">Obra nueva</option>
+              <option value="SOLO_SUMINISTRO">Solo suministro</option>
+            </select>
+          </label>
+          <label class="span-2">
+            <span>Notas / Sistemas solicitados</span>
+            <input type="text" [(ngModel)]="newLeadSystem" class="dash-input" placeholder="Ej: 4 ventanas oscilobatientes + 1 corredera" />
+          </label>
+        </div>
+        <div class="dash-modal__foot">
+          <button type="button" class="btn btn--outline" (click)="showNewLeadModal.set(false)">Cancelar</button>
+          <button type="button" class="btn btn--champagne" (click)="saveNewLead()">Guardar cliente</button>
+        </div>
+      </div>
+    </div>
+  }
 </div>

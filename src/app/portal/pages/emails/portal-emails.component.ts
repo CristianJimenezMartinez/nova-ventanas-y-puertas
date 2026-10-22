@@ -20,25 +20,23 @@ export class PortalEmailsComponent {
   readonly selectedSenderEmail = signal<string>(
     this.store.emailAccounts()[0]?.emailAddress || 'gerencia@gruposoto.es'
   );
-  readonly recipientName = signal<string>('Estudio Arquitectura Valcárcel SLP');
-  readonly recipientEmail = signal<string>('estudio@valcarcelarquitectura.es');
-  readonly linkedDocCode = signal<string>('PRE-2026-0192');
-  readonly subject = signal<string>('Presupuesto PRE-2026-0192 · NOVA Ventanas & Puertas');
-  readonly messageBody = signal<string>(
-    'Estimado cliente,\n\nAdjuntamos la propuesta detallada por posiciones con medidas, serie seleccionada y desglose de precios.\n\nQuedamos a su disposición para cualquier consulta.'
-  );
+  readonly recipientName = signal<string>('');
+  readonly recipientEmail = signal<string>('');
+  readonly linkedDocCode = signal<string>('');
+  readonly subject = signal<string>('');
+  readonly messageBody = signal<string>('');
 
   // Autogestión sencilla de cuenta de correo para cada sede/franquicia
   readonly selectedProviderPreset = signal<'IONOS' | 'GMAIL' | 'OUTLOOK' | 'OTRO'>('IONOS');
-  readonly newAlias = signal<string>('Buzón de la Sede');
-  readonly newEmailAddress = signal<string>('info@novaventanasypuertas.com');
+  readonly newAlias = signal<string>('');
+  readonly newEmailAddress = signal<string>('');
   readonly newEmailPassword = signal<string>('');
   readonly newDepartment = signal<EmailAccountConfig['department']>('GENERAL');
   readonly newSmtpHost = signal<string>('smtp.ionos.es');
   readonly newSmtpPort = signal<number>(587);
   readonly newImapHost = signal<string>('imap.ionos.es');
   readonly newImapPort = signal<number>(993);
-  readonly newSignature = signal<string>('Equipo NOVA Ventanas & Puertas');
+  readonly newSignature = signal<string>('');
 
   constructor() {
     const draft = this.store.security.pendingEmailDraft();

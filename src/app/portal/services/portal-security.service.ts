@@ -33,6 +33,14 @@ export class PortalSecurityService {
     messageBody: string;
   } | null>(null);
 
+  readonly pendingQuoteDraft = signal<{
+    clientName: string;
+    clientPhone: string;
+    clientEmail: string;
+    workAddress: string;
+    projectType: 'OBRA_NUEVA' | 'REFORMA_VIVIENDA' | 'SOLO_SUMINISTRO';
+  } | null>(null);
+
   readonly tenants = signal<PortalTenantCompany[]>([
     {
       id: 'tenant-nova-soto',
@@ -44,17 +52,6 @@ export class PortalSecurityService {
       catalogPolicy: 'LOCKED_BY_CENTRAL',
       adminEmail: 'gerencia@gruposoto.es',
       active: true
-    },
-    {
-      id: 'tenant-nova-alicante',
-      commercialName: 'NOVA Delegación Alicante Sur',
-      legalName: 'CERRAMIENTOS ARQUITECTÓNICOS LEVANTE SL',
-      cif: 'B03948120',
-      city: 'Alicante',
-      invoicePrefix: 'FAC-ALI',
-      catalogPolicy: 'LOCKED_BY_CENTRAL',
-      adminEmail: 'alicante@novaventanasypuertas.com',
-      active: true
     }
   ]);
 
@@ -65,42 +62,6 @@ export class PortalSecurityService {
       email: 'gerencia@gruposoto.es',
       fullName: 'Gerencia General · Grupo Soto',
       role: 'SUPERADMIN',
-      active: true,
-      tokenVersion: 1
-    },
-    {
-      id: 'usr-presupuestos',
-      tenantId: 'tenant-nova-soto',
-      email: 'presupuestos@novaventanasypuertas.com',
-      fullName: 'Oficina Técnica · Central Murcia',
-      role: 'OFICINA_TECNICA',
-      active: true,
-      tokenVersion: 1
-    },
-    {
-      id: 'usr-almacen',
-      tenantId: 'tenant-nova-soto',
-      email: 'almacen@novaventanasypuertas.com',
-      fullName: 'Almacén y Expedición · Central Murcia',
-      role: 'MEDIDOR_OBRA',
-      active: true,
-      tokenVersion: 1
-    },
-    {
-      id: 'usr-facturacion',
-      tenantId: 'tenant-nova-soto',
-      email: 'administracion@novaventanasypuertas.com',
-      fullName: 'Administración · Central Murcia',
-      role: 'ADMINISTRACION_FACTURACION',
-      active: true,
-      tokenVersion: 1
-    },
-    {
-      id: 'usr-alicante-dir',
-      tenantId: 'tenant-nova-alicante',
-      email: 'alicante@novaventanasypuertas.com',
-      fullName: 'Dirección · Delegación Alicante',
-      role: 'GERENCIA',
       active: true,
       tokenVersion: 1
     }

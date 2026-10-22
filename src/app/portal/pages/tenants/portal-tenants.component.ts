@@ -19,23 +19,23 @@ export class PortalTenantsComponent {
   readonly showNewUserModal = signal<boolean>(false);
 
   // Campos para dar de alta Nueva Empresa / Franquicia
-  readonly newCommercialName = signal<string>('NOVA Delegación Valencia');
-  readonly newLegalName = signal<string>('CERRAMIENTOS LEVANTE NORTE SL');
-  readonly newCif = signal<string>('B46910284');
-  readonly newCity = signal<string>('Valencia');
-  readonly newInvoicePrefix = signal<string>('FAC-VAL');
+  readonly newCommercialName = signal<string>('');
+  readonly newLegalName = signal<string>('');
+  readonly newCif = signal<string>('');
+  readonly newCity = signal<string>('');
+  readonly newInvoicePrefix = signal<string>('FAC');
   readonly newCatalogPolicy = signal<'LOCKED_BY_CENTRAL' | 'CUSTOM_MARGIN_ALLOWED'>(
     'LOCKED_BY_CENTRAL'
   );
-  readonly newAdminEmail = signal<string>('valencia@novaventanasypuertas.com');
-  readonly newAdminPassword = signal<string>('Soto2026!Seguro');
+  readonly newAdminEmail = signal<string>('');
+  readonly newAdminPassword = signal<string>('');
 
   // Campos para dar de alta Nuevo Usuario por Rol
-  readonly newUserFullName = signal<string>('Técnico de Presupuestos');
-  readonly newUserEmail = signal<string>('tecnico@novaventanasypuertas.com');
+  readonly newUserFullName = signal<string>('');
+  readonly newUserEmail = signal<string>('');
   readonly newUserRole = signal<UserRole>('OFICINA_TECNICA');
   readonly newUserTenantId = signal<string>('tenant-nova-soto');
-  readonly newUserPassword = signal<string>('Soto2026!Seguro');
+  readonly newUserPassword = signal<string>('');
 
   createNewFranchise(): void {
     this.security.createFranchiseTenant({

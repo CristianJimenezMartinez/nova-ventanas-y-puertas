@@ -2,11 +2,14 @@
   <div class="wh-header">
     <h1>Almacén y Pedidos</h1>
 
-    <div class="wh-header__right tabular-nums">
+    <div class="wh-header__right tabular-nums" style="display:flex;flex-wrap:wrap;gap:0.75rem;align-items:center;">
       <label class="dias-box">
         <span>Días de pago al facturar:</span>
         <input type="number" [(ngModel)]="diasPagoDirectInvoice" min="0" max="120" class="wh-input" />
       </label>
+      <button type="button" class="btn btn--champagne" (click)="showNewOrderModal.set(true)">
+        + Nuevo pedido en almacén
+      </button>
     </div>
   </div>
 
@@ -36,6 +39,13 @@
   </div>
 
   <div class="orders-grid">
+    @if (filteredOrders().length === 0) {
+      <article class="order-card">
+        <p style="margin:0;color:var(--p-text-sec);">
+          No hay pedidos registrados en almacén. Puedes enviar un presupuesto aprobado desde «Presupuestos» o pulsar «+ Nuevo pedido en almacén».
+        </p>
+      </article>
+    }
     @for (ord of filteredOrders(); track ord.id) {
       <article class="order-card tabular-nums">
         <div class="order-card__top">
@@ -139,8 +149,65 @@
             (click)="emitInvoiceFromWarehouse(ord)">
             Pasar a Factura ({{ ord.totalAmountEur | number:'1.2-2' }} €) →
           </button>
+          <button
+            type="button"
+            class="btn btn--outline"
+            (click)="deleteOrder(ord.id)"
+            aria-label="Eliminar pedido">
+            ✕ Eliminar
+          </button>
         </div>
       </article>
     }
   </div>
+
+  @if (showNewOrderModal()) {
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:2500;display:flex;align-items:center;justify-content:center;padding:1rem;" (click)="showNewOrderModal.set(false)">
+      <div style="background:var(--p-surface);border:1px solid var(--p-border);max-width:560px;width:100%;padding:1.5rem;display:flex;flex-direction:column;gap:1.15rem;" (click)="$event.stopPropagation()">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <h3>Nuevo pedido en almacén</h3>
+          <button type="button" class="btn btn--outline" style="padding:0.3rem 0.65rem;" (click)="showNewOrderModal.set(false)">✕</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.85rem;" class="tabular-nums">
+          <label style="display:flex;flex-direction:column;gap:0.3rem;">
+            <span>Cliente / Empresa</span>
+            <input type="text" [(ngModel)]="newClientName" class="wh-select" style="width:100%;" placeholder="Nombre del cliente" />
+          </label>
+          <label style="display:flex;flex-direction:column;gap:0.3rem;">
+            <span>NIF / CIF</span>
+            <input type="text" [(ngModel)]="newClientNif" class="wh-select" style="width:100%;" placeholder="NIF / CIF" />
+          </label>
+          <label style="grid-column:span 2;display:flex;flex-direction:column;gap:0.3rem;">
+            <span>Dirección de obra o entrega</span>
+            <input type="text" [(ngModel)]="newWorkAddress" class="wh-select" style="width:100%;" placeholder="Dirección o Recogida en almacén" />
+          </label>
+          <label style="display:flex;flex-direction:column;gap:0.3rem;">
+            <span>Tipo de pedido</span>
+            <select [(ngModel)]="newCircuitType" class="wh-select" style="width:100%;">
+              <option value="FABRICA_TERMINADA">Fábrica terminada (con montaje)</option>
+              <option value="SUMINISTRO_SIN_MONTAJE">Solo suministro (recogida)</option>
+              <option value="KIT_CAJON_MOSQUITERA">Multiproveedor</option>
+              <option value="BARRAS_TALLER">Taller</option>
+            </select>
+          </label>
+          <label style="display:flex;flex-direction:column;gap:0.3rem;">
+            <span>Caballete / Ubicación</span>
+            <input type="text" [(ngModel)]="newCaballete" class="wh-select" style="width:100%;" placeholder="CABALLETE A-01" />
+          </label>
+          <label style="display:flex;flex-direction:column;gap:0.3rem;">
+            <span>Unidades</span>
+            <input type="number" [(ngModel)]="newUnitsCount" min="1" class="wh-select" style="width:100%;" />
+          </label>
+          <label style="display:flex;flex-direction:column;gap:0.3rem;">
+            <span>Importe total IVA incl. (€)</span>
+            <input type="number" [(ngModel)]="newTotalAmountEur" min="0" class="wh-select" style="width:100%;" />
+          </label>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:0.75rem;">
+          <button type="button" class="btn btn--outline" (click)="showNewOrderModal.set(false)">Cancelar</button>
+          <button type="button" class="btn btn--champagne" (click)="createManualOrder()">Guardar pedido</button>
+        </div>
+      </div>
+    </div>
+  }
 </div>

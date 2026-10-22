@@ -18,8 +18,7 @@ CREATE TABLE IF NOT EXISTS nova_tenants (
 
 INSERT INTO nova_tenants (id, commercial_name, legal_name, cif, city, invoice_prefix, catalog_policy, admin_email, active)
 VALUES
-  ('tenant-nova-soto', 'NOVA Central · Murcia (Matriz)', 'GRUPO SOTO EMPRESARIAL SL', 'B73849102', 'Molina de Segura · Murcia', 'FAC-MUR', 'LOCKED_BY_CENTRAL', 'gerencia@gruposoto.es', TRUE),
-  ('tenant-nova-alicante', 'NOVA Delegación Alicante Sur', 'CERRAMIENTOS ARQUITECTÓNICOS LEVANTE SL', 'B03948120', 'Alicante', 'FAC-ALI', 'LOCKED_BY_CENTRAL', 'alicante@novaventanasypuertas.com', TRUE)
+  ('tenant-nova-soto', 'NOVA Central · Murcia (Matriz)', 'GRUPO SOTO EMPRESARIAL SL', 'B73849102', 'Molina de Segura · Murcia', 'FAC-MUR', 'LOCKED_BY_CENTRAL', 'gerencia@gruposoto.es', TRUE)
 ON CONFLICT (id) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS nova_state_store (
@@ -97,10 +96,25 @@ ALTER TABLE nova_users ADD COLUMN IF NOT EXISTS token_version INTEGER NOT NULL D
 
 INSERT INTO nova_users (id, tenant_id, email, full_name, role, password_plain, token_version, active)
 VALUES
-  ('usr-gerencia-soto', 'tenant-nova-soto', 'gerencia@gruposoto.es', 'Gerencia General · Grupo Soto', 'SUPERADMIN', 'Soto2026!Seguro', 1, TRUE),
-  ('usr-admin-soto', 'tenant-nova-soto', 'admin@gruposoto.es', 'Administrador · Grupo Soto', 'SUPERADMIN', 'Soto2026!Seguro', 1, TRUE),
-  ('usr-presupuestos', 'tenant-nova-soto', 'presupuestos@novaventanasypuertas.com', 'Oficina Técnica · Central Murcia', 'OFICINA_TECNICA', 'Soto2026!Seguro', 1, TRUE),
-  ('usr-almacen', 'tenant-nova-soto', 'almacen@novaventanasypuertas.com', 'Almacén & Recepción · Central Murcia', 'MEDIDOR_OBRA', 'Soto2026!Seguro', 1, TRUE),
-  ('usr-facturacion', 'tenant-nova-soto', 'administracion@novaventanasypuertas.com', 'Administración · Central Murcia', 'ADMINISTRACION_FACTURACION', 'Soto2026!Seguro', 1, TRUE),
-  ('usr-alicante-dir', 'tenant-nova-alicante', 'alicante@novaventanasypuertas.com', 'Dirección · Delegación Alicante', 'GERENCIA', 'Soto2026!Seguro', 1, TRUE)
+  ('usr-gerencia-soto', 'tenant-nova-soto', 'gerencia@gruposoto.es', 'Gerencia General · Grupo Soto', 'SUPERADMIN', 'Soto2026!Seguro', 1, TRUE)
 ON CONFLICT (email) DO NOTHING;
+
+-- Limpieza de datos mock antiguos de demostración
+DELETE FROM nova_leads WHERE id = 'lead-01' OR email = 'carmen.riquelme@clinicarq.es';
+DELETE FROM nova_tenants WHERE id IN ('tenant-nova-alicante', 'tenant-nova-valencia');
+DELETE FROM nova_users WHERE email IN ('alicante@novaventanasypuertas.com', 'valencia@novaventanasypuertas.com');
+UPDATE nova_state_store
+SET state_json = jsonb_set(
+  jsonb_set(
+    jsonb_set(
+      jsonb_set(
+        jsonb_set(state_json, '{quotes}', '[]'::jsonb, true),
+        '{warehouseOrders}', '[]'::jsonb, true
+      ),
+      '{invoices}', '[]'::jsonb, true
+    ),
+    '{emailMessages}', '[]'::jsonb, true
+  ),
+  '{leads}', '[]'::jsonb, true
+)
+WHERE state_json::text LIKE '%quo-init-1%' OR state_json::text LIKE '%ord-01%' OR state_json::text LIKE '%inv-01%';

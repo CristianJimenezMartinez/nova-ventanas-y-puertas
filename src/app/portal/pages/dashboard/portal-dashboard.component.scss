@@ -124,3 +124,77 @@
     margin-top: 0.15rem;
   }
 }
+
+.dash-mini-btn {
+  background: var(--p-card);
+  border: 1px solid var(--p-border);
+  color: var(--p-text);
+  font-size: 0.8125rem;
+  padding: 0.35rem 0.65rem;
+  cursor: pointer;
+
+  &--gold {
+    border-color: var(--p-accent);
+    color: var(--p-accent);
+    font-weight: 600;
+  }
+}
+
+.dash-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 2500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.dash-modal {
+  background: var(--p-surface);
+  border: 1px solid var(--p-border);
+  max-width: 560px;
+  width: 100%;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+
+  &__head,
+  &__foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.85rem;
+
+    .span-2 {
+      grid-column: span 2;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+
+      span {
+        font-size: 0.8125rem;
+        font-weight: 500;
+        color: var(--p-text-sec);
+      }
+    }
+  }
+}
+
+.dash-input {
+  background: var(--p-input-bg);
+  border: 1px solid var(--p-border);
+  color: var(--p-text);
+  padding: 0.6rem 0.75rem;
+  font-size: 0.875rem;
+}

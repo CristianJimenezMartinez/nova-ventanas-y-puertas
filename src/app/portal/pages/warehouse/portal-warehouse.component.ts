@@ -25,6 +25,16 @@ export class PortalWarehouseComponent {
   readonly selectedCircuit = signal<'TODOS' | WarehouseCircuitType>('TODOS');
   readonly diasPagoDirectInvoice = signal<number>(0);
   readonly lastGeneratedInvoiceMsg = signal<string>('');
+  readonly showNewOrderModal = signal<boolean>(false);
+
+  // Campos limpios para dar de alta un pedido manual en almacén
+  readonly newClientName = signal<string>('');
+  readonly newClientNif = signal<string>('');
+  readonly newWorkAddress = signal<string>('');
+  readonly newCircuitType = signal<WarehouseCircuitType>('FABRICA_TERMINADA');
+  readonly newCaballete = signal<string>('CABALLETE A-01');
+  readonly newUnitsCount = signal<number>(1);
+  readonly newTotalAmountEur = signal<number>(0);
 
   readonly filteredOrders = computed<WarehouseOrder[]>(() => {
     const c = this.selectedCircuit();
@@ -34,6 +44,43 @@ export class PortalWarehouseComponent {
 
   setCircuit(c: 'TODOS' | WarehouseCircuitType): void {
     this.selectedCircuit.set(c);
+  }
+
+  createManualOrder(): void {
+    const name = this.newClientName().trim();
+    if (!name) return;
+    const seq = 1 + this.store.warehouseOrders().length;
+    const ord: WarehouseOrder = {
+      id: `ord-${Date.now()}`,
+      orderCode: `PED-2026-${String(seq).padStart(3, '0')}`,
+      quoteCode: 'DIRECTO',
+      clientName: name,
+      clientNif: this.newClientNif().trim(),
+      workAddress: this.newWorkAddress().trim() || 'Recogida / Obra',
+      circuitType: this.newCircuitType(),
+      assignedCaballete: this.newCaballete().trim() || `CABALLETE A-${String(seq).padStart(2, '0')}`,
+      unitsCount: Math.max(1, this.newUnitsCount()),
+      totalAmountEur: Math.max(0, this.newTotalAmountEur()),
+      carpentryReceived: false,
+      glassReceived: false,
+      shutterMotorReceived: false,
+      accessoriesReceived: false,
+      operationalStatus: 'EN_FABRICACION',
+      financialStatus: 'PENDIENTE_FACTURAR',
+      deliveryNoteCode: `ALB-2026-${String(seq).padStart(3, '0')}`,
+      updatedAtIso: new Date().toISOString()
+    };
+    this.store.addManualWarehouseOrder(ord);
+    this.newClientName.set('');
+    this.newClientNif.set('');
+    this.newWorkAddress.set('');
+    this.newTotalAmountEur.set(0);
+    this.showNewOrderModal.set(false);
+    this.lastGeneratedInvoiceMsg.set(`✓ Pedido ${ord.orderCode} (${ord.clientName}) registrado en almacén.`);
+  }
+
+  deleteOrder(id: string): void {
+    this.store.removeWarehouseOrder(id);
   }
 
   togglePart(

@@ -1,7 +1,13 @@
 <div class="quo-page">
   <div class="quo-header">
-    <h1>Presupuestos</h1>
+    <h1>Presupuestos {{ activeQuoteCode() ? '· ' + activeQuoteCode() : '' }}</h1>
     <div style="display:flex;flex-wrap:wrap;gap:0.6rem;">
+      <button type="button" class="btn btn--outline" (click)="resetQuoteForm()">
+        Nuevo / Limpiar
+      </button>
+      <button type="button" class="btn btn--outline" (click)="saveCurrentQuote()">
+        Guardar presupuesto
+      </button>
       <button type="button" class="btn btn--outline" (click)="sendQuoteByEmail()">
         ✉ Enviar al cliente
       </button>
@@ -20,6 +26,35 @@
   @if (statusMessage()) {
     <div class="quo-banner">{{ statusMessage() }}</div>
   }
+
+  <!-- DATOS DEL CLIENTE Y OBRA -->
+  <section class="quo-panel">
+    <div class="quo-panel__head">
+      <h2>Datos del cliente y obra</h2>
+    </div>
+    <div class="form-grid" style="grid-template-columns:repeat(auto-fit,minmax(210px,1fr));">
+      <label>
+        <span>Cliente o empresa</span>
+        <input type="text" [(ngModel)]="clientName" class="quo-input" placeholder="Nombre del cliente o empresa" />
+      </label>
+      <label>
+        <span>NIF / CIF</span>
+        <input type="text" [(ngModel)]="clientNif" class="quo-input" placeholder="12345678A / B00000000" />
+      </label>
+      <label>
+        <span>Teléfono</span>
+        <input type="text" [(ngModel)]="clientPhone" class="quo-input" placeholder="+34 600 00 00 00" />
+      </label>
+      <label>
+        <span>Correo electrónico</span>
+        <input type="email" [(ngModel)]="clientEmail" class="quo-input" placeholder="cliente@correo.es" />
+      </label>
+      <label class="field-span-2">
+        <span>Dirección de obra / entrega</span>
+        <input type="text" [(ngModel)]="workAddress" class="quo-input" placeholder="Calle, número y municipio" />
+      </label>
+    </div>
+  </section>
 
   <div class="configurator-split">
     <section class="quo-panel">
@@ -186,6 +221,13 @@
           </tr>
         </thead>
         <tbody>
+          @if (holes().length === 0) {
+            <tr>
+              <td colspan="7" class="sub-txt" style="padding:1.25rem 0.75rem;">
+                Aún no has añadido posiciones. Configura las medidas arriba y pulsa «+ Añadir al presupuesto».
+              </td>
+            </tr>
+          }
           @for (h of holes(); track h.id) {
             <tr>
               <td><strong>0{{ h.posNumber }}</strong></td>
@@ -245,6 +287,56 @@
           <strong>{{ quoteTotals().totalEur | number:'1.2-2' }} €</strong>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- HISTORIAL DE PRESUPUESTOS GUARDADOS -->
+  <section class="quo-panel">
+    <div class="quo-panel__head">
+      <h2>Presupuestos guardados ({{ store.quotes().length }})</h2>
+    </div>
+    <div class="table-scroll">
+      <table class="quo-table tabular-nums">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Cliente</th>
+            <th>Dirección</th>
+            <th>Posiciones</th>
+            <th>Total</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (store.quotes().length === 0) {
+            <tr>
+              <td colspan="6" class="sub-txt" style="padding:1.25rem 0.75rem;">
+                No hay presupuestos guardados todavía.
+              </td>
+            </tr>
+          }
+          @for (q of store.quotes(); track q.id) {
+            <tr>
+              <td><strong>{{ q.code }}</strong></td>
+              <td>
+                <strong>{{ q.clientName }}</strong>
+                <div class="sub-txt">{{ q.clientPhone }} · {{ q.clientEmail }}</div>
+              </td>
+              <td>{{ q.workAddress }}</td>
+              <td>{{ q.holes.length }} pos.</td>
+              <td><strong>{{ q.totalPvpEur | number:'1.2-2' }} €</strong></td>
+              <td>
+                <div style="display:flex;gap:0.4rem;">
+                  <button type="button" class="btn btn--outline" style="padding:0.3rem 0.65rem;" (click)="loadSavedQuote(q)">
+                    Abrir
+                  </button>
+                  <button type="button" class="del-btn" (click)="deleteSavedQuote(q.id)">✕</button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
     </div>
   </section>
 </div>
