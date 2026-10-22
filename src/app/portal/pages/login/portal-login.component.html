@@ -39,8 +39,14 @@
       </div>
 
       <div class="field-group">
+        <label for="loginPassword">CONTRASEÑA CORPORATIVA GRUPO SOTO</label>
+        <input id="loginPassword" type="password" [(ngModel)]="password" class="login-input" />
+      </div>
+
+      <div class="field-group">
         <label for="loginRole">PERFIL OPERATIVO (RBAC 8 ROLES)</label>
         <select id="loginRole" [(ngModel)]="selectedRole" class="login-input">
+          <option value="SUPERADMIN">Administrador Total · Gerencia Grupo Soto (gerencia&#64;gruposoto.es)</option>
           <option value="GERENCIA">Gerencia &amp; Dirección General</option>
           <option value="OFICINA_TECNICA">Oficina Técnica &amp; Presupuestación</option>
           <option value="COMERCIAL">Asesor Comercial Showroom</option>
@@ -50,14 +56,17 @@
       </div>
 
       <button type="button" class="btn btn--champagne w-100" (click)="enterPortal()">
-        ENTRAR AL ESPACIO DE TRABAJO →
+        ENTRAR COMO {{ email() === 'gerencia@gruposoto.es' ? 'ADMINISTRADOR TOTAL (gerencia@gruposoto.es)' : 'PROFESIONAL' }} →
       </button>
     </div>
 
     <!-- Accesos Rápidos de Demostración en Producción -->
     <div class="quick-roles">
-      <span class="quick-roles__label">CAMBIO RÁPIDO DE PERFIL PARA PRUEBAS EN PRODUCCIÓN:</span>
+      <span class="quick-roles__label">ACCESO DIRECTO 1-CLIC POR PERFIL CORPORATIVO:</span>
       <div class="quick-roles__grid">
+        <button type="button" class="role-btn" (click)="quickRoleAccess('SUPERADMIN', 'gerencia@gruposoto.es')">
+          ★ Admin Total (gerencia&#64;gruposoto.es)
+        </button>
         <button type="button" class="role-btn" (click)="quickRoleAccess('OFICINA_TECNICA', 'presupuestos@novaventanasypuertas.com')">
           Oficina Técnica
         </button>

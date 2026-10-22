@@ -20,6 +20,7 @@ export class PortalShellComponent {
   readonly searchModalOpen = signal<boolean>(false);
 
   readonly availableRoles: { role: UserRole; label: string }[] = [
+    { role: 'SUPERADMIN', label: 'Administrador Total (gerencia@gruposoto.es)' },
     { role: 'GERENCIA', label: 'Gerencia & Dirección' },
     { role: 'OFICINA_TECNICA', label: 'Oficina Técnica & Presupuestos' },
     { role: 'COMERCIAL', label: 'Showroom & Ventas' },

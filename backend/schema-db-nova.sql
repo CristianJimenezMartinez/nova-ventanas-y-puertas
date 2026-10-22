@@ -61,3 +61,26 @@ CREATE TABLE IF NOT EXISTS nova_email_logs (
   delivery_mode VARCHAR(40) NOT NULL DEFAULT 'SMTP_PROCESSED',
   sent_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS nova_users (
+  id VARCHAR(64) PRIMARY KEY,
+  tenant_id VARCHAR(64) NOT NULL DEFAULT 'tenant-nova-soto',
+  email VARCHAR(200) NOT NULL UNIQUE,
+  full_name VARCHAR(200) NOT NULL,
+  role VARCHAR(50) NOT NULL DEFAULT 'SUPERADMIN',
+  password_plain VARCHAR(120) NOT NULL DEFAULT 'Soto2026!Seguro',
+  active BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+INSERT INTO nova_users (id, tenant_id, email, full_name, role, password_plain, active)
+VALUES
+  ('usr-gerencia-soto', 'tenant-nova-soto', 'gerencia@gruposoto.es', 'Gerencia General · Grupo Soto', 'SUPERADMIN', 'Soto2026!Seguro', TRUE),
+  ('usr-admin-soto', 'tenant-nova-soto', 'admin@gruposoto.es', 'Administrador · Grupo Soto', 'SUPERADMIN', 'Soto2026!Seguro', TRUE),
+  ('usr-presupuestos', 'tenant-nova-soto', 'presupuestos@novaventanasypuertas.com', 'Oficina Técnica · NOVA', 'OFICINA_TECNICA', 'Soto2026!Seguro', TRUE),
+  ('usr-almacen', 'tenant-nova-soto', 'almacen@novaventanasypuertas.com', 'Almacén & Recepción · NOVA', 'MEDIDOR_OBRA', 'Soto2026!Seguro', TRUE),
+  ('usr-facturacion', 'tenant-nova-soto', 'administracion@novaventanasypuertas.com', 'Administración & VeriFactu · NOVA', 'ADMINISTRACION_FACTURACION', 'Soto2026!Seguro', TRUE)
+ON CONFLICT (email) DO UPDATE SET
+  role = EXCLUDED.role,
+  full_name = EXCLUDED.full_name,
+  active = TRUE;

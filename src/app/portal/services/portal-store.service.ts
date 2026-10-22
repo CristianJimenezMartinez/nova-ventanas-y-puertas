@@ -41,11 +41,11 @@ export class PortalStoreService {
   readonly dbSyncedStatus = signal<'CONECTANDO_DB' | 'SINCRONIZADO_DB_NOVA' | 'MODO_LOCAL'>('CONECTANDO_DB');
 
   readonly currentUser = signal<PortalUser>({
-    id: 'usr-01',
-    fullName: 'Dirección Técnica · NOVA',
-    email: 'direccion@novaventanasypuertas.com',
-    role: 'GERENCIA',
-    roleLabel: 'Gerencia & Oficina Técnica',
+    id: 'usr-gerencia-soto',
+    fullName: 'Gerencia General · Grupo Soto',
+    email: 'gerencia@gruposoto.es',
+    role: 'SUPERADMIN',
+    roleLabel: 'Administrador Total · Gerencia Grupo Soto',
     tenantId: 'tenant-nova-soto',
     tenantName: 'NOVA VENTANAS & PUERTAS (GRUPO SOTO)',
     branchName: 'Showroom & Planta La Serreta · Molina de Segura'
@@ -102,7 +102,11 @@ export class PortalStoreService {
             if (Array.isArray(st['quotes'])) this.quotes.set(st['quotes'] as PortalQuote[]);
             if (Array.isArray(st['warehouseOrders'])) this.warehouseOrders.set(st['warehouseOrders'] as WarehouseOrder[]);
             if (Array.isArray(st['invoices'])) this.invoices.set(st['invoices'] as VeriFactuInvoice[]);
-            if (Array.isArray(st['emailAccounts'])) this.emailAccounts.set(st['emailAccounts'] as EmailAccountConfig[]);
+            if (Array.isArray(st['emailAccounts'])) {
+              const loaded = st['emailAccounts'] as EmailAccountConfig[];
+              const hasGerencia = loaded.some(a => a.emailAddress.toLowerCase() === 'gerencia@gruposoto.es');
+              this.emailAccounts.set(hasGerencia ? loaded : [INITIAL_EMAIL_ACCOUNTS[0], ...loaded]);
+            }
             if (Array.isArray(st['emailMessages'])) this.emailMessages.set(st['emailMessages'] as EmailMessageItem[]);
           } else {
             this.persistStateToPostgresDb();
@@ -143,9 +147,9 @@ export class PortalStoreService {
     this.currentUser.update(u => ({ ...u, role, roleLabel }));
   }
 
-  loginWithCredentials(email: string, role: UserRole = 'GERENCIA'): void {
+  loginWithCredentials(email: string, role: UserRole = 'SUPERADMIN'): void {
     const labels: Record<UserRole, string> = {
-      SUPERADMIN: 'Superadministrador Ecosistema',
+      SUPERADMIN: 'Administrador Total · Gerencia Grupo Soto',
       GERENCIA: 'Gerencia & Dirección',
       OFICINA_TECNICA: 'Oficina Técnica & Presupuestos',
       COMERCIAL: 'Asesor Comercial Showroom',
@@ -154,7 +158,18 @@ export class PortalStoreService {
       ADMINISTRACION_FACTURACION: 'Administración & VeriFactu',
       COLABORADOR_EXTERNO: 'Arquitecto / Distribuidor B2B'
     };
-    this.currentUser.update(u => ({ ...u, email: email || u.email, role, roleLabel: labels[role] }));
+    const normalizedEmail = (email || 'gerencia@gruposoto.es').trim().toLowerCase();
+    const fullName =
+      normalizedEmail === 'gerencia@gruposoto.es'
+        ? 'Gerencia General · Grupo Soto'
+        : 'Usuario Corporativo · NOVA';
+    this.currentUser.update(u => ({
+      ...u,
+      fullName,
+      email: normalizedEmail,
+      role,
+      roleLabel: labels[role]
+    }));
     this.isAuthenticated.set(true);
   }
 

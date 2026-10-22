@@ -304,6 +304,19 @@ export const INITIAL_WAREHOUSE_ORDERS: WarehouseOrder[] = [
 
 export const INITIAL_EMAIL_ACCOUNTS: EmailAccountConfig[] = [
   {
+    id: 'mail-gerencia-soto',
+    aliasName: 'Gerencia General · Grupo Soto (Administrador)',
+    emailAddress: 'gerencia@gruposoto.es',
+    department: 'GENERAL',
+    smtpHost: 'smtp.ionos.es',
+    smtpPort: 587,
+    imapHost: 'imap.ionos.es',
+    imapPort: 993,
+    useTls: true,
+    status: 'CONECTADO_OK',
+    signatureHtml: 'Gerencia General · GRUPO SOTO EMPRESARIAL SL · NOVA Ventanas & Puertas'
+  },
+  {
     id: 'mail-presupuestos',
     aliasName: 'NOVA Oficina Técnica & Presupuestos',
     emailAddress: 'presupuestos@novaventanasypuertas.com',

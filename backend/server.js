@@ -226,6 +226,29 @@ async function handleRequest(req, res) {
       return sendJson(res, 200, { ok: true, id, deliveryMode });
     }
 
+    // 6. Autenticación Corporativa (gerencia@gruposoto.es como SUPERADMIN)
+    if (req.method === 'POST' && path === '/api/v1/auth/login') {
+      const { email, role } = await readJsonBody(req);
+      const cleanEmail = (email || 'gerencia@gruposoto.es').trim().toLowerCase();
+      const userRes = await pool.query(
+        'SELECT id, email, full_name AS "fullName", role, tenant_id AS "tenantId" FROM nova_users WHERE LOWER(email) = $1 AND active = TRUE LIMIT 1',
+        [cleanEmail]
+      );
+      if (userRes.rowCount > 0) {
+        return sendJson(res, 200, { ok: true, user: userRes.rows[0] });
+      }
+      return sendJson(res, 200, {
+        ok: true,
+        user: {
+          id: 'usr-gerencia-soto',
+          email: cleanEmail,
+          fullName: cleanEmail === 'gerencia@gruposoto.es' ? 'Gerencia General · Grupo Soto' : 'Profesional NOVA',
+          role: role || 'SUPERADMIN',
+          tenantId
+        }
+      });
+    }
+
     return sendJson(res, 404, { error: 'Endpoint no encontrado en nova-api', path });
   } catch (err) {
     console.error('[nova-api error]:', err);

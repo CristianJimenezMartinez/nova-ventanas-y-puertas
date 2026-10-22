@@ -16,9 +16,9 @@ export class PortalLoginComponent {
   readonly store = inject(PortalStoreService);
   private readonly router = inject(Router);
 
-  readonly email = signal<string>('direccion@novaventanasypuertas.com');
-  readonly password = signal<string>('••••••••••••••••');
-  readonly selectedRole = signal<UserRole>('GERENCIA');
+  readonly email = signal<string>('gerencia@gruposoto.es');
+  readonly password = signal<string>('Soto2026!Seguro');
+  readonly selectedRole = signal<UserRole>('SUPERADMIN');
 
   enterPortal(): void {
     this.store.loginWithCredentials(this.email(), this.selectedRole());
