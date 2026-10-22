@@ -5,6 +5,13 @@ import { FormsModule } from '@angular/forms';
 import { PortalStoreService } from '../services/portal-store.service';
 import { UserRole } from '../models/portal.models';
 
+export interface PortalNavItem {
+  moduleKey: 'dashboard' | 'presupuestos' | 'almacen' | 'facturacion' | 'catalogo' | 'correos' | 'empresas' | 'documentacion';
+  label: string;
+  route: string;
+  showWarehouseBadge?: boolean;
+}
+
 @Component({
   selector: 'app-portal-shell',
   standalone: true,
@@ -19,6 +26,18 @@ export class PortalShellComponent {
   readonly mobileSidebarOpen = signal<boolean>(false);
   readonly globalSearchQuery = signal<string>('');
   readonly searchModalOpen = signal<boolean>(false);
+
+  // Distribución fija e invariable del menú lateral en todos los apartados
+  readonly navItems: PortalNavItem[] = [
+    { moduleKey: 'dashboard', label: 'Inicio', route: '/portal/dashboard' },
+    { moduleKey: 'presupuestos', label: 'Presupuestos', route: '/portal/presupuestos' },
+    { moduleKey: 'almacen', label: 'Almacén', route: '/portal/almacen', showWarehouseBadge: true },
+    { moduleKey: 'facturacion', label: 'Facturas', route: '/portal/facturacion' },
+    { moduleKey: 'catalogo', label: 'Catálogo y Tarifas', route: '/portal/catalogo' },
+    { moduleKey: 'correos', label: 'Correos', route: '/portal/correos' },
+    { moduleKey: 'empresas', label: 'Empresas y Usuarios', route: '/portal/empresas' },
+    { moduleKey: 'documentacion', label: 'Documentación', route: '/portal/documentacion' }
+  ];
 
   readonly availableRoles: { role: UserRole; label: string }[] = [
     { role: 'SUPERADMIN', label: 'Ver como: Superadministrador Central' },
@@ -38,6 +57,11 @@ export class PortalShellComponent {
     }
   }
 
+  canAccess(moduleKey: PortalNavItem['moduleKey']): boolean {
+    if (moduleKey === 'documentacion') return true;
+    return this.store.security.canAccessModule(this.store.currentUser().role, moduleKey);
+  }
+
   toggleMobileSidebar(): void {
     this.mobileSidebarOpen.set(!this.mobileSidebarOpen());
   }
@@ -54,8 +78,10 @@ export class PortalShellComponent {
     const found = this.availableRoles.find(r => r.role === role);
     if (found) {
       this.store.setRole(found.role, found.label.replace('Ver como: ', ''));
-      if (role === 'ALMACEN_OBRA') {
-        this.router.navigate(['/portal/almacen']);
+      const currentUrl = this.router.url;
+      const activeItem = this.navItems.find(item => currentUrl.startsWith(item.route));
+      if (activeItem && !this.canAccess(activeItem.moduleKey)) {
+        this.router.navigate([role === 'ALMACEN_OBRA' ? '/portal/almacen' : '/portal/dashboard']);
       }
     }
   }

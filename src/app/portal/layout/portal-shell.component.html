@@ -3,7 +3,7 @@
   [class.portal-workspace--noir]="store.themeMode() === 'noir'"
   [class.portal-workspace--ivory]="store.themeMode() === 'ivory'">
 
-  <!-- MENÚ LATERAL CON FILTRADO REAL POR ROL -->
+  <!-- MENÚ LATERAL FIJO CON DISTRIBUCIÓN INVARIABLE Y BLOQUEO DIRECTO POR ROL -->
   <aside class="portal-sidebar" [class.portal-sidebar--open]="mobileSidebarOpen()">
     <div class="sidebar-brand">
       <a routerLink="/portal/dashboard" class="sidebar-logo" (click)="closeMobileSidebar()">
@@ -29,54 +29,28 @@
     </div>
 
     <nav class="sidebar-nav" aria-label="Menú principal">
-      @if (store.security.canAccessModule(store.currentUser().role, 'dashboard')) {
-        <a routerLink="/portal/dashboard" routerLinkActive="sidebar-link--active" class="sidebar-link" (click)="closeMobileSidebar()">
-          <span class="link-text">Inicio</span>
-        </a>
+      @for (item of navItems; track item.moduleKey) {
+        @if (canAccess(item.moduleKey)) {
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="sidebar-link--active"
+            class="sidebar-link"
+            (click)="closeMobileSidebar()">
+            <span class="link-text">{{ item.label }}</span>
+            @if (item.showWarehouseBadge) {
+              <span class="link-badge tabular-nums">{{ store.activeWarehouseCount() }}</span>
+            }
+          </a>
+        } @else {
+          <div
+            class="sidebar-link sidebar-link--locked"
+            aria-disabled="true"
+            title="Apartado bloqueado para tu rol actual">
+            <span class="link-text">{{ item.label }}</span>
+            <span class="lock-tag" aria-label="Bloqueado">🔒</span>
+          </div>
+        }
       }
-
-      @if (store.security.canAccessModule(store.currentUser().role, 'presupuestos')) {
-        <a routerLink="/portal/presupuestos" routerLinkActive="sidebar-link--active" class="sidebar-link" (click)="closeMobileSidebar()">
-          <span class="link-text">Presupuestos</span>
-        </a>
-      }
-
-      @if (store.security.canAccessModule(store.currentUser().role, 'almacen')) {
-        <a routerLink="/portal/almacen" routerLinkActive="sidebar-link--active" class="sidebar-link" (click)="closeMobileSidebar()">
-          <span class="link-text">Almacén</span>
-          <span class="link-badge tabular-nums">{{ store.activeWarehouseCount() }}</span>
-        </a>
-      }
-
-      @if (store.security.canAccessModule(store.currentUser().role, 'facturacion')) {
-        <a routerLink="/portal/facturacion" routerLinkActive="sidebar-link--active" class="sidebar-link" (click)="closeMobileSidebar()">
-          <span class="link-text">Facturas</span>
-        </a>
-      }
-
-      @if (store.security.canAccessModule(store.currentUser().role, 'catalogo')) {
-        <a routerLink="/portal/catalogo" routerLinkActive="sidebar-link--active" class="sidebar-link" (click)="closeMobileSidebar()">
-          <span class="link-text">Catálogo y Tarifas</span>
-        </a>
-      }
-
-      @if (store.security.canAccessModule(store.currentUser().role, 'correos')) {
-        <a routerLink="/portal/correos" routerLinkActive="sidebar-link--active" class="sidebar-link" (click)="closeMobileSidebar()">
-          <span class="link-text">Correos</span>
-        </a>
-      }
-
-      @if (store.security.canAccessModule(store.currentUser().role, 'empresas')) {
-        <a routerLink="/portal/empresas" routerLinkActive="sidebar-link--active" class="sidebar-link" (click)="closeMobileSidebar()">
-          <span class="link-text">
-            {{ store.currentUser().role === 'SUPERADMIN' ? 'Empresas y Usuarios' : 'Usuarios de mi empresa' }}
-          </span>
-        </a>
-      }
-
-      <a routerLink="/portal/documentacion" routerLinkActive="sidebar-link--active" class="sidebar-link" (click)="closeMobileSidebar()">
-        <span class="link-text">Documentación</span>
-      </a>
     </nav>
 
     <div class="sidebar-footer">
@@ -94,7 +68,7 @@
     </div>
   </aside>
 
-  <!-- ÁREA DE TRABAJO -->
+  <!-- ÁREA DE TRABAJO CON CABECERA SUPERIOR FIJA -->
   <div class="portal-main">
     <header class="portal-topbar">
       <div class="topbar-left">
@@ -164,22 +138,13 @@
           autofocus />
 
         <div class="omnibox-links">
-          <a routerLink="/portal/empresas" class="omnibox-item" (click)="searchModalOpen.set(false)">
-            <strong>Empresas, Usuarios y Seguridad</strong>
-            <span>Dar de alta franquicias/delegaciones, gestionar usuarios y revocar sesiones</span>
-          </a>
-          <a routerLink="/portal/presupuestos" class="omnibox-item" (click)="searchModalOpen.set(false)">
-            <strong>Presupuestos</strong>
-            <span>Crear o descargar presupuesto PDF</span>
-          </a>
-          <a routerLink="/portal/almacen" class="omnibox-item" (click)="searchModalOpen.set(false)">
-            <strong>Almacén</strong>
-            <span>Recepción de material y paso a factura</span>
-          </a>
-          <a routerLink="/portal/facturacion" class="omnibox-item" (click)="searchModalOpen.set(false)">
-            <strong>Facturas</strong>
-            <span>Emitir factura, registrar cobro o descargar XML</span>
-          </a>
+          @for (item of navItems; track item.moduleKey) {
+            @if (canAccess(item.moduleKey)) {
+              <a [routerLink]="item.route" class="omnibox-item" (click)="searchModalOpen.set(false)">
+                <strong>{{ item.label }}</strong>
+              </a>
+            }
+          }
         </div>
       </div>
     </div>

@@ -424,4 +424,42 @@ button, input, textarea, select {
     color: #1D4ED8;
     border: 1px solid rgba(37, 99, 235, 0.3);
   }
+
+  /* Cabecera y contenedor unificados e invariables en todos los apartados del portal */
+  .dash-page,
+  .quo-page,
+  .wh-page,
+  .inv-page,
+  .cat-page,
+  .mail-page,
+  .ten-page,
+  .docs-page {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+  }
+
+  .dash-header,
+  .quo-header,
+  .wh-header,
+  .inv-header,
+  .cat-header,
+  .mail-header,
+  .ten-header,
+  .docs-header {
+    min-height: 54px !important;
+    padding: 0 0 1rem 0 !important;
+    margin: 0 !important;
+    border-bottom: 1px solid var(--p-border) !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    gap: 0.85rem !important;
+  }
+
+  .docs-subtitle {
+    display: none !important;
+  }
 }
