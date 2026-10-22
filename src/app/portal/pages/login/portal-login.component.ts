@@ -1,14 +1,14 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 import { PortalStoreService } from '../../services/portal-store.service';
 import { UserRole } from '../../models/portal.models';
 
 @Component({
   selector: 'app-portal-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './portal-login.component.html',
   styleUrls: ['./portal-login.component.scss']
 })
