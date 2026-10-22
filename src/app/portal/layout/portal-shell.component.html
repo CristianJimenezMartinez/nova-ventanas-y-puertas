@@ -122,22 +122,44 @@
     </main>
   </div>
 
-  <!-- BUSCADOR RÁPIDO (Ctrl + K) -->
+  <!-- BUSCADOR RÁPIDO DE CLIENTES Y SECCIONES POR ENCIMA DE TODO (Ctrl + K) -->
   @if (searchModalOpen()) {
-    <div class="omnibox-backdrop" (click)="searchModalOpen.set(false)">
+    <div class="omnibox-backdrop" style="z-index:99999;" (click)="searchModalOpen.set(false)">
       <div class="omnibox-modal" (click)="$event.stopPropagation()">
         <div class="omnibox-header">
-          <strong>Ir a sección</strong>
+          <strong>Buscador de clientes y apartados</strong>
           <button type="button" class="omnibox-close" (click)="searchModalOpen.set(false)">Cerrar ✕</button>
         </div>
         <input
           type="text"
           [(ngModel)]="globalSearchQuery"
           class="portal-input"
-          placeholder="Buscar código o cliente..."
+          placeholder="Buscar cliente por nombre, NIF, teléfono o dirección..."
           autofocus />
 
+        @if (matchingClients().length > 0) {
+          <div class="omnibox-links tabular-nums">
+            <span style="font-size:0.78rem;font-weight:600;color:var(--p-text-sec);">
+              Clientes guardados ({{ matchingClients().length }}) — Pulsa para abrir en Presupuestos
+            </span>
+            @for (c of matchingClients(); track c.id) {
+              <button
+                type="button"
+                class="omnibox-item"
+                style="width:100%;text-align:left;cursor:pointer;justify-content:space-between;"
+                (click)="openClientInQuotes(c)">
+                <div>
+                  <strong>{{ c.fullName }}{{ c.nif ? ' · ' + c.nif : '' }}</strong>
+                  <div style="font-size:0.8rem;color:var(--p-text-sec);">{{ c.phone }} · {{ c.city }}</div>
+                </div>
+                <span style="font-size:0.8rem;font-weight:600;color:var(--p-accent);">Presupuestar →</span>
+              </button>
+            }
+          </div>
+        }
+
         <div class="omnibox-links">
+          <span style="font-size:0.78rem;font-weight:600;color:var(--p-text-sec);">Ir a apartado</span>
           @for (item of navItems; track item.moduleKey) {
             @if (canAccess(item.moduleKey)) {
               <a [routerLink]="item.route" class="omnibox-item" (click)="searchModalOpen.set(false)">

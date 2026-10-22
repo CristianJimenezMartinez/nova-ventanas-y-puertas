@@ -5,12 +5,13 @@ import { Router } from '@angular/router';
 import { PortalStoreService } from '../../services/portal-store.service';
 import { VeriFactuXmlService } from '../../services/verifactu-xml.service';
 import { PortalPdfGeneratorService } from '../../services/portal-pdf-generator.service';
-import { VeriFactuInvoice, VeriFactuVaultConfig } from '../../models/portal.models';
+import { CrmLeadItem, VeriFactuInvoice, VeriFactuVaultConfig } from '../../models/portal.models';
+import { ClientSearchComponent } from '../../components/client-search/client-search.component';
 
 @Component({
   selector: 'app-portal-invoicing',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ClientSearchComponent],
   templateUrl: './portal-invoicing.component.html',
   styleUrls: ['./portal-invoicing.component.scss']
 })
@@ -52,9 +53,7 @@ export class PortalInvoicingComponent {
     this.newBaseImponible.set(Math.round((ord.totalAmountEur / (1 + vatPct / 100)) * 100) / 100);
   }
 
-  loadFromSavedClient(clientId: string): void {
-    const c = this.store.leads().find(l => l.id === clientId);
-    if (!c) return;
+  onClientPickedForInvoice(c: CrmLeadItem): void {
     this.newClientName.set(c.fullName);
     this.newClientNif.set(c.nif || '');
     if (!this.newDescription()) {

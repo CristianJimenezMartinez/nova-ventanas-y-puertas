@@ -8,16 +8,18 @@ import { PricingMatrixEngineService } from '../../services/pricing-matrix-engine
 import { WindowSketchSvgService } from '../../services/window-sketch-svg.service';
 import { PortalPdfGeneratorService } from '../../services/portal-pdf-generator.service';
 import {
+  CrmLeadItem,
   FinishColorCategory,
   OpeningHandCode,
   PortalQuote,
   QuoteHoleLine
 } from '../../models/portal.models';
+import { ClientSearchComponent } from '../../components/client-search/client-search.component';
 
 @Component({
   selector: 'app-portal-quotes',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ClientSearchComponent],
   templateUrl: './portal-quotes.component.html',
   styleUrls: ['./portal-quotes.component.scss']
 })
@@ -85,9 +87,7 @@ export class PortalQuotesComponent {
     }
   }
 
-  selectSavedClient(clientId: string): void {
-    const c = this.store.leads().find(l => l.id === clientId);
-    if (!c) return;
+  onClientPicked(c: CrmLeadItem): void {
     this.clientName.set(c.fullName);
     this.clientNif.set(c.nif || '');
     this.clientPhone.set(c.phone);

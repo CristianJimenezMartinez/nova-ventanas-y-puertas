@@ -1,9 +1,9 @@
-import { Component, HostListener, inject, signal } from '@angular/core';
+import { Component, HostListener, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { PortalStoreService } from '../services/portal-store.service';
-import { UserRole } from '../models/portal.models';
+import { CrmLeadItem, UserRole } from '../models/portal.models';
 
 export interface PortalNavItem {
   moduleKey: 'dashboard' | 'presupuestos' | 'almacen' | 'facturacion' | 'catalogo' | 'correos' | 'empresas' | 'documentacion';
@@ -26,6 +26,37 @@ export class PortalShellComponent {
   readonly mobileSidebarOpen = signal<boolean>(false);
   readonly globalSearchQuery = signal<string>('');
   readonly searchModalOpen = signal<boolean>(false);
+
+  readonly matchingClients = computed(() => {
+    const q = this.globalSearchQuery().trim().toLowerCase();
+    const list = this.store.leads();
+    if (!q) return list.slice(0, 6);
+    return list.filter(
+      c =>
+        c.fullName.toLowerCase().includes(q) ||
+        (c.nif && c.nif.toLowerCase().includes(q)) ||
+        c.phone.toLowerCase().includes(q) ||
+        c.email.toLowerCase().includes(q) ||
+        c.city.toLowerCase().includes(q)
+    );
+  });
+
+  openClientInQuotes(lead: CrmLeadItem): void {
+    const pt =
+      lead.projectType === 'OBRA_NUEVA' || lead.projectType === 'SOLO_SUMINISTRO'
+        ? lead.projectType
+        : 'REFORMA_VIVIENDA';
+    this.store.security.pendingQuoteDraft.set({
+      clientName: lead.fullName,
+      clientNif: lead.nif || '',
+      clientPhone: lead.phone,
+      clientEmail: lead.email,
+      workAddress: lead.city,
+      projectType: pt
+    });
+    this.searchModalOpen.set(false);
+    this.router.navigate(['/portal/presupuestos']);
+  }
 
   // Distribución fija e invariable del menú lateral en todos los apartados
   readonly navItems: PortalNavItem[] = [

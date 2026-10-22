@@ -34,11 +34,18 @@
 
   <div class="dash-columns">
     <section class="dash-panel">
-      <div class="dash-panel__head">
-        <h2>Clientes guardados ({{ store.leads().length }})</h2>
-        <button type="button" class="panel-link" style="background:none;border:none;cursor:pointer;" (click)="showNewLeadModal.set(true)">
-          + Añadir cliente
-        </button>
+      <div class="dash-panel__head" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:0.65rem;">
+        <h2>Clientes guardados ({{ filteredLeads().length }})</h2>
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;align-items:center;">
+          <input
+            type="text"
+            [(ngModel)]="clientSearchQuery"
+            placeholder="🔍 Buscar cliente, NIF o teléfono..."
+            style="padding:0.4rem 0.65rem;min-width:210px;" />
+          <button type="button" class="panel-link" style="background:none;border:none;cursor:pointer;" (click)="showNewLeadModal.set(true)">
+            + Añadir cliente
+          </button>
+        </div>
       </div>
 
       <div class="table-wrap">
@@ -52,14 +59,14 @@
             </tr>
           </thead>
           <tbody>
-            @if (store.leads().length === 0) {
+            @if (filteredLeads().length === 0) {
               <tr>
                 <td colspan="4" class="cell-sub" style="padding:1.25rem 0.75rem;">
-                  No hay clientes registrados. Pulsa «+ Nuevo cliente» o guárdalos directamente desde Presupuestos.
+                  No hay clientes registrados con ese filtro. Pulsa «+ Nuevo cliente» o guárdalos directamente desde Presupuestos.
                 </td>
               </tr>
             }
-            @for (lead of store.leads(); track lead.id) {
+            @for (lead of filteredLeads(); track lead.id) {
               <tr>
                 <td>
                   <strong>{{ lead.fullName }}</strong>

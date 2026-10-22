@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -16,6 +16,7 @@ export class PortalDashboardComponent {
   readonly store = inject(PortalStoreService);
   private readonly router = inject(Router);
 
+  readonly clientSearchQuery = signal<string>('');
   readonly showNewLeadModal = signal<boolean>(false);
   readonly newLeadName = signal<string>('');
   readonly newLeadNif = signal<string>('');
@@ -24,6 +25,20 @@ export class PortalDashboardComponent {
   readonly newLeadCity = signal<string>('');
   readonly newLeadSystem = signal<string>('Carpintería a medida');
   readonly newLeadType = signal<'OBRA_NUEVA' | 'REFORMA_VIVIENDA' | 'SOLO_SUMINISTRO'>('REFORMA_VIVIENDA');
+
+  readonly filteredLeads = computed(() => {
+    const q = this.clientSearchQuery().trim().toLowerCase();
+    const list = this.store.leads();
+    if (!q) return list;
+    return list.filter(
+      l =>
+        l.fullName.toLowerCase().includes(q) ||
+        (l.nif && l.nif.toLowerCase().includes(q)) ||
+        l.phone.toLowerCase().includes(q) ||
+        l.email.toLowerCase().includes(q) ||
+        l.city.toLowerCase().includes(q)
+    );
+  });
 
   saveNewLead(): void {
     const name = this.newLeadName().trim();

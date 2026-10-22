@@ -5,15 +5,17 @@ import { Router, RouterModule } from '@angular/router';
 import { PortalStoreService } from '../../services/portal-store.service';
 import { PortalPdfGeneratorService } from '../../services/portal-pdf-generator.service';
 import {
+  CrmLeadItem,
   WarehouseCircuitType,
   WarehouseOperationalStatus,
   WarehouseOrder
 } from '../../models/portal.models';
+import { ClientSearchComponent } from '../../components/client-search/client-search.component';
 
 @Component({
   selector: 'app-portal-warehouse',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, ClientSearchComponent],
   templateUrl: './portal-warehouse.component.html',
   styleUrls: ['./portal-warehouse.component.scss']
 })
@@ -46,9 +48,7 @@ export class PortalWarehouseComponent {
     this.selectedCircuit.set(c);
   }
 
-  selectSavedClientForOrder(clientId: string): void {
-    const c = this.store.leads().find(l => l.id === clientId);
-    if (!c) return;
+  onClientPickedForOrder(c: CrmLeadItem): void {
     this.newClientName.set(c.fullName);
     this.newClientNif.set(c.nif || '');
     this.newWorkAddress.set(c.city);

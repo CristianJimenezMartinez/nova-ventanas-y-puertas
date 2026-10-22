@@ -24,21 +24,16 @@
     <div class="quo-banner">{{ statusMessage() }}</div>
   }
 
-  <!-- DATOS DEL CLIENTE Y OBRA (CON SELECTOR DE CLIENTES GUARDADOS + ALTA MANUAL) -->
+  <!-- DATOS DEL CLIENTE Y OBRA (CON BUSCADOR FLOTANTE POR ENCIMA DE TODO + ALTA MANUAL) -->
   <section class="quo-panel">
     <div class="quo-panel__head" style="display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:0.75rem;">
       <h2>Datos del cliente y obra</h2>
-      <div style="display:flex;flex-wrap:wrap;gap:0.6rem;align-items:center;">
-        <select
-          class="quo-input"
-          style="min-width:260px;"
-          aria-label="Seleccionar cliente guardado"
-          (change)="selectSavedClient($any($event.target).value)">
-          <option value="">-- Seleccionar cliente guardado ({{ store.leads().length }}) --</option>
-          @for (c of store.leads(); track c.id) {
-            <option [value]="c.id">{{ c.fullName }}{{ c.nif ? ' (' + c.nif + ')' : '' }} · {{ c.city }}</option>
-          }
-        </select>
+      <div style="display:flex;flex-wrap:wrap;gap:0.6rem;align-items:center;flex:1;justify-content:flex-end;max-width:620px;">
+        <app-client-search
+          style="flex:1;min-width:260px;"
+          placeholder="Buscar cliente guardado por nombre, NIF, teléfono..."
+          (clientSelected)="onClientPicked($event)">
+        </app-client-search>
         <button type="button" class="btn btn--outline" (click)="saveCurrentClientToDirectory()">
           + Guardar en mis clientes
         </button>
