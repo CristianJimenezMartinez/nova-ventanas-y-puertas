@@ -58,6 +58,13 @@ export const routes: Routes = [
           )
       },
       {
+        path: 'documentacion',
+        loadComponent: () =>
+          import('./portal/pages/docs/portal-docs.component').then(
+            m => m.PortalDocsComponent
+          )
+      },
+      {
         path: 'login',
         loadComponent: () =>
           import('./portal/pages/login/portal-login.component').then(

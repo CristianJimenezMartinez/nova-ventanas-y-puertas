@@ -1,0 +1,82 @@
+<div class="docs-page">
+  <div class="docs-header">
+    <div>
+      <h1>Guía de uso y documentación</h1>
+      <p class="docs-subtitle">
+        Manual paso a paso de funcionamiento de cada apartado del portal NOVA.
+      </p>
+    </div>
+
+    <div class="docs-actions">
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        class="docs-search"
+        placeholder="Buscar en la guía (ej. Excel, factura, almacén...)" />
+      <button type="button" class="btn btn--outline" (click)="printManual()">
+        ↓ Imprimir guía PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- Pestañas por apartado -->
+  <div class="docs-tabs">
+    <button
+      type="button"
+      class="docs-tab"
+      [class.docs-tab--active]="activeSectionId() === 'TODOS'"
+      (click)="selectSection('TODOS')">
+      Ver todo el manual ({{ sections.length }})
+    </button>
+    @for (sec of sections; track sec.id) {
+      <button
+        type="button"
+        class="docs-tab"
+        [class.docs-tab--active]="activeSectionId() === sec.id"
+        (click)="selectSection(sec.id)">
+        {{ sec.category }}
+      </button>
+    }
+  </div>
+
+  <!-- Bloques explicativos paso a paso -->
+  <div class="docs-list">
+    @for (sec of filteredSections(); track sec.id) {
+      <section class="doc-card">
+        <div class="doc-card__head">
+          <div>
+            <span class="doc-cat">{{ sec.category }}</span>
+            <h2>{{ sec.title }}</h2>
+            <p class="doc-sum">{{ sec.summary }}</p>
+          </div>
+          <a [routerLink]="sec.routeLink" class="btn btn--champagne">
+            {{ sec.routeLabel }} →
+          </a>
+        </div>
+
+        <div class="steps-grid">
+          @for (st of sec.steps; track st.stepNumber) {
+            <div class="step-box">
+              <div class="step-box__top">
+                <span class="step-num tabular-nums">Paso {{ st.stepNumber }}</span>
+                <strong>{{ st.heading }}</strong>
+              </div>
+              <p>{{ st.detail }}</p>
+            </div>
+          }
+        </div>
+
+        @if (sec.tips.length > 0) {
+          <div class="tips-box">
+            @for (tip of sec.tips; track tip) {
+              <div class="tip-row">
+                <span class="tip-badge">Nota práctica</span>
+                <span>{{ tip }}</span>
+              </div>
+            }
+          </div>
+        }
+      </section>
+    }
+  </div>
+</div>
