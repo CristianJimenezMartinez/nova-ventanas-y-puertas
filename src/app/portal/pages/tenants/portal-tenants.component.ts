@@ -82,10 +82,22 @@ export class PortalTenantsComponent {
 
   createNewUser(): void {
     const email = this.newUserEmail().trim().toLowerCase();
-    if (!email) return;
+    if (!email || !this.store.isValidEmail(email)) {
+      this.security.securityBanner.set('⚠ El formato del correo electrónico no es válido.');
+      return;
+    }
     const targetTenantId = this.isSuperAdminView()
       ? this.newUserTenantId()
       : this.security.activeTenantId();
+    const dupUser = this.security
+      .managedUsers()
+      .find(u => u.tenantId === targetTenantId && u.email.trim().toLowerCase() === email);
+    if (dupUser) {
+      this.security.securityBanner.set(
+        `⚠ Ya existe un usuario con el correo "${email}" en esta empresa (${dupUser.fullName}).`
+      );
+      return;
+    }
     const safeRole: UserRole =
       !this.isSuperAdminView() && this.newUserRole() === 'SUPERADMIN'
         ? 'GERENCIA'

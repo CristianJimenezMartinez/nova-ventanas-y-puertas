@@ -307,48 +307,23 @@ export class PortalStoreService {
 
     const vault = this.verifactuVault();
     const currentHash64 = this.verifactuXml.computeDeterministicAeatHash64({
-      nifEmisor: vault.nifEmisor,
-      seriesAndNumber,
-      issueDateIso,
-      invoiceType: params.invoiceType,
-      vatAmountEur,
-      totalImporteEur,
-      previousHash64
+      nifEmisor: vault.nifEmisor, seriesAndNumber, issueDateIso,
+      invoiceType: params.invoiceType, vatAmountEur, totalImporteEur, previousHash64
     });
-
     const aeatQrUrl = this.verifactuXml.buildAeatQrVerificationUrl(
-      vault.nifEmisor,
-      seriesAndNumber,
-      issueDateIso,
-      totalImporteEur,
-      currentHash64
+      vault.nifEmisor, seriesAndNumber, issueDateIso, totalImporteEur, currentHash64
     );
-
     const newInv: VeriFactuInvoice = {
-      id: `inv-${Date.now()}`,
-      seriesAndNumber,
-      invoiceType: params.invoiceType,
-      orderCode: params.orderCode,
-      clientName: params.clientName,
-      clientNif: params.clientNif,
-      workDescription: params.workDescription,
-      issueDateIso,
-      diasPago: safeDiasPago,
-      dueDateIso,
-      baseImponibleEur: params.baseImponibleEur,
-      vatRatePercent: params.vatRatePercent,
-      vatAmountEur,
-      retencionGarantia5PercentEur: params.retencionGarantia5PercentEur,
-      totalImporteEur,
-      cobradoEur: 0,
-      operationalStatus: params.operationalStatus,
+      id: `inv-${Date.now()}`, seriesAndNumber, invoiceType: params.invoiceType,
+      orderCode: params.orderCode, clientName: params.clientName, clientNif: params.clientNif,
+      workDescription: params.workDescription, issueDateIso, diasPago: safeDiasPago, dueDateIso,
+      baseImponibleEur: params.baseImponibleEur, vatRatePercent: params.vatRatePercent,
+      vatAmountEur, retencionGarantia5PercentEur: params.retencionGarantia5PercentEur,
+      totalImporteEur, cobradoEur: 0, operationalStatus: params.operationalStatus,
       paymentStatus: this.verifactuXml.evaluatePaymentStatus(totalImporteEur, 0, dueDateIso),
-      previousHash64,
-      currentHash64,
-      aeatQrUrl,
+      previousHash64, currentHash64, aeatQrUrl,
       aeatSubmissionState: vault.certificateLoaded && vault.autoSendOnIssue ? 'ENVIADO_AEAT_OK' : 'HUELLA_GENERADA'
     };
-
     this.invoices.update(list => [newInv, ...list]);
     if (params.orderCode) {
       const finState = params.invoiceType === 'ANTICIPO_OBRA' ? 'ANTICIPO_50_FACTURADO' : 'FACTURADO_TOTAL';
@@ -398,17 +373,12 @@ export class PortalStoreService {
     if (existing) {
       this.warehouseOrders.update(list =>
         list.map(o =>
-          o.id !== existing.id
-            ? o
-            : {
-                ...o,
-                clientName: quote.clientName || o.clientName,
-                clientNif: quote.clientNif || o.clientNif,
-                workAddress: quote.workAddress || o.workAddress,
-                unitsCount: Math.max(1, quote.holes.reduce((acc, h) => acc + h.quantity, 0)),
-                totalAmountEur: quote.totalPvpEur,
-                updatedAtIso: new Date().toISOString()
-              }
+          o.id !== existing.id ? o : {
+            ...o, clientName: quote.clientName || o.clientName, clientNif: quote.clientNif || o.clientNif,
+            workAddress: quote.workAddress || o.workAddress,
+            unitsCount: Math.max(1, quote.holes.reduce((acc, h) => acc + h.quantity, 0)),
+            totalAmountEur: quote.totalPvpEur, updatedAtIso: new Date().toISOString()
+          }
         )
       );
       this.persistStateToPostgresDb();
@@ -416,52 +386,81 @@ export class PortalStoreService {
     }
     const seq = 1 + this.warehouseOrders().length;
     const newOrder: WarehouseOrder = {
-      id: `ord-${Date.now()}`,
-      orderCode: `PED-2026-${String(seq).padStart(3, '0')}`,
-      quoteCode: quote.code,
-      clientName: quote.clientName || 'Cliente',
-      clientNif: quote.clientNif || '',
-      workAddress: quote.workAddress || '',
+      id: `ord-${Date.now()}`, orderCode: `PED-2026-${String(seq).padStart(3, '0')}`, quoteCode: quote.code,
+      clientName: quote.clientName || 'Cliente', clientNif: quote.clientNif || '', workAddress: quote.workAddress || '',
       circuitType: quote.projectType === 'SOLO_SUMINISTRO' ? 'SUMINISTRO_SIN_MONTAJE' : 'FABRICA_TERMINADA',
       assignedCaballete: `CABALLETE A-${String(seq).padStart(2, '0')}`,
       unitsCount: Math.max(1, quote.holes.reduce((acc, h) => acc + h.quantity, 0)),
-      totalAmountEur: quote.totalPvpEur,
-      carpentryReceived: false,
-      glassReceived: false,
-      shutterMotorReceived: false,
-      accessoriesReceived: false,
-      operationalStatus: 'EN_FABRICACION',
-      financialStatus: 'PENDIENTE_FACTURAR',
-      deliveryNoteCode: `ALB-2026-${String(seq).padStart(3, '0')}`,
+      totalAmountEur: quote.totalPvpEur, carpentryReceived: false, glassReceived: false,
+      shutterMotorReceived: false, accessoriesReceived: false, operationalStatus: 'EN_FABRICACION',
+      financialStatus: 'PENDIENTE_FACTURAR', deliveryNoteCode: `ALB-2026-${String(seq).padStart(3, '0')}`,
       updatedAtIso: new Date().toISOString()
     };
     this.warehouseOrders.update(list => [newOrder, ...list]);
     this.persistStateToPostgresDb();
   }
 
-  registerWebLead(lead: Omit<CrmLeadItem, 'id' | 'createdAtIso' | 'status'>): void {
-    const cleanName = lead.fullName.trim();
-    if (!cleanName) return;
-    this.leads.update(list => {
-      const existingIdx = list.findIndex(
-        l =>
-          l.fullName.toLowerCase() === cleanName.toLowerCase() ||
-          (lead.nif && l.nif && l.nif.toLowerCase() === lead.nif.toLowerCase())
-      );
-      if (existingIdx >= 0) {
-        return list.map((item, idx) => (idx === existingIdx ? { ...item, ...lead, fullName: cleanName } : item));
-      }
-      const item: CrmLeadItem = {
-        ...lead,
-        fullName: cleanName,
-        id: `lead-${Date.now()}`,
-        createdAtIso: new Date().toISOString(),
-        status: 'NUEVO_WEB'
+  isValidEmail(email: string): boolean {
+    const clean = (email || '').trim();
+    if (!clean) return false;
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(clean);
+  }
+
+  registerWebLead(
+    lead: Omit<CrmLeadItem, 'id' | 'createdAtIso' | 'status'>,
+    options?: { rejectDuplicateEmail?: boolean }
+  ): { ok: boolean; error?: string; existingLead?: CrmLeadItem } {
+    const cleanName = (lead.fullName || '').trim();
+    if (!cleanName) return { ok: false, error: 'El nombre del cliente es obligatorio.' };
+    const cleanEmail = (lead.email || '').trim().toLowerCase();
+    if (cleanEmail && !this.isValidEmail(cleanEmail)) {
+      return { ok: false, error: 'El formato del correo electrónico no es válido (ej. cliente@empresa.es).' };
+    }
+    const activeTid = this.security.activeTenantId();
+    const list = this.leads();
+    const dupByEmail = cleanEmail
+      ? list.find(l => (l.tenantId || activeTid) === activeTid && (l.email || '').trim().toLowerCase() === cleanEmail)
+      : undefined;
+
+    if (dupByEmail && options?.rejectDuplicateEmail) {
+      return {
+        ok: false,
+        error: `Ya existe un cliente en esta empresa con el correo "${cleanEmail}" (${dupByEmail.fullName}).`,
+        existingLead: dupByEmail
       };
-      this.http.post('/api/v1/leads', item).subscribe({ error: () => {} });
-      return [item, ...list];
-    });
+    }
+
+    const existingIdx = list.findIndex(
+      l =>
+        (l.tenantId || activeTid) === activeTid &&
+        ((cleanEmail && (l.email || '').trim().toLowerCase() === cleanEmail) ||
+          (lead.nif && l.nif && l.nif.toLowerCase() === lead.nif.trim().toLowerCase()) ||
+          (!cleanEmail && l.fullName.toLowerCase() === cleanName.toLowerCase()))
+    );
+
+    if (existingIdx >= 0) {
+      this.leads.update(curr =>
+        curr.map((item, idx) =>
+          idx === existingIdx ? { ...item, ...lead, tenantId: activeTid, fullName: cleanName, email: cleanEmail || item.email } : item
+        )
+      );
+      this.persistStateToPostgresDb();
+      return { ok: true, existingLead: this.leads()[existingIdx] };
+    }
+
+    const item: CrmLeadItem = {
+      ...lead,
+      tenantId: activeTid,
+      fullName: cleanName,
+      email: cleanEmail,
+      id: `lead-${Date.now()}`,
+      createdAtIso: new Date().toISOString(),
+      status: 'NUEVO_WEB'
+    };
+    this.leads.update(curr => [item, ...curr]);
+    this.http.post('/api/v1/leads', item, { headers: this.security.getAuthHeaders(activeTid) }).subscribe({ error: () => {} });
     this.persistStateToPostgresDb();
+    return { ok: true, existingLead: item };
   }
 
   removeLead(leadId: string): void {

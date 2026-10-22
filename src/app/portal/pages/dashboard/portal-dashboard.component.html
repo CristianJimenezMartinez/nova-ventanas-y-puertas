@@ -143,6 +143,11 @@
           <h3>Nuevo cliente / solicitud</h3>
           <button type="button" class="dash-mini-btn" (click)="showNewLeadModal.set(false)">✕</button>
         </div>
+        @if (leadModalError()) {
+          <div style="border:1px solid #ef4444;background:rgba(239,68,68,0.1);color:#b91c1c;padding:0.65rem 0.85rem;font-size:0.85rem;font-weight:600;">
+            ⚠ {{ leadModalError() }}
+          </div>
+        }
         <div class="dash-modal__grid">
           <label>
             <span>Nombre o empresa</span>

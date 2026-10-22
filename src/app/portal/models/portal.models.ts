@@ -260,6 +260,7 @@ export interface EmailMessageItem {
 
 export interface CrmLeadItem {
   id: string;
+  tenantId?: string;
   createdAtIso: string;
   fullName: string;
   nif?: string;

@@ -49,8 +49,18 @@ export class PortalEmailsComponent {
   }
 
   saveNewEmailAccount(): void {
-    const email = this.newEmailAddress().trim();
-    if (!email) return;
+    const email = this.newEmailAddress().trim().toLowerCase();
+    if (!email || !this.store.isValidEmail(email)) {
+      this.feedbackMsg.set('⚠ Introduce un correo electrónico válido (ejemplo: oficina@tuempresa.es).');
+      return;
+    }
+    const alreadyExists = this.store
+      .emailAccounts()
+      .some(a => a.emailAddress.trim().toLowerCase() === email);
+    if (alreadyExists) {
+      this.feedbackMsg.set(`⚠ La cuenta "${email}" ya está registrada en esta empresa.`);
+      return;
+    }
     const created: EmailAccountConfig = {
       id: `mail-${Date.now()}`,
       aliasName: this.newAlias().trim() || this.store.security.activeTenant().commercialName,

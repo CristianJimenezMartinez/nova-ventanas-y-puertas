@@ -18,6 +18,7 @@ export class PortalDashboardComponent {
 
   readonly clientSearchQuery = signal<string>('');
   readonly showNewLeadModal = signal<boolean>(false);
+  readonly leadModalError = signal<string>('');
   readonly newLeadName = signal<string>('');
   readonly newLeadNif = signal<string>('');
   readonly newLeadPhone = signal<string>('');
@@ -41,17 +42,23 @@ export class PortalDashboardComponent {
   });
 
   saveNewLead(): void {
-    const name = this.newLeadName().trim();
-    if (!name) return;
-    this.store.registerWebLead({
-      fullName: name,
-      nif: this.newLeadNif().trim(),
-      phone: this.newLeadPhone().trim(),
-      email: this.newLeadEmail().trim(),
-      city: this.newLeadCity().trim() || 'Murcia',
-      projectType: this.newLeadType(),
-      recommendedSystem: this.newLeadSystem().trim() || 'Carpintería a medida'
-    });
+    this.leadModalError.set('');
+    const res = this.store.registerWebLead(
+      {
+        fullName: this.newLeadName(),
+        nif: this.newLeadNif().trim(),
+        phone: this.newLeadPhone().trim(),
+        email: this.newLeadEmail().trim(),
+        city: this.newLeadCity().trim() || 'Murcia',
+        projectType: this.newLeadType(),
+        recommendedSystem: this.newLeadSystem().trim() || 'Carpintería a medida'
+      },
+      { rejectDuplicateEmail: true }
+    );
+    if (!res.ok) {
+      this.leadModalError.set(res.error || 'No se pudo guardar el cliente.');
+      return;
+    }
     this.newLeadName.set('');
     this.newLeadNif.set('');
     this.newLeadPhone.set('');

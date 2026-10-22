@@ -365,12 +365,30 @@ async function handleRequest(req, res) {
       return sendJson(req, res, 200, { ok: true, tenantId, savedAt: new Date().toISOString() });
     }
 
-    // 7. Leads desde la Web Pública (con Rate Limiting anti-spam)
+    // 7. Leads / Clientes por Empresa (con validación de formato email y bloqueo de duplicados por tenant_id)
     if (req.method === 'POST' && path === '/api/v1/leads') {
       if (!checkRateLimit(clientIp, 'public_leads', 15)) {
         return sendJson(req, res, 429, { error: 'Límite de solicitudes excedido.' });
       }
       const lead = await readJsonBody(req);
+      const targetTenant = lead.tenantId || tenantId;
+      const cleanEmail = String(lead.email || '').trim().toLowerCase();
+      if (cleanEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(cleanEmail)) {
+        return sendJson(req, res, 400, { error: 'El formato del correo electrónico no es válido.' });
+      }
+      if (cleanEmail) {
+        const dupRes = await pool.query(
+          `SELECT id, full_name FROM nova_leads
+           WHERE tenant_id = $1 AND LOWER(TRIM(email)) = $2
+           LIMIT 1`,
+          [targetTenant, cleanEmail]
+        );
+        if (dupRes.rowCount > 0) {
+          return sendJson(req, res, 409, {
+            error: `Ya existe un cliente en esta empresa con el correo ${cleanEmail} (${dupRes.rows[0].full_name}).`
+          });
+        }
+      }
       const id = lead.id || `lead-${Date.now()}`;
       await pool.query(
         `INSERT INTO nova_leads (id, tenant_id, full_name, phone, email, city, project_type, recommended_system, status)
@@ -378,13 +396,13 @@ async function handleRequest(req, res) {
          ON CONFLICT (id) DO NOTHING`,
         [
           id,
-          tenantId,
-          String(lead.fullName || 'Cliente Web NOVA').slice(0, 180),
+          targetTenant,
+          String(lead.fullName || 'Cliente NOVA').slice(0, 180),
           String(lead.phone || '').slice(0, 50),
-          String(lead.email || '').slice(0, 180),
+          cleanEmail.slice(0, 180),
           String(lead.city || 'Murcia').slice(0, 100),
           String(lead.projectType || 'OBRA_NUEVA').slice(0, 60),
-          String(lead.recommendedSystem || 'Prescripción Técnica NOVA').slice(0, 300)
+          String(lead.recommendedSystem || 'Cliente NOVA').slice(0, 300)
         ]
       );
       return sendJson(req, res, 201, { ok: true, id });

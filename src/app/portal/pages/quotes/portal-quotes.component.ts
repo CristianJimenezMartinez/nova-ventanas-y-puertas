@@ -97,18 +97,23 @@ export class PortalQuotesComponent {
   }
 
   saveCurrentClientToDirectory(): void {
-    const name = this.clientName().trim();
-    if (!name) return;
-    this.store.registerWebLead({
-      fullName: name,
-      nif: this.clientNif().trim(),
-      phone: this.clientPhone().trim(),
-      email: this.clientEmail().trim(),
-      city: this.workAddress().trim() || 'Murcia',
-      projectType: this.projectType(),
-      recommendedSystem: 'Cliente guardado desde Presupuestos'
-    });
-    this.statusMessage.set(`✓ Cliente "${name}" guardado en la cartera de clientes para próximos presupuestos.`);
+    const res = this.store.registerWebLead(
+      {
+        fullName: this.clientName(),
+        nif: this.clientNif().trim(),
+        phone: this.clientPhone().trim(),
+        email: this.clientEmail().trim(),
+        city: this.workAddress().trim() || 'Murcia',
+        projectType: this.projectType(),
+        recommendedSystem: 'Cliente guardado desde Presupuestos'
+      },
+      { rejectDuplicateEmail: true }
+    );
+    if (!res.ok) {
+      this.statusMessage.set(`⚠ ${res.error}`);
+      return;
+    }
+    this.statusMessage.set(`✓ Cliente "${this.clientName().trim()}" guardado en la cartera de clientes de esta empresa.`);
   }
 
   readonly activeSeries = computed(() =>
@@ -323,6 +328,11 @@ export class PortalQuotesComponent {
   }
 
   saveCurrentQuote(): void {
+    const email = this.clientEmail().trim();
+    if (email && !this.store.isValidEmail(email)) {
+      this.statusMessage.set('⚠ El formato del correo electrónico del cliente no es válido.');
+      return;
+    }
     const q = this.buildCurrentQuoteSnapshot();
     this.activeQuoteId.set(q.id);
     this.activeQuoteCode.set(q.code);
