@@ -178,6 +178,18 @@ export class PortalQuotesComponent {
     this.pdfGenerator.generateFactoryOrderPdf(this.buildCurrentQuoteSnapshot());
   }
 
+  sendQuoteByEmail(): void {
+    const q = this.buildCurrentQuoteSnapshot();
+    this.store.security.pendingEmailDraft.set({
+      recipientName: q.clientName,
+      recipientEmail: q.clientEmail,
+      linkedDocCode: q.code,
+      subject: `Presupuesto ${q.code} (${q.totalPvpEur.toFixed(2)} €) · ${this.store.security.activeTenant().commercialName}`,
+      messageBody: `Estimado/a ${q.clientName},\n\nAdjuntamos su presupuesto ${q.code} (${q.holes.length} posiciones) por un importe total de ${q.totalPvpEur.toFixed(2)} € (IVA incluido).\n\nQuedamos a su disposición.`
+    });
+    this.router.navigate(['/portal/correos']);
+  }
+
   approveAndSendToWarehouse(): void {
     const newQuote = this.buildCurrentQuoteSnapshot();
     this.store.saveQuoteAndConvertToOrder(newQuote);

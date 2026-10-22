@@ -254,7 +254,21 @@ async function handleRequest(req, res) {
           quotes: [],
           warehouseOrders: [],
           invoices: [],
-          emailAccounts: [],
+          emailAccounts: [
+            {
+              id: `mail-${Date.now()}`,
+              aliasName: body.commercialName || 'Sede NOVA',
+              emailAddress: adminEmail,
+              department: 'GENERAL',
+              smtpHost: 'smtp.ionos.es',
+              smtpPort: 587,
+              imapHost: 'imap.ionos.es',
+              imapPort: 993,
+              useTls: true,
+              status: 'CONECTADO_OK',
+              signatureHtml: `${body.commercialName || 'Delegación NOVA'} · ${body.legalName || ''}`
+            }
+          ],
           emailMessages: [],
           leads: []
         };

@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { PortalStoreService } from '../../services/portal-store.service';
 import { VeriFactuXmlService } from '../../services/verifactu-xml.service';
 import { PortalPdfGeneratorService } from '../../services/portal-pdf-generator.service';
@@ -17,6 +18,7 @@ export class PortalInvoicingComponent {
   readonly store = inject(PortalStoreService);
   private readonly xmlService = inject(VeriFactuXmlService);
   private readonly pdfGenerator = inject(PortalPdfGeneratorService);
+  private readonly router = inject(Router);
 
   readonly showIssueModal = signal<boolean>(false);
   readonly showVaultModal = signal<boolean>(false);
@@ -96,6 +98,17 @@ export class PortalInvoicingComponent {
 
   downloadInvoicePdf(inv: VeriFactuInvoice): void {
     this.pdfGenerator.generateVeriFactuInvoicePdf(inv, this.store.verifactuVault());
+  }
+
+  sendInvoiceByEmail(inv: VeriFactuInvoice): void {
+    this.store.security.pendingEmailDraft.set({
+      recipientName: inv.clientName,
+      recipientEmail: 'facturacion@cliente.es',
+      linkedDocCode: inv.seriesAndNumber,
+      subject: `Factura ${inv.seriesAndNumber} (${inv.totalImporteEur.toFixed(2)} €) · ${this.store.security.activeTenant().commercialName}`,
+      messageBody: `Estimado/a ${inv.clientName},\n\nAdjuntamos la factura ${inv.seriesAndNumber} correspondiente a ${inv.workDescription} por un importe total de ${inv.totalImporteEur.toFixed(2)} €.`
+    });
+    this.router.navigate(['/portal/correos']);
   }
 
   previewXml(inv: VeriFactuInvoice): void {

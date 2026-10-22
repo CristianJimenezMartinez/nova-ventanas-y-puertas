@@ -1,8 +1,10 @@
 <div class="mail-page">
   <div class="mail-header">
-    <h1>Correos</h1>
+    <div>
+      <h1>Correos de la sede ({{ store.security.activeTenant().commercialName }})</h1>
+    </div>
     <button type="button" class="btn btn--champagne" (click)="showNewAccountModal.set(true)">
-      + Añadir cuenta
+      + Conectar mi correo
     </button>
   </div>
 
@@ -26,36 +28,36 @@
   <div class="mail-split">
     <section class="mail-panel">
       <div class="mail-panel__head">
-        <h2>Nuevo mensaje</h2>
+        <h2>Enviar documento al cliente</h2>
         <div class="tpl-btns">
-          <button type="button" class="tpl-btn" (click)="applyTemplate('PRESUPUESTO')">Presupuesto</button>
-          <button type="button" class="tpl-btn" (click)="applyTemplate('ALMACEN')">Almacén</button>
-          <button type="button" class="tpl-btn" (click)="applyTemplate('FACTURA')">Factura</button>
+          <button type="button" class="tpl-btn" (click)="applyTemplate('PRESUPUESTO')">Plantilla Presupuesto</button>
+          <button type="button" class="tpl-btn" (click)="applyTemplate('ALMACEN')">Plantilla Almacén</button>
+          <button type="button" class="tpl-btn" (click)="applyTemplate('FACTURA')">Plantilla Factura</button>
         </div>
       </div>
 
       <div class="compose-grid">
         <label>
-          <span>Desde</span>
+          <span>Enviar desde cuenta</span>
           <select [(ngModel)]="selectedSenderEmail" class="mail-input">
             @for (acc of store.emailAccounts(); track acc.id) {
-              <option [value]="acc.emailAddress">{{ acc.emailAddress }}</option>
+              <option [value]="acc.emailAddress">{{ acc.emailAddress }} ({{ acc.aliasName }})</option>
             }
           </select>
         </label>
 
         <label>
-          <span>Expediente</span>
+          <span>Nº Documento (Presupuesto / Pedido / Factura)</span>
           <input type="text" [(ngModel)]="linkedDocCode" class="mail-input tabular-nums" />
         </label>
 
         <label>
-          <span>Destinatario</span>
+          <span>Nombre del cliente</span>
           <input type="text" [(ngModel)]="recipientName" class="mail-input" />
         </label>
 
         <label>
-          <span>Correo destinatario</span>
+          <span>Correo del cliente</span>
           <input type="email" [(ngModel)]="recipientEmail" class="mail-input" />
         </label>
 
@@ -71,13 +73,13 @@
       </div>
 
       <button type="button" class="btn btn--champagne w-100" (click)="sendTrackedMessage()">
-        Enviar correo
+        Enviar correo al cliente →
       </button>
     </section>
 
     <section class="mail-panel">
       <div class="mail-panel__head">
-        <h2>Enviados ({{ store.emailMessages().length }})</h2>
+        <h2>Enviados en esta sede ({{ store.emailMessages().length }})</h2>
       </div>
 
       <div class="msg-list tabular-nums">
@@ -96,41 +98,49 @@
     </section>
   </div>
 
+  <!-- Modal autogestionable para que cada sede conecte su correo en 1 clic -->
   @if (showNewAccountModal()) {
     <div class="modal-backdrop" (click)="showNewAccountModal.set(false)">
       <div class="modal-box" (click)="$event.stopPropagation()">
         <div class="modal-head">
-          <h3>Añadir cuenta de correo</h3>
+          <h3>Conectar cuenta de correo de la sede</h3>
           <button type="button" class="tpl-btn" (click)="showNewAccountModal.set(false)">✕</button>
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:0.5rem;">
+          <button type="button" class="tpl-btn" (click)="applyProviderPreset('IONOS')">1. IONOS (1&amp;1)</button>
+          <button type="button" class="tpl-btn" (click)="applyProviderPreset('GMAIL')">2. Gmail / Google</button>
+          <button type="button" class="tpl-btn" (click)="applyProviderPreset('OUTLOOK')">3. Outlook / Office 365</button>
+          <button type="button" class="tpl-btn" (click)="applyProviderPreset('OTRO')">4. Otro proveedor</button>
         </div>
 
         <div class="compose-grid tabular-nums">
           <label>
-            <span>Nombre</span>
+            <span>Nombre visible (ej. NOVA Alicante)</span>
             <input type="text" [(ngModel)]="newAlias" class="mail-input" />
           </label>
           <label>
-            <span>Correo electrónico</span>
+            <span>Tu dirección de correo</span>
             <input type="email" [(ngModel)]="newEmailAddress" class="mail-input" />
           </label>
-          <label>
-            <span>Servidor SMTP</span>
-            <input type="text" [(ngModel)]="newSmtpHost" class="mail-input" />
-          </label>
-          <label>
-            <span>Puerto SMTP</span>
-            <input type="number" [(ngModel)]="newSmtpPort" class="mail-input" />
-          </label>
-          <label>
-            <span>Servidor IMAP</span>
-            <input type="text" [(ngModel)]="newImapHost" class="mail-input" />
-          </label>
-          <label>
-            <span>Puerto IMAP</span>
-            <input type="number" [(ngModel)]="newImapPort" class="mail-input" />
-          </label>
           <label class="span-2">
-            <span>Firma</span>
+            <span>Contraseña del correo</span>
+            <input type="password" [(ngModel)]="newEmailPassword" placeholder="Contraseña de tu buzón" class="mail-input" />
+          </label>
+
+          @if (selectedProviderPreset() === 'OTRO') {
+            <label>
+              <span>Servidor SMTP</span>
+              <input type="text" [(ngModel)]="newSmtpHost" class="mail-input" />
+            </label>
+            <label>
+              <span>Puerto SMTP</span>
+              <input type="number" [(ngModel)]="newSmtpPort" class="mail-input" />
+            </label>
+          }
+
+          <label class="span-2">
+            <span>Firma al pie del correo</span>
             <input type="text" [(ngModel)]="newSignature" class="mail-input" />
           </label>
         </div>
@@ -138,7 +148,7 @@
         <div class="modal-foot">
           <button type="button" class="btn btn--outline" (click)="showNewAccountModal.set(false)">Cancelar</button>
           <button type="button" class="btn btn--champagne" (click)="saveNewEmailAccount()">
-            Guardar cuenta
+            Guardar mi correo →
           </button>
         </div>
       </div>

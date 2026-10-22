@@ -1,7 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { PortalStoreService } from '../../services/portal-store.service';
 import { PortalPdfGeneratorService } from '../../services/portal-pdf-generator.service';
 import {
@@ -20,6 +20,7 @@ import {
 export class PortalWarehouseComponent {
   readonly store = inject(PortalStoreService);
   private readonly pdfGenerator = inject(PortalPdfGeneratorService);
+  private readonly router = inject(Router);
 
   readonly selectedCircuit = signal<'TODOS' | WarehouseCircuitType>('TODOS');
   readonly diasPagoDirectInvoice = signal<number>(0);
@@ -60,5 +61,16 @@ export class PortalWarehouseComponent {
 
   downloadDeliveryNotePdf(order: WarehouseOrder): void {
     this.pdfGenerator.generateWarehouseDeliveryNotePdf(order);
+  }
+
+  notifyClientWarehouseReady(order: WarehouseOrder): void {
+    this.store.security.pendingEmailDraft.set({
+      recipientName: order.clientName,
+      recipientEmail: 'cliente@obra.es',
+      linkedDocCode: order.orderCode,
+      subject: `Aviso de material en almacén · Pedido ${order.orderCode} (${order.assignedCaballete})`,
+      messageBody: `Estimado/a ${order.clientName},\n\nSu pedido ${order.orderCode} (${order.unitsCount} unidades) se encuentra en ${order.assignedCaballete}, listo para recogida o coordinación de montaje.`
+    });
+    this.router.navigate(['/portal/correos']);
   }
 }

@@ -25,6 +25,13 @@ export class PortalSecurityService {
   readonly jwtToken = signal<string>(this.readSessionToken());
   readonly activeTenantId = signal<string>('tenant-nova-soto');
   readonly securityBanner = signal<string>('');
+  readonly pendingEmailDraft = signal<{
+    recipientName: string;
+    recipientEmail: string;
+    linkedDocCode: string;
+    subject: string;
+    messageBody: string;
+  } | null>(null);
 
   readonly tenants = signal<PortalTenantCompany[]>([
     {
