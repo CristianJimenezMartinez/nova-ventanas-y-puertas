@@ -4,9 +4,17 @@
       <span class="label-tracked">INGENIERÍA POR HUECOS · MATRIZ 2D · CROQUIS UNE-EN 12519</span>
       <h1 class="quo-title">CONFIGURADOR TÉCNICO Y PRESUPUESTADOR</h1>
     </div>
-    <button type="button" class="btn btn--champagne" (click)="approveAndSendToWarehouse()">
-      APROBAR Y ENVIAR PEDIDO A ALMACÉN →
-    </button>
+    <div style="display:flex;flex-wrap:wrap;gap:0.6rem;">
+      <button type="button" class="btn btn--outline" (click)="downloadQuotePdf()">
+        ↓ PDF PRESUPUESTO + CROQUIS UNE
+      </button>
+      <button type="button" class="btn btn--outline" (click)="downloadFactoryOrderPdf()">
+        ↓ PDF ORDEN A FÁBRICA (SIN PVP)
+      </button>
+      <button type="button" class="btn btn--champagne" (click)="approveAndSendToWarehouse()">
+        APROBAR Y ENVIAR A ALMACÉN →
+      </button>
+    </div>
   </div>
 
   @if (statusMessage()) {

@@ -98,10 +98,16 @@
                 <span class="catalog-tag">{{ sp }}</span>
               }
             </div>
-            <button type="button" class="catalog-btn" (click)="requestCatalog(cat)">
-              <span>SOLICITAR DOSSIER PDF EN ESPAÑOL</span>
-              <span>→</span>
-            </button>
+            <div class="catalog-actions">
+              <a [href]="cat.downloadUrl" target="_blank" rel="noopener" class="catalog-btn">
+                <span>DESCARGAR PDF EN ESPAÑOL</span>
+                <span>↓</span>
+              </a>
+              <button type="button" class="catalog-btn catalog-btn--secondary" (click)="requestCatalog(cat)">
+                <span>CONSULTAR CON OFICINA TÉCNICA</span>
+                <span>→</span>
+              </button>
+            </div>
           </article>
         }
       </div>

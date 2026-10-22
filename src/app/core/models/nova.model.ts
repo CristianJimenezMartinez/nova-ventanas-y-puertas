@@ -70,6 +70,7 @@ export interface NovaPdfCatalog {
   pages: number;
   category: string;
   specs: string[];
+  downloadUrl: string;
   requestSubject: string;
 }
 

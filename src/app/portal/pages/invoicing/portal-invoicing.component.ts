@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PortalStoreService } from '../../services/portal-store.service';
 import { VeriFactuXmlService } from '../../services/verifactu-xml.service';
+import { PortalPdfGeneratorService } from '../../services/portal-pdf-generator.service';
 import { VeriFactuInvoice, VeriFactuVaultConfig } from '../../models/portal.models';
 
 @Component({
@@ -15,6 +16,7 @@ import { VeriFactuInvoice, VeriFactuVaultConfig } from '../../models/portal.mode
 export class PortalInvoicingComponent {
   readonly store = inject(PortalStoreService);
   private readonly xmlService = inject(VeriFactuXmlService);
+  private readonly pdfGenerator = inject(PortalPdfGeneratorService);
 
   readonly showIssueModal = signal<boolean>(false);
   readonly showVaultModal = signal<boolean>(false);
@@ -90,6 +92,10 @@ export class PortalInvoicingComponent {
   downloadOfficialXml(inv: VeriFactuInvoice): void {
     this.xmlService.downloadXmlFile(inv, this.store.verifactuVault());
     this.feedbackMsg.set(`✓ Archivo XML Oficial AEAT (${inv.seriesAndNumber}) descargado.`);
+  }
+
+  downloadInvoicePdf(inv: VeriFactuInvoice): void {
+    this.pdfGenerator.generateVeriFactuInvoicePdf(inv, this.store.verifactuVault());
   }
 
   previewXml(inv: VeriFactuInvoice): void {

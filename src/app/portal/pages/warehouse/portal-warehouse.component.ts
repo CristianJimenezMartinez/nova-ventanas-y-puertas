@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { PortalStoreService } from '../../services/portal-store.service';
+import { PortalPdfGeneratorService } from '../../services/portal-pdf-generator.service';
 import {
   WarehouseCircuitType,
   WarehouseOperationalStatus,
@@ -18,6 +19,7 @@ import {
 })
 export class PortalWarehouseComponent {
   readonly store = inject(PortalStoreService);
+  private readonly pdfGenerator = inject(PortalPdfGeneratorService);
 
   readonly selectedCircuit = signal<'TODOS' | WarehouseCircuitType>('TODOS');
   readonly diasPagoDirectInvoice = signal<number>(0);
@@ -54,5 +56,9 @@ export class PortalWarehouseComponent {
     this.lastGeneratedInvoiceMsg.set(
       `✓ Factura Oficial VeriFactu ${inv.seriesAndNumber} generada desde Almacén (${order.assignedCaballete}) · Huella SHA-256: ${inv.currentHash64.slice(0, 16)}...`
     );
+  }
+
+  downloadDeliveryNotePdf(order: WarehouseOrder): void {
+    this.pdfGenerator.generateWarehouseDeliveryNotePdf(order);
   }
 }

@@ -121,11 +121,14 @@
               </td>
               <td>
                 <div class="row-btns">
+                  <button type="button" class="mini-btn mini-btn--gold" (click)="downloadInvoicePdf(inv)">
+                    ↓ PDF + QR AEAT
+                  </button>
                   <button type="button" class="mini-btn mini-btn--gold" (click)="downloadOfficialXml(inv)">
                     ↓ XML AEAT
                   </button>
                   <button type="button" class="mini-btn" (click)="previewXml(inv)">
-                    VER XML / QR
+                    VER XML
                   </button>
                   @if (inv.paymentStatus !== 'COBRADA') {
                     <button type="button" class="mini-btn mini-btn--green" (click)="collectInvoice(inv)">

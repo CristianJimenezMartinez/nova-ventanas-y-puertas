@@ -1,0 +1,13 @@
+{
+  "name": "nova-api",
+  "version": "1.0.0",
+  "description": "Backend Multitenant API & VeriFactu Engine for NOVA Ventanas y Puertas (Grupo Soto)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.16",
+    "pg": "^8.13.1"
+  }
+}

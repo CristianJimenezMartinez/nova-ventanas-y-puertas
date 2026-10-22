@@ -125,11 +125,18 @@
           </div>
         </div>
 
-        <!-- Botón Siempre Activo de Paso Directo de Almacén a Factura (REGLA CRÍTICA 5) -->
-        <div class="order-card__actions">
+        <!-- Botón Siempre Activo de Paso Directo de Almacén a Factura (REGLA CRÍTICA 5) + PDF Albarán -->
+        <div class="order-card__actions" style="display:flex;flex-wrap:wrap;gap:0.75rem;">
           <button
             type="button"
-            class="btn btn--champagne w-100"
+            class="btn btn--outline"
+            (click)="downloadDeliveryNotePdf(ord)">
+            ↓ PDF ALBARÁN ({{ ord.deliveryNoteCode }})
+          </button>
+          <button
+            type="button"
+            class="btn btn--champagne"
+            style="flex-grow:1;"
             (click)="emitInvoiceFromWarehouse(ord)">
             EMITIR FACTURA VERIFACTU DIRECTAMENTE DESDE ALMACÉN ({{ ord.totalAmountEur | number:'1.2-2' }} €) →
           </button>

@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { PortalStoreService } from '../../services/portal-store.service';
 import { PricingMatrixEngineService } from '../../services/pricing-matrix-engine.service';
 import { WindowSketchSvgService } from '../../services/window-sketch-svg.service';
+import { PortalPdfGeneratorService } from '../../services/portal-pdf-generator.service';
 import {
   FinishColorCategory,
   OpeningHandCode,
@@ -24,6 +25,7 @@ export class PortalQuotesComponent {
   readonly store = inject(PortalStoreService);
   private readonly pricingEngine = inject(PricingMatrixEngineService);
   private readonly sketchService = inject(WindowSketchSvgService);
+  private readonly pdfGenerator = inject(PortalPdfGeneratorService);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly router = inject(Router);
 
@@ -140,10 +142,10 @@ export class PortalQuotesComponent {
     );
   }
 
-  approveAndSendToWarehouse(): void {
+  private buildCurrentQuoteSnapshot(): PortalQuote {
     const totals = this.quoteTotals();
     const assessment = this.vatAssessment();
-    const newQuote: PortalQuote = {
+    return {
       id: `quo-${Date.now()}`,
       code: `PRE-2026-0${210 + this.store.quotes().length}`,
       clientName: this.clientName(),
@@ -166,7 +168,18 @@ export class PortalQuotesComponent {
       status: 'ACEPTADO_EN_PEDIDO',
       createdAtIso: new Date().toISOString()
     };
+  }
 
+  downloadQuotePdf(): void {
+    this.pdfGenerator.generateQuotePdf(this.buildCurrentQuoteSnapshot());
+  }
+
+  downloadFactoryOrderPdf(): void {
+    this.pdfGenerator.generateFactoryOrderPdf(this.buildCurrentQuoteSnapshot());
+  }
+
+  approveAndSendToWarehouse(): void {
+    const newQuote = this.buildCurrentQuoteSnapshot();
     this.store.saveQuoteAndConvertToOrder(newQuote);
     this.router.navigate(['/portal/almacen']);
   }

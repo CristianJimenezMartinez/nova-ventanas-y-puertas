@@ -101,6 +101,7 @@ export const NOVA_PDF_CATALOGS_DATA: NovaPdfCatalog[] = [
     pages: 98,
     category: 'VENTANAS & CORREDERAS',
     specs: ['Secciones a escala 1:1', 'Tablas de transmitancia Uw y acústica Rw', 'Límites dimensionales y herrajes'],
+    downloadUrl: '/catalogs/NOVA_Catalogo_Maestro_Sistemas_ES.pdf',
     requestSubject: 'Catálogo General de Sistemas Arquitectónicos (98 págs.)'
   },
   {
@@ -111,6 +112,7 @@ export const NOVA_PDF_CATALOGS_DATA: NovaPdfCatalog[] = [
     pages: 133,
     category: 'PUERTAS DE ENTRADA',
     specs: ['Más de 80 diseños de paneles', 'Tiradores integrados con LED', 'Cerraduras motorizadas y control de acceso'],
+    downloadUrl: '/catalogs/NOVA_Catalogo_Puertas_Seguridad_ES.pdf',
     requestSubject: 'Catálogo de Puertas de Entrada y Paneles (133 págs.)'
   },
   {
@@ -121,17 +123,19 @@ export const NOVA_PDF_CATALOGS_DATA: NovaPdfCatalog[] = [
     pages: 16,
     category: 'ACABADOS & TEXTURAS',
     specs: ['Acabados Spectral Ultramate', 'Maderas nobles y texturados arena', 'Certificación solar Cool-Colors'],
+    downloadUrl: '/catalogs/NOVA_Carta_Acabados_Folios_ES.pdf',
     requestSubject: 'Carta Técnica de Acabados y Folios (16 págs.)'
   },
   {
     id: 'cat-prescripcion-cte',
     code: 'DOSSIER 04 · EDICIÓN ESPAÑOL',
-    title: 'Manual Técnico de Prescripción para Arquitectos (CTE)',
-    subtitle: 'Guía de cumplimiento del Código Técnico de la Edificación (DB-HE, DB-HR, DB-SUA) e instalación en obra.',
+    title: 'Catálogo de Mallorquinas Arquitectónicas y Sistemas Skuro',
+    subtitle: 'Sistemas de oscurecimiento solar arquitectónico, mallorquinas orientables de aluminio y control bioclimático.',
     pages: 15,
-    category: 'INGENIERÍA & NORMATIVA',
-    specs: ['Cálculo de transmitancia por zona climática', 'Encuentros de obra y premarcos', 'Certificación energética y deducciones IRPF'],
-    requestSubject: 'Manual Técnico de Prescripción CTE (15 págs.)'
+    category: 'CONTROL SOLAR & MALLORQUINAS',
+    specs: ['Lamas orientables y fijas', ' Integración en fachada CTE DB-HE', 'Acabados Qualicoat Seaside'],
+    downloadUrl: '/catalogs/NOVA_Catalogo_Mallorquinas_Skuro_ES.pdf',
+    requestSubject: 'Catálogo de Mallorquinas Arquitectónicas y Sistemas Skuro (15 págs.)'
   }
 ];
 

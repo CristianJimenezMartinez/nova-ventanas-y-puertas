@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-and-deploy:
-    name: 🏗️ Compilar en Runner & Desplegar en VPS
+    name: 🏗️ Compilar en Runner & Desplegar en VPS (Frontend + nova-api :3006)
     runs-on: ubuntu-latest
 
     steps:
@@ -20,22 +20,27 @@ jobs:
           node-version: 22
           cache: 'npm'
 
-      - name: 📦 Instalar Dependencias en Runner
+      - name: 📦 Instalar Dependencias Frontend en Runner
         run: npm ci
 
-      - name: 🔨 Compilar Frontend Angular (SPA)
-        # CRÍTICO: Compilación con 16GB RAM en GitHub Actions Runner.
-        # NUNCA ejecutar npm run build en el VPS para evitar saturación de memoria.
+      - name: 🔨 Compilar Frontend Angular (SPA + Portal) en Runner (16GB RAM)
+        # CRÍTICO: Compilación exclusiva en GitHub Actions Runner.
         run: npm run build
 
-      - name: 🗜️ Empaquetar artefactos en tarball atómico
+      - name: 📦 Instalar Dependencias de Producción de nova-api en Runner
+        run: |
+          cd backend
+          npm install --omit=dev
+
+      - name: 🗜️ Empaquetar artefactos (Frontend + Backend + Nginx) en tarball atómico
         run: |
           mkdir -p package-staging
           cp -r dist/nova-ventanas-y-puertas/browser package-staging/
+          cp -r backend package-staging/
           cp nginx-nova.conf package-staging/
           cp nginx-nova-http.conf package-staging/
           cd package-staging
-          tar -czf ../deploy-bundle.tar.gz browser nginx-nova.conf nginx-nova-http.conf
+          tar -czf ../deploy-bundle.tar.gz browser backend nginx-nova.conf nginx-nova-http.conf
           cd ..
           rm -rf package-staging
           echo "📦 Bundle de despliegue generado con éxito:"
@@ -48,9 +53,9 @@ jobs:
           username: antigravity
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
-            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S mkdir -p /var/www/nova-ventanas-y-puertas /var/www/certbot
-            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S chown -R antigravity:www-data /var/www/nova-ventanas-y-puertas /var/www/certbot
-            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S chmod -R 775 /var/www/nova-ventanas-y-puertas /var/www/certbot
+            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S mkdir -p /var/www/nova-ventanas-y-puertas /var/www/nova-api /var/www/nova-storage/catalogs /var/www/certbot
+            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S chown -R antigravity:www-data /var/www/nova-ventanas-y-puertas /var/www/nova-api /var/www/nova-storage /var/www/certbot
+            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S chmod -R 775 /var/www/nova-ventanas-y-puertas /var/www/nova-api /var/www/nova-storage /var/www/certbot
 
       - name: 📤 Transferir tarball al VPS via SCP
         uses: appleboy/scp-action@v0.1.7
@@ -61,7 +66,7 @@ jobs:
           source: "deploy-bundle.tar.gz"
           target: "/var/www/nova-ventanas-y-puertas"
 
-      - name: 🚀 Extraer artefactos y recargar Nginx en VPS (Zero-Build en VPS)
+      - name: 🚀 Extraer artefactos, iniciar nova-api (:3006) y recargar Nginx (Zero-Build en VPS)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: 212.227.248.132
@@ -72,32 +77,37 @@ jobs:
             tar -xzf deploy-bundle.tar.gz
             rm -f deploy-bundle.tar.gz
 
-            # Asegurar permisos correctos para lectura directa por Nginx (www-data)
-            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S chown -R antigravity:www-data /var/www/nova-ventanas-y-puertas
-            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S chmod -R 775 /var/www/nova-ventanas-y-puertas
+            # Actualizar micro-backend nova-api ya compilado con node_modules de producción
+            cp -r /var/www/nova-ventanas-y-puertas/backend/* /var/www/nova-api/
+            rm -rf /var/www/nova-ventanas-y-puertas/backend
 
-            # Desactivar sitio default de Nginx si existiese para que no capture el puerto 80
-            if [ -f /etc/nginx/sites-enabled/default ]; then
-              echo "${{ secrets.VPS_PASSWORD }}" | sudo -S rm -f /etc/nginx/sites-enabled/default
-            fi
+            # Asegurar esquema PostgreSQL db_nova e iniciar/recargar nova-api en puerto 3006
+            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S -u postgres psql -f /var/www/nova-api/init-postgres.sql
+            cd /var/www/nova-api
+            pm2 describe nova-api > /dev/null 2>&1 && pm2 reload nova-api || PORT=3006 pm2 start server.js --name nova-api --max-memory-restart 180M
+            pm2 save
 
-            # Eliminar posibles marcas BOM y activar configuración de producción
+            # Permisos de lectura para Nginx
+            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S chown -R antigravity:www-data /var/www/nova-ventanas-y-puertas /var/www/nova-storage
+            echo "${{ secrets.VPS_PASSWORD }}" | sudo -S chmod -R 775 /var/www/nova-ventanas-y-puertas /var/www/nova-storage
+
+            # Activar configuración Nginx de producción (con /api/v1/ y /catalogs/)
             echo "${{ secrets.VPS_PASSWORD }}" | sudo -S sed -i '1s/^\xEF\xBB\xBF//' /var/www/nova-ventanas-y-puertas/nginx-nova.conf
             echo "${{ secrets.VPS_PASSWORD }}" | sudo -S cp /var/www/nova-ventanas-y-puertas/nginx-nova.conf /etc/nginx/sites-available/novaventanasypuertas.conf
             echo "${{ secrets.VPS_PASSWORD }}" | sudo -S ln -sf /etc/nginx/sites-available/novaventanasypuertas.conf /etc/nginx/sites-enabled/novaventanasypuertas.conf
 
-            # Validar y recargar Nginx sin afectar a los demás servicios
             echo "${{ secrets.VPS_PASSWORD }}" | sudo -S nginx -t
             echo "${{ secrets.VPS_PASSWORD }}" | sudo -S systemctl reload nginx
-            echo "✅ Despliegue completado con éxito."
+            echo "✅ Despliegue Full-Stack NOVA completado con éxito."
 
-      - name: 🧪 Smoke Test / Healthcheck Post-Despliegue
+      - name: 🧪 Smoke Test / Healthcheck Post-Despliegue (Web + Portal + API + DB)
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: 212.227.248.132
           username: antigravity
           password: ${{ secrets.VPS_PASSWORD }}
           script: |
-            echo "🔍 Probando respuesta HTTPS local en el VPS (.com y .es):"
-            curl -s -k -I -H "Host: novaventanasypuertas.com" https://127.0.0.1/
-            curl -s -k -I -H "Host: novaventanasypuertas.es" https://127.0.0.1/
+            echo "🔍 Probando Web Pública, Portal y API PostgreSQL db_nova:"
+            curl -s -k -I -H "Host: novaventanasypuertas.com" https://127.0.0.1/ | head -n 1
+            curl -s -k -I -H "Host: novaventanasypuertas.com" https://127.0.0.1/portal | head -n 1
+            curl -s -k -H "Host: novaventanasypuertas.com" https://127.0.0.1/api/v1/health
