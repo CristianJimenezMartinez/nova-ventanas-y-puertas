@@ -1,19 +1,20 @@
 <div class="ten-page">
   <div class="ten-header">
     <div>
-      <h1>Empresas, Usuarios y Seguridad</h1>
-      <p class="ten-subtitle">
-        Gestión de sedes/franquicias aisladas, usuarios por rol y seguridad de sesiones desde Central ({{ store.currentUser().email }}).
-      </p>
+      <h1>
+        {{ isSuperAdminView() ? 'Empresas y Usuarios' : 'Usuarios de la empresa · ' + security.activeTenant().commercialName }}
+      </h1>
     </div>
 
     <div class="ten-actions">
-      <button type="button" class="btn btn--outline" (click)="showNewUserModal.set(true)">
-        + Nuevo usuario
+      <button type="button" class="btn btn--champagne" (click)="openNewUserModal()">
+        + Añadir usuario a {{ isSuperAdminView() ? 'sede' : 'mi empresa' }}
       </button>
-      <button type="button" class="btn btn--champagne" (click)="showNewTenantModal.set(true)">
-        + Nueva empresa / sede
-      </button>
+      @if (isSuperAdminView()) {
+        <button type="button" class="btn btn--outline" (click)="showNewTenantModal.set(true)">
+          + Nueva empresa / sede
+        </button>
+      }
     </div>
   </div>
 
@@ -23,95 +24,96 @@
     </div>
   }
 
-  <!-- Bloque 1: Estado de Seguridad Activa -->
-  <div class="sec-grid tabular-nums">
-    <div class="sec-card">
-      <span class="sec-lbl">Autenticación y Contraseñas</span>
-      <strong>JWT HS256 + Cifrado scrypt</strong>
-      <span class="badge-ok">Protección activa</span>
+  <!-- Bloque exclusivo para Central Grupo Soto (SUPERADMIN): Gestión de Empresas / Sedes -->
+  @if (isSuperAdminView()) {
+    <div class="sec-grid tabular-nums">
+      <div class="sec-card">
+        <span class="sec-lbl">Autenticación y Contraseñas</span>
+        <strong>JWT HS256 + Cifrado scrypt</strong>
+        <span class="badge-ok">Protección activa</span>
+      </div>
+
+      <div class="sec-card">
+        <span class="sec-lbl">Aislamiento entre Sedes</span>
+        <strong>Strict Tenant Lock ({{ security.tenants().length }} sedes)</strong>
+        <span class="badge-ok">Datos separados en DB</span>
+      </div>
+
+      <div class="sec-card">
+        <span class="sec-lbl">Escudo Anti-Fuerza Bruta</span>
+        <strong>Rate-Limit IP + HSTS / CSP</strong>
+        <span class="badge-ok">Activo en API y Nginx</span>
+      </div>
+
+      <div class="sec-card">
+        <span class="sec-lbl">Control de Sesiones Abiertas</span>
+        <button type="button" class="btn btn--outline" (click)="security.revokeAllSessions()">
+          Cerrar sesiones remotas
+        </button>
+      </div>
     </div>
 
-    <div class="sec-card">
-      <span class="sec-lbl">Aislamiento entre Sedes</span>
-      <strong>Strict Tenant Lock ({{ security.tenants().length }} sedes)</strong>
-      <span class="badge-ok">Datos separados en DB</span>
-    </div>
+    <section class="ten-panel">
+      <div class="ten-panel__head">
+        <h2>Empresas y delegaciones activas ({{ security.tenants().length }})</h2>
+        <span class="badge-info">Sede activa: {{ security.activeTenant().commercialName }}</span>
+      </div>
 
-    <div class="sec-card">
-      <span class="sec-lbl">Escudo Anti-Fuerza Bruta y Cabeceras</span>
-      <strong>Rate-Limit IP + HSTS / CSP</strong>
-      <span class="badge-ok">Activo en API y Nginx</span>
-    </div>
-
-    <div class="sec-card">
-      <span class="sec-lbl">Control de Sesiones Abiertas</span>
-      <button type="button" class="btn btn--outline" (click)="security.revokeAllSessions()">
-        Cerrar sesiones remotas (Revocar tokens)
-      </button>
-    </div>
-  </div>
-
-  <!-- Bloque 2: Empresas / Franquicias / Delegaciones -->
-  <section class="ten-panel">
-    <div class="ten-panel__head">
-      <h2>Empresas y delegaciones activas ({{ security.tenants().length }})</h2>
-      <span class="badge-info">Sede en pantalla: {{ security.activeTenant().commercialName }}</span>
-    </div>
-
-    <div class="table-wrap">
-      <table class="ten-table tabular-nums">
-        <thead>
-          <tr>
-            <th>Empresa / Sede</th>
-            <th>Razón Social y CIF</th>
-            <th>Responsable</th>
-            <th>Política de Catálogo y Precios</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (t of security.tenants(); track t.id) {
+      <div class="table-wrap">
+        <table class="ten-table tabular-nums">
+          <thead>
             <tr>
-              <td>
-                <strong>{{ t.commercialName }}</strong>
-                <div class="cell-sub">{{ t.city }} · Serie facturas: {{ t.invoicePrefix }}</div>
-              </td>
-              <td>
-                <div>{{ t.legalName }}</div>
-                <div class="cell-sub">CIF: {{ t.cif }}</div>
-              </td>
-              <td>{{ t.adminEmail }}</td>
-              <td>
-                <button
-                  type="button"
-                  class="policy-btn"
-                  (click)="toggleCatalogPolicy(t)">
-                  {{ t.catalogPolicy === 'LOCKED_BY_CENTRAL' ? '🔒 Tarifa oficial fijada por Central' : '🔓 Margen comercial libre' }}
-                </button>
-              </td>
-              <td>
-                @if (security.activeTenantId() === t.id) {
-                  <span class="badge-ok">Viendo esta sede</span>
-                } @else {
+              <th>Empresa / Sede</th>
+              <th>Razón Social y CIF</th>
+              <th>Responsable</th>
+              <th>Política de Catálogo y Precios</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (t of security.tenants(); track t.id) {
+              <tr>
+                <td>
+                  <strong>{{ t.commercialName }}</strong>
+                  <div class="cell-sub">{{ t.city }} · Serie facturas: {{ t.invoicePrefix }}</div>
+                </td>
+                <td>
+                  <div>{{ t.legalName }}</div>
+                  <div class="cell-sub">CIF: {{ t.cif }}</div>
+                </td>
+                <td>{{ t.adminEmail }}</td>
+                <td>
                   <button
                     type="button"
-                    class="btn btn--champagne"
-                    (click)="enterTenantWorkspace(t)">
-                    Entrar en sede →
+                    class="policy-btn"
+                    (click)="toggleCatalogPolicy(t)">
+                    {{ t.catalogPolicy === 'LOCKED_BY_CENTRAL' ? '🔒 Tarifa oficial fijada por Central' : '🔓 Margen comercial libre' }}
                   </button>
-                }
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-  </section>
+                </td>
+                <td>
+                  @if (security.activeTenantId() === t.id) {
+                    <span class="badge-ok">Viendo esta sede</span>
+                  } @else {
+                    <button
+                      type="button"
+                      class="btn btn--champagne"
+                      (click)="enterTenantWorkspace(t)">
+                      Entrar en sede →
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
 
-  <!-- Bloque 3: Usuarios y Permisos por Rol -->
+  <!-- Bloque de Usuarios de la Empresa Activa (Tanto Gerente de la empresa como Superadmin) -->
   <section class="ten-panel">
     <div class="ten-panel__head">
-      <h2>Usuarios y permisos de acceso ({{ security.managedUsers().length }})</h2>
+      <h2>Usuarios de {{ security.activeTenant().commercialName }} ({{ visibleUsers().length }})</h2>
     </div>
 
     <div class="table-wrap">
@@ -119,26 +121,44 @@
         <thead>
           <tr>
             <th>Usuario</th>
-            <th>Empresa asignada</th>
-            <th>Rol</th>
-            <th>Pantallas visibles</th>
+            <th>Rol asignado</th>
+            <th>Pantallas a las que tiene acceso</th>
             <th>Estado</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          @for (u of security.managedUsers(); track u.id) {
+          @if (visibleUsers().length === 0) {
+            <tr>
+              <td colspan="5" class="cell-sub" style="padding:1.25rem 0.75rem;">
+                No hay usuarios adicionales en esta empresa. Pulsa «+ Añadir usuario» para crear empleados (Comercial, Almacén, Administración...).
+              </td>
+            </tr>
+          }
+          @for (u of visibleUsers(); track u.id) {
             <tr>
               <td>
                 <strong>{{ u.fullName }}</strong>
                 <div class="cell-sub">{{ u.email }}</div>
               </td>
-              <td>{{ getTenantLabel(u.tenantId) }}</td>
               <td><span class="badge-info">{{ u.role }}</span></td>
               <td>{{ getRolePermissionsSummary(u.role) }}</td>
               <td>
                 <span [class]="u.active ? 'badge-ok' : 'badge-warn'">
-                  {{ u.active ? 'Activo (v' + (u.tokenVersion || 1) + ')' : 'Inactivo' }}
+                  {{ u.active ? 'Activo' : 'Desactivado' }}
                 </span>
+              </td>
+              <td>
+                <div style="display:flex;gap:0.4rem;">
+                  <button type="button" class="policy-btn" (click)="toggleUserActive(u)">
+                    {{ u.active ? 'Desactivar' : 'Activar' }}
+                  </button>
+                  @if (u.email !== 'gerencia@gruposoto.es') {
+                    <button type="button" class="policy-btn" (click)="deleteUser(u)">
+                      ✕ Eliminar
+                    </button>
+                  }
+                </div>
               </td>
             </tr>
           }
@@ -147,8 +167,8 @@
     </div>
   </section>
 
-  <!-- Modal: Dar de alta Nueva Empresa / Franquicia -->
-  @if (showNewTenantModal()) {
+  <!-- Modal: Dar de alta Nueva Empresa / Franquicia (Exclusivo Superadmin) -->
+  @if (showNewTenantModal() && isSuperAdminView()) {
     <div class="modal-backdrop" (click)="showNewTenantModal.set(false)">
       <div class="modal-box" (click)="$event.stopPropagation()">
         <div class="modal-head">
@@ -159,19 +179,19 @@
         <div class="modal-grid">
           <label>
             <span>Nombre comercial de la sede</span>
-            <input type="text" [(ngModel)]="newCommercialName" />
+            <input type="text" [(ngModel)]="newCommercialName" placeholder="Ej: NOVA Delegación..." />
           </label>
           <label>
             <span>Ciudad / Zona</span>
-            <input type="text" [(ngModel)]="newCity" />
+            <input type="text" [(ngModel)]="newCity" placeholder="Ciudad" />
           </label>
           <label>
             <span>Razón Social (para sus facturas)</span>
-            <input type="text" [(ngModel)]="newLegalName" />
+            <input type="text" [(ngModel)]="newLegalName" placeholder="Sociedad SL" />
           </label>
           <label>
             <span>CIF / NIF</span>
-            <input type="text" [(ngModel)]="newCif" />
+            <input type="text" [(ngModel)]="newCif" placeholder="B00000000" />
           </label>
           <label>
             <span>Prefijo de numeración de facturas</span>
@@ -185,12 +205,12 @@
             </select>
           </label>
           <label>
-            <span>Correo del responsable de la sede</span>
-            <input type="email" [(ngModel)]="newAdminEmail" />
+            <span>Correo del gerente de la sede</span>
+            <input type="email" [(ngModel)]="newAdminEmail" placeholder="gerente@empresa.es" />
           </label>
           <label>
-            <span>Contraseña inicial (se cifra con scrypt)</span>
-            <input type="text" [(ngModel)]="newAdminPassword" />
+            <span>Contraseña inicial</span>
+            <input type="text" [(ngModel)]="newAdminPassword" placeholder="Contraseña inicial" />
           </label>
         </div>
 
@@ -204,45 +224,52 @@
     </div>
   }
 
-  <!-- Modal: Dar de alta Nuevo Usuario -->
+  <!-- Modal: Dar de alta Nuevo Usuario en la Empresa -->
   @if (showNewUserModal()) {
     <div class="modal-backdrop" (click)="showNewUserModal.set(false)">
       <div class="modal-box" (click)="$event.stopPropagation()">
         <div class="modal-head">
-          <h3>Añadir usuario y permisos</h3>
+          <h3>Añadir usuario en {{ security.activeTenant().commercialName }}</h3>
           <button type="button" class="close-btn" (click)="showNewUserModal.set(false)">✕</button>
         </div>
 
         <div class="modal-grid">
           <label>
             <span>Nombre y apellidos</span>
-            <input type="text" [(ngModel)]="newUserFullName" />
+            <input type="text" [(ngModel)]="newUserFullName" placeholder="Nombre del empleado" />
           </label>
           <label>
             <span>Correo de acceso</span>
-            <input type="email" [(ngModel)]="newUserEmail" />
+            <input type="email" [(ngModel)]="newUserEmail" placeholder="usuario@empresa.es" />
           </label>
-          <label>
-            <span>Empresa / Sede a la que pertenece</span>
-            <select [(ngModel)]="newUserTenantId">
-              @for (t of security.tenants(); track t.id) {
-                <option [value]="t.id">{{ t.commercialName }}</option>
+
+          @if (isSuperAdminView()) {
+            <label>
+              <span>Empresa / Sede asignada</span>
+              <select [(ngModel)]="newUserTenantId">
+                @for (t of security.tenants(); track t.id) {
+                  <option [value]="t.id">{{ t.commercialName }}</option>
+                }
+              </select>
+            </label>
+          }
+
+          <label [class.span-2]="!isSuperAdminView()">
+            <span>Rol y pantallas permitidas</span>
+            <select [(ngModel)]="newUserRole">
+              <option value="OFICINA_TECNICA">Comercial y Presupuestos (Inicio, Presupuestos y Correos)</option>
+              <option value="ALMACEN_OBRA">Almacén y Obra (Solo Almacén)</option>
+              <option value="ADMINISTRACION">Administración y Facturas (Inicio, Facturas y Almacén)</option>
+              <option value="GERENCIA">Gerente de Sede (Todo dentro de esta empresa)</option>
+              @if (isSuperAdminView()) {
+                <option value="SUPERADMIN">Superadministrador Central Grupo Soto</option>
               }
             </select>
           </label>
-          <label>
-            <span>Rol y permisos de menú</span>
-            <select [(ngModel)]="newUserRole">
-              <option value="GERENCIA">Gerente de Sede (Todo en su sede)</option>
-              <option value="OFICINA_TECNICA">Comercial y Presupuestos (Sin editar tarifas)</option>
-              <option value="ALMACEN_OBRA">Almacén y Obra (Solo Almacén)</option>
-              <option value="ADMINISTRACION">Administración y Facturas</option>
-              <option value="SUPERADMIN">Superadministrador Central Grupo Soto</option>
-            </select>
-          </label>
+
           <label class="span-2">
             <span>Contraseña de acceso</span>
-            <input type="text" [(ngModel)]="newUserPassword" />
+            <input type="text" [(ngModel)]="newUserPassword" placeholder="Contraseña para iniciar sesión" />
           </label>
         </div>
 

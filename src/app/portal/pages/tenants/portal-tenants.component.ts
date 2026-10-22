@@ -1,8 +1,8 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { PortalStoreService } from '../../services/portal-store.service';
-import { PortalTenantCompany, UserRole } from '../../models/portal.models';
+import { PortalManagedUser, PortalTenantCompany, UserRole } from '../../models/portal.models';
 
 @Component({
   selector: 'app-portal-tenants',
@@ -18,7 +18,13 @@ export class PortalTenantsComponent {
   readonly showNewTenantModal = signal<boolean>(false);
   readonly showNewUserModal = signal<boolean>(false);
 
-  // Campos para dar de alta Nueva Empresa / Franquicia
+  readonly isSuperAdminView = computed(() => this.store.currentUser().role === 'SUPERADMIN');
+  readonly visibleUsers = computed(() => {
+    const activeTid = this.security.activeTenantId();
+    return this.security.managedUsers().filter(u => u.tenantId === activeTid);
+  });
+
+  // Campos para dar de alta Nueva Empresa / Franquicia (Exclusivo Superadmin)
   readonly newCommercialName = signal<string>('');
   readonly newLegalName = signal<string>('');
   readonly newCif = signal<string>('');
@@ -30,14 +36,24 @@ export class PortalTenantsComponent {
   readonly newAdminEmail = signal<string>('');
   readonly newAdminPassword = signal<string>('');
 
-  // Campos para dar de alta Nuevo Usuario por Rol
+  // Campos para dar de alta Nuevo Usuario en la Empresa
   readonly newUserFullName = signal<string>('');
   readonly newUserEmail = signal<string>('');
   readonly newUserRole = signal<UserRole>('OFICINA_TECNICA');
   readonly newUserTenantId = signal<string>('tenant-nova-soto');
   readonly newUserPassword = signal<string>('');
 
+  openNewUserModal(): void {
+    this.newUserTenantId.set(this.security.activeTenantId());
+    this.newUserFullName.set('');
+    this.newUserEmail.set('');
+    this.newUserPassword.set('');
+    this.newUserRole.set('OFICINA_TECNICA');
+    this.showNewUserModal.set(true);
+  }
+
   createNewFranchise(): void {
+    if (!this.isSuperAdminView()) return;
     this.security.createFranchiseTenant({
       commercialName: this.newCommercialName(),
       legalName: this.newLegalName(),
@@ -52,26 +68,53 @@ export class PortalTenantsComponent {
   }
 
   enterTenantWorkspace(tenant: PortalTenantCompany): void {
+    if (!this.isSuperAdminView()) return;
     this.store.switchActiveTenant(tenant.id);
     this.security.securityBanner.set(
-      `Espacio de trabajo cambiado a "${tenant.commercialName}" (${tenant.cif}). Viendo sus datos aislados.`
+      `Espacio de trabajo cambiado a "${tenant.commercialName}" (${tenant.cif}). Viendo sus datos y usuarios aislados.`
     );
   }
 
   toggleCatalogPolicy(tenant: PortalTenantCompany): void {
+    if (!this.isSuperAdminView()) return;
     this.security.toggleTenantCatalogPolicy(tenant);
   }
 
   createNewUser(): void {
+    const email = this.newUserEmail().trim().toLowerCase();
+    if (!email) return;
+    const targetTenantId = this.isSuperAdminView()
+      ? this.newUserTenantId()
+      : this.security.activeTenantId();
+    const safeRole: UserRole =
+      !this.isSuperAdminView() && this.newUserRole() === 'SUPERADMIN'
+        ? 'GERENCIA'
+        : this.newUserRole();
+
     this.security.saveManagedUser({
-      tenantId: this.newUserTenantId(),
-      email: this.newUserEmail(),
-      fullName: this.newUserFullName(),
-      role: this.newUserRole(),
-      password: this.newUserPassword(),
+      tenantId: targetTenantId,
+      email,
+      fullName: this.newUserFullName().trim() || email,
+      role: safeRole,
+      password: this.newUserPassword() || 'Soto2026!Seguro',
       active: true
     });
     this.showNewUserModal.set(false);
+  }
+
+  toggleUserActive(user: PortalManagedUser): void {
+    this.security.saveManagedUser({
+      id: user.id,
+      tenantId: user.tenantId,
+      email: user.email,
+      fullName: user.fullName,
+      role: user.role,
+      active: !user.active
+    });
+  }
+
+  deleteUser(user: PortalManagedUser): void {
+    this.security.deleteManagedUser(user.id, user.email);
   }
 
   getTenantLabel(tenantId: string): string {

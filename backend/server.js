@@ -180,16 +180,23 @@ async function handleRequest(req, res) {
 
     // 4. Gestión Multi-Empresa / Franquicias (Listado y Alta con herencia de Catálogo Maestro)
     if (req.method === 'GET' && path === '/api/v1/tenants') {
+      const isSuper = !authUser || authUser.role === 'SUPERADMIN';
       const rows = await pool.query(
         `SELECT id, commercial_name AS "commercialName", legal_name AS "legalName",
                 cif, city, invoice_prefix AS "invoicePrefix",
                 catalog_policy AS "catalogPolicy", admin_email AS "adminEmail", active
-         FROM nova_tenants ORDER BY created_at ASC`
+         FROM nova_tenants
+         WHERE $1 = TRUE OR id = $2
+         ORDER BY created_at ASC`,
+        [isSuper, tenantId]
       );
       const usersRows = await pool.query(
         `SELECT id, tenant_id AS "tenantId", email, full_name AS "fullName",
                 role, active, token_version AS "tokenVersion"
-         FROM nova_users ORDER BY created_at ASC`
+         FROM nova_users
+         WHERE $1 = TRUE OR tenant_id = $2
+         ORDER BY created_at ASC`,
+        [isSuper, tenantId]
       );
       return sendJson(req, res, 200, {
         tenants: rows.rows,
@@ -283,11 +290,15 @@ async function handleRequest(req, res) {
       return sendJson(req, res, 201, { ok: true, tenantId: newTenantId });
     }
 
-    // 5. Alta y gestión de Usuarios por Rol y Empresa
+    // 5. Alta, edición y eliminación de Usuarios por Rol y Empresa (Aislados por Sede)
     if (req.method === 'POST' && path === '/api/v1/users') {
       const body = await readJsonBody(req);
       const email = String(body.email || '').trim().toLowerCase();
       if (!email) return sendJson(req, res, 400, { error: 'Correo obligatorio' });
+      const isSuper = !authUser || authUser.role === 'SUPERADMIN';
+      const targetTenant = isSuper ? body.tenantId || tenantId : tenantId;
+      const requestedRole = body.role || 'OFICINA_TECNICA';
+      const safeRole = !isSuper && requestedRole === 'SUPERADMIN' ? 'GERENCIA' : requestedRole;
       const hashed = hashPassword(body.password || 'Soto2026!Seguro');
       const id = body.id || `usr-${Date.now()}`;
       await pool.query(
@@ -301,15 +312,26 @@ async function handleRequest(req, res) {
            token_version = nova_users.token_version + 1`,
         [
           id,
-          body.tenantId || tenantId,
+          targetTenant,
           email,
           body.fullName || 'Usuario NOVA',
-          body.role || 'OFICINA_TECNICA',
+          safeRole,
           hashed,
           body.active !== false
         ]
       );
       return sendJson(req, res, 201, { ok: true, id });
+    }
+
+    if (req.method === 'POST' && path === '/api/v1/users/delete') {
+      const body = await readJsonBody(req);
+      const isSuper = !authUser || authUser.role === 'SUPERADMIN';
+      await pool.query(
+        `DELETE FROM nova_users
+         WHERE id = $1 AND LOWER(email) <> 'gerencia@gruposoto.es' AND ($2 = TRUE OR tenant_id = $3)`,
+        [body.id, isSuper, tenantId]
+      );
+      return sendJson(req, res, 200, { ok: true });
     }
 
     // 6. Obtener y Guardar Estado por Empresa (Tenant Aislado)

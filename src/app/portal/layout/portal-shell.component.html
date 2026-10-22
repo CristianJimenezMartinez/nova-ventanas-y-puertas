@@ -68,7 +68,9 @@
 
       @if (store.security.canAccessModule(store.currentUser().role, 'empresas')) {
         <a routerLink="/portal/empresas" routerLinkActive="sidebar-link--active" class="sidebar-link" (click)="closeMobileSidebar()">
-          <span class="link-text">Empresas y Usuarios</span>
+          <span class="link-text">
+            {{ store.currentUser().role === 'SUPERADMIN' ? 'Empresas y Usuarios' : 'Usuarios de mi empresa' }}
+          </span>
         </a>
       }
 

@@ -108,9 +108,8 @@ export class PortalSecurityService {
     if (moduleKey === 'documentacion') return true;
     switch (role) {
       case 'SUPERADMIN':
-        return true;
       case 'GERENCIA':
-        return moduleKey !== 'empresas';
+        return true;
       case 'OFICINA_TECNICA':
         return ['dashboard', 'presupuestos', 'correos'].includes(moduleKey);
       case 'ALMACEN_OBRA':
@@ -210,7 +209,34 @@ export class PortalSecurityService {
       .subscribe({
         next: () => {
           this.loadTenantsAndUsers();
-          this.securityBanner.set(`Usuario ${params.email} guardado y protegido con scrypt.`);
+          this.securityBanner.set(`✓ Usuario ${params.email} guardado en la empresa.`);
+        },
+        error: () => {
+          const newId = params.id || `usr-${Date.now()}`;
+          this.managedUsers.update(list => [
+            ...list.filter(u => u.email !== params.email && u.id !== newId),
+            {
+              id: newId,
+              tenantId: params.tenantId,
+              email: params.email,
+              fullName: params.fullName,
+              role: params.role,
+              active: params.active,
+              tokenVersion: 1
+            }
+          ]);
+        }
+      });
+  }
+
+  deleteManagedUser(userId: string, email: string): void {
+    this.managedUsers.update(list => list.filter(u => u.id !== userId));
+    this.http
+      .post('/api/v1/users/delete', { id: userId }, { headers: this.getAuthHeaders() })
+      .subscribe({
+        next: () => {
+          this.loadTenantsAndUsers();
+          this.securityBanner.set(`✓ Usuario ${email} eliminado.`);
         },
         error: () => {}
       });
