@@ -15,9 +15,7 @@ import { VeriFactuXmlService } from './verifactu-xml.service';
 import { PricingMatrixEngineService } from './pricing-matrix-engine.service';
 import { PortalSecurityService } from './portal-security.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class PortalStoreService {
   private readonly http = inject(HttpClient);
   private readonly verifactuXml = inject(VeriFactuXmlService);
@@ -63,12 +61,8 @@ export class PortalStoreService {
   readonly emailAccounts = signal<EmailAccountConfig[]>(INITIAL_EMAIL_ACCOUNTS);
   readonly emailMessages = signal<EmailMessageItem[]>(INITIAL_EMAIL_MESSAGES);
 
-  readonly totalInvoicedEur = computed(() =>
-    this.invoices().reduce((acc, inv) => acc + inv.totalImporteEur, 0)
-  );
-  readonly totalCollectedEur = computed(() =>
-    this.invoices().reduce((acc, inv) => acc + inv.cobradoEur, 0)
-  );
+  readonly totalInvoicedEur = computed(() => this.invoices().reduce((acc, inv) => acc + inv.totalImporteEur, 0));
+  readonly totalCollectedEur = computed(() => this.invoices().reduce((acc, inv) => acc + inv.cobradoEur, 0));
   readonly activeWarehouseCount = computed(() => this.warehouseOrders().length);
   readonly isSuperAdminAccount = computed(
     () => this.currentUser().email.toLowerCase() === 'gerencia@gruposoto.es' || this.currentUser().role === 'SUPERADMIN'
@@ -81,11 +75,7 @@ export class PortalStoreService {
   private hydrateFromPostgresDb(targetTenantId?: string): void {
     const headers = this.security.getAuthHeaders(targetTenantId);
     this.http
-      .get<{
-        hasStoredState: boolean;
-        state: Record<string, unknown> | null;
-        leads: CrmLeadItem[];
-      }>('/api/v1/state', { headers })
+      .get<{ hasStoredState: boolean; state: Record<string, unknown> | null; leads: CrmLeadItem[] }>('/api/v1/state', { headers })
       .subscribe({
         next: res => {
           if (res.hasStoredState && res.state) {
@@ -94,9 +84,7 @@ export class PortalStoreService {
             if (Array.isArray(st['quotes'])) this.quotes.set(st['quotes'] as PortalQuote[]);
             if (Array.isArray(st['warehouseOrders'])) this.warehouseOrders.set(st['warehouseOrders'] as WarehouseOrder[]);
             if (Array.isArray(st['invoices'])) this.invoices.set(st['invoices'] as VeriFactuInvoice[]);
-            if (Array.isArray(st['emailAccounts'])) {
-              this.emailAccounts.set(st['emailAccounts'] as EmailAccountConfig[]);
-            }
+            if (Array.isArray(st['emailAccounts'])) this.emailAccounts.set(st['emailAccounts'] as EmailAccountConfig[]);
             if (Array.isArray(st['emailMessages'])) this.emailMessages.set(st['emailMessages'] as EmailMessageItem[]);
             if (Array.isArray(st['leads'])) this.leads.set(st['leads'] as CrmLeadItem[]);
           } else {
@@ -107,9 +95,7 @@ export class PortalStoreService {
           }
           this.dbSyncedStatus.set('SINCRONIZADO_DB_NOVA');
         },
-        error: () => {
-          this.dbSyncedStatus.set('MODO_LOCAL');
-        }
+        error: () => this.dbSyncedStatus.set('MODO_LOCAL')
       });
   }
 
@@ -140,11 +126,7 @@ export class PortalStoreService {
         tenantName: tenant.legalName,
         branchName: tenant.commercialName
       }));
-      this.verifactuVault.update(v => ({
-        ...v,
-        nifEmisor: tenant.cif,
-        razonSocialEmisor: tenant.legalName
-      }));
+      this.verifactuVault.update(v => ({ ...v, nifEmisor: tenant.cif, razonSocialEmisor: tenant.legalName }));
     }
     this.quotes.set([]);
     this.warehouseOrders.set([]);
@@ -155,21 +137,19 @@ export class PortalStoreService {
       tenantId === 'tenant-nova-soto'
         ? INITIAL_EMAIL_ACCOUNTS
         : tenant?.adminEmail
-          ? [
-              {
-                id: `mail-${tenant.id}`,
-                aliasName: tenant.commercialName,
-                emailAddress: tenant.adminEmail,
-                department: 'GENERAL',
-                smtpHost: 'smtp.ionos.es',
-                smtpPort: 587,
-                imapHost: 'imap.ionos.es',
-                imapPort: 993,
-                useTls: true,
-                status: 'CONECTADO_OK',
-                signatureHtml: `${tenant.commercialName} · ${tenant.legalName}`
-              }
-            ]
+          ? [{
+              id: `mail-${tenant.id}`,
+              aliasName: tenant.commercialName,
+              emailAddress: tenant.adminEmail,
+              department: 'GENERAL',
+              smtpHost: 'smtp.ionos.es',
+              smtpPort: 587,
+              imapHost: 'imap.ionos.es',
+              imapPort: 993,
+              useTls: true,
+              status: 'CONECTADO_OK',
+              signatureHtml: `${tenant.commercialName} · ${tenant.legalName}`
+            }]
           : []
     );
     this.hydrateFromPostgresDb(tenantId);
@@ -188,7 +168,11 @@ export class PortalStoreService {
     this.currentUser.update(u => ({ ...u, role, roleLabel }));
   }
 
-  loginWithCredentials(email: string, password?: string): void {
+  loginWithCredentials(
+    email: string,
+    password?: string,
+    onDone?: (ok: boolean, role: UserRole, errorMsg?: string) => void
+  ): void {
     const labels: Record<UserRole, string> = {
       SUPERADMIN: 'Superadministrador Central · Grupo Soto',
       GERENCIA: 'Gerente de Sede',
@@ -199,38 +183,40 @@ export class PortalStoreService {
     const normalizedEmail = (email || 'gerencia@gruposoto.es').trim().toLowerCase();
     const fallbackRole: UserRole = normalizedEmail === 'gerencia@gruposoto.es' ? 'SUPERADMIN' : 'GERENCIA';
     this.http
-      .post<{
-        ok: boolean;
-        token?: string;
-        user?: { id: string; email: string; fullName: string; role: UserRole; tenantId: string };
-      }>('/api/v1/auth/login', { email: normalizedEmail, password })
+      .post<{ ok: boolean; error?: string; token?: string; user?: { id: string; email: string; fullName: string; role: UserRole; tenantId: string } }>(
+        '/api/v1/auth/login',
+        { email: normalizedEmail, password }
+      )
       .subscribe({
         next: res => {
           if (res.token) this.security.saveSessionToken(res.token);
           if (res.user) {
             const mappedRole: UserRole = labels[res.user.role] ? res.user.role : fallbackRole;
             this.currentUser.update(u => ({
-              ...u,
-              id: res.user!.id,
-              email: res.user!.email,
-              fullName: res.user!.fullName,
-              role: mappedRole,
-              roleLabel: labels[mappedRole],
-              tenantId: res.user!.tenantId
+              ...u, id: res.user!.id, email: res.user!.email, fullName: res.user!.fullName,
+              role: mappedRole, roleLabel: labels[mappedRole], tenantId: res.user!.tenantId
             }));
+            this.isAuthenticated.set(true);
             this.switchActiveTenant(res.user.tenantId);
+            onDone?.(true, mappedRole);
+          } else {
+            onDone?.(false, fallbackRole, res.error || 'Error de acceso');
           }
         },
-        error: () => {}
+        error: err => {
+          const msg = err?.error?.error;
+          if (msg) {
+            onDone?.(false, fallbackRole, msg);
+          } else {
+            this.currentUser.update(u => ({
+              ...u, fullName: normalizedEmail === 'gerencia@gruposoto.es' ? 'Gerencia General · Grupo Soto' : normalizedEmail,
+              email: normalizedEmail, role: fallbackRole, roleLabel: labels[fallbackRole]
+            }));
+            this.isAuthenticated.set(true);
+            onDone?.(true, fallbackRole);
+          }
+        }
       });
-    this.currentUser.update(u => ({
-      ...u,
-      fullName: normalizedEmail === 'gerencia@gruposoto.es' ? 'Gerencia General · Grupo Soto' : normalizedEmail,
-      email: normalizedEmail,
-      role: fallbackRole,
-      roleLabel: labels[fallbackRole]
-    }));
-    this.isAuthenticated.set(true);
   }
 
   addCatalogSeries(newSeries: CatalogSeries): void {
@@ -246,15 +232,9 @@ export class PortalStoreService {
       list.map(ord => {
         if (ord.id !== orderId) return ord;
         const updated = { ...ord, [part]: !ord[part], updatedAtIso: new Date().toISOString() };
-        const allReady =
-          updated.carpentryReceived &&
-          updated.glassReceived &&
-          updated.shutterMotorReceived &&
-          updated.accessoriesReceived;
+        const allReady = updated.carpentryReceived && updated.glassReceived && updated.shutterMotorReceived && updated.accessoriesReceived;
         updated.operationalStatus = allReady
-          ? updated.circuitType === 'SUMINISTRO_SIN_MONTAJE'
-            ? 'LISTO_RECOGIDA_ENTREGA'
-            : 'COMPLETO_EN_ALMACEN'
+          ? (updated.circuitType === 'SUMINISTRO_SIN_MONTAJE' ? 'LISTO_RECOGIDA_ENTREGA' : 'COMPLETO_EN_ALMACEN')
           : 'RECIBIDO_PARCIAL';
         return updated;
       })
@@ -308,7 +288,8 @@ export class PortalStoreService {
   }): VeriFactuInvoice {
     const currentList = this.invoices();
     const nextNum = 2026001 + currentList.length;
-    const prefix = params.invoiceType === 'R1_RECTIFICATIVA' ? 'RECT' : 'FAC';
+    const tenantPrefix = this.security.activeTenant()?.invoicePrefix || 'FAC';
+    const prefix = params.invoiceType === 'R1_RECTIFICATIVA' ? 'RECT' : tenantPrefix;
     const seriesAndNumber = `${prefix}-${nextNum}`;
     const issueDateIso = new Date().toISOString();
 
@@ -369,6 +350,12 @@ export class PortalStoreService {
     };
 
     this.invoices.update(list => [newInv, ...list]);
+    if (params.orderCode) {
+      const finState = params.invoiceType === 'ANTICIPO_OBRA' ? 'ANTICIPO_50_FACTURADO' : 'FACTURADO_TOTAL';
+      this.warehouseOrders.update(list =>
+        list.map(o => (o.orderCode === params.orderCode ? { ...o, financialStatus: finState } : o))
+      );
+    }
     this.persistStateToPostgresDb();
     return newInv;
   }
@@ -407,6 +394,26 @@ export class PortalStoreService {
 
   saveQuoteAndConvertToOrder(quote: PortalQuote): void {
     this.quotes.update(list => [quote, ...list.filter(q => q.id !== quote.id)]);
+    const existing = this.warehouseOrders().find(o => o.quoteCode === quote.code && quote.code !== 'DIRECTO');
+    if (existing) {
+      this.warehouseOrders.update(list =>
+        list.map(o =>
+          o.id !== existing.id
+            ? o
+            : {
+                ...o,
+                clientName: quote.clientName || o.clientName,
+                clientNif: quote.clientNif || o.clientNif,
+                workAddress: quote.workAddress || o.workAddress,
+                unitsCount: Math.max(1, quote.holes.reduce((acc, h) => acc + h.quantity, 0)),
+                totalAmountEur: quote.totalPvpEur,
+                updatedAtIso: new Date().toISOString()
+              }
+        )
+      );
+      this.persistStateToPostgresDb();
+      return;
+    }
     const seq = 1 + this.warehouseOrders().length;
     const newOrder: WarehouseOrder = {
       id: `ord-${Date.now()}`,
@@ -417,7 +424,7 @@ export class PortalStoreService {
       workAddress: quote.workAddress || '',
       circuitType: quote.projectType === 'SOLO_SUMINISTRO' ? 'SUMINISTRO_SIN_MONTAJE' : 'FABRICA_TERMINADA',
       assignedCaballete: `CABALLETE A-${String(seq).padStart(2, '0')}`,
-      unitsCount: quote.holes.reduce((acc, h) => acc + h.quantity, 0),
+      unitsCount: Math.max(1, quote.holes.reduce((acc, h) => acc + h.quantity, 0)),
       totalAmountEur: quote.totalPvpEur,
       carpentryReceived: false,
       glassReceived: false,
@@ -442,9 +449,7 @@ export class PortalStoreService {
           (lead.nif && l.nif && l.nif.toLowerCase() === lead.nif.toLowerCase())
       );
       if (existingIdx >= 0) {
-        return list.map((item, idx) =>
-          idx === existingIdx ? { ...item, ...lead, fullName: cleanName } : item
-        );
+        return list.map((item, idx) => (idx === existingIdx ? { ...item, ...lead, fullName: cleanName } : item));
       }
       const item: CrmLeadItem = {
         ...lead,

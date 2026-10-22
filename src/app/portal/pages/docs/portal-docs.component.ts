@@ -92,9 +92,9 @@ export class PortalDocsComponent {
         },
         {
           stepNumber: 3,
-          heading: 'Subir o bajar precios por porcentaje (%)',
+          heading: 'Fijar tu Ganancia por Porcentaje (%) o Sumar/Restar en Euros (€)',
           detail:
-            'Si un fabricante anuncia una subida de tarifa (por ejemplo, +4,5%), escribe 4.5 en "Modificar tarifa (%)" y pulsa "Aplicar". Todos los precios de esa serie se recalculan automáticamente.'
+            'En Catálogo puedes fijar tu "Ganancia (%)" comercial por defecto sobre el coste base y también modificar toda una tabla por porcentaje (%) o sumando/restando un importe fijo en euros (€).'
         },
         {
           stepNumber: 4,
@@ -110,23 +110,23 @@ export class PortalDocsComponent {
     {
       id: 'presupuestos-croquis',
       category: '3. Presupuestos',
-      title: 'Cómo hacer un presupuesto por huecos y descargar el PDF o la Orden de Taller',
+      title: 'Cómo seleccionar clientes, ajustar ganancia (% o €) y generar PDF / Orden de Taller',
       summary:
-        'Configuración ventana por ventana con dibujo en vivo, cálculo de IVA (10% reforma vs 21%) y generación de documentos.',
+        'Selector de clientes guardados, configuración ventana por ventana con margen en % y €, cálculo de IVA y paso directo a Almacén.',
       routeLink: '/portal/presupuestos',
       routeLabel: 'Ir a Presupuestos',
       steps: [
         {
           stepNumber: 1,
-          heading: 'Rellenar los datos de la ventana (Posición)',
+          heading: 'Seleccionar un cliente guardado o guardar uno nuevo',
           detail:
-            'Escribe la estancia (ej. Dormitorio principal), elige la serie, pon el ancho y alto en milímetros, las unidades iguales, la mano de apertura vista desde dentro, el acabado, el vidrio y la persiana.'
+            'Arriba en "Datos del cliente y obra" puedes desplegar "-- Seleccionar cliente guardado --" para autorrellenar Nombre, NIF/CIF, Teléfono, Correo y Dirección en un clic, o escribir uno nuevo y pulsar "+ Guardar en mis clientes".'
         },
         {
           stepNumber: 2,
-          heading: 'Revisar el dibujo y alertas de seguridad',
+          heading: 'Configurar medidas y ajustar ganancia en % o en €',
           detail:
-            'A la derecha verás el dibujo técnico de la ventana actualizarse en tiempo real y el desglose de costes. Si marcas "Antepecho < 90 cm" con un vidrio simple, el sistema te mostrará un aviso recomendando vidrio laminar de seguridad.'
+            'Introduce estancia, serie, ancho, alto, vidrio y persiana. Puedes ajustar tu "Ganancia (%)", "Sumar / Restar (€)" o escribir directamente el "Precio final / ud (€)". También puedes editar el precio o unidades en las filas ya añadidas y aplicar un ajuste al total en % o €.'
         },
         {
           stepNumber: 3,
@@ -224,71 +224,59 @@ export class PortalDocsComponent {
     {
       id: 'correos-smtp',
       category: '6. Correos',
-      title: 'Cómo conectar cuentas de correo propias y enviar documentos con plantillas',
+      title: 'Cómo gestionar las cuentas de correo corporativas de tu sede',
       summary:
-        'Configuración de buzones corporativos (@gruposoto.es y @novaventanasypuertas.com) y envío rápido vinculado a cada obra.',
+        'Directorio de buzones corporativos exclusivos de la empresa activa con aislamiento total entre sedes.',
       routeLink: '/portal/correos',
       routeLabel: 'Ir a Correos',
       steps: [
         {
           stepNumber: 1,
-          heading: 'Añadir una nueva cuenta de correo',
+          heading: 'Añadir una cuenta de correo de tu empresa',
           detail:
-            'Pulsa "+ Añadir cuenta" arriba a la derecha. Introduce el nombre del departamento, la dirección de correo, el servidor SMTP (ej. smtp.ionos.es, puerto 587), el servidor IMAP (imap.ionos.es, puerto 993) y la firma.'
+            'Pulsa "+ Añadir cuenta" arriba a la derecha. Introduce el nombre o alias, la dirección de correo de tu sede, el departamento y el servidor de correo.'
         },
         {
           stepNumber: 2,
-          heading: 'Usar las plantillas rápidas de envío',
+          heading: 'Privacidad estricta por sede',
           detail:
-            'En el bloque "Nuevo mensaje", pulsa uno de los 3 botones superiores ("Presupuesto", "Almacén" o "Factura") para que el asunto y el texto se rellenen automáticamente con un formato profesional.'
-        },
-        {
-          stepNumber: 3,
-          heading: 'Enviar y consultar el historial por expediente',
-          detail:
-            'Elige desde qué cuenta quieres enviar (por ejemplo, gerencia@gruposoto.es o presupuestos@novaventanasypuertas.com), indica el código de expediente y pulsa "Enviar correo". Quedará registrado en la columna derecha "Enviados".'
+            'Cada empresa o franquicia ve únicamente sus propias cuentas de correo corporativas y nunca los buzones de Central ni de otras delegaciones.'
         }
       ],
       tips: [
-        'Ya tienes preconfiguradas las cuentas de gerencia@gruposoto.es, presupuestos@, administracion@ y compras@novaventanasypuertas.com.'
+        'Puedes eliminar o añadir cuentas de correo de tu propia sede en cualquier momento.'
       ]
     },
     {
       id: 'empresas-seguridad',
       category: '7. Empresas, Usuarios y Seguridad',
-      title: 'Cómo dar de alta nuevas empresas/franquicias, usuarios por rol y blindar accesos',
+      title: 'Cómo gestionar los usuarios de tu empresa o dar de alta nuevas franquicias',
       summary:
-        'Funcionamiento del modelo Central + Delegaciones (tipo franquicia), herencia del catálogo maestro y revocación de sesiones.',
+        'Autogestión de empleados para cada empresa (Gerencia) y control global de sedes para Central (Superadmin).',
       routeLink: '/portal/empresas',
-      routeLabel: 'Ir a Empresas y Usuarios',
+      routeLabel: 'Ir a Usuarios / Empresas',
       steps: [
         {
           stepNumber: 1,
-          heading: 'Dar de alta una nueva Empresa / Franquicia en 30 segundos',
+          heading: 'Cómo añade una empresa a sus propios trabajadores (Gerencia)',
           detail:
-            'En Empresas y Usuarios pulsa "+ Nueva empresa / sede". Indica su nombre comercial, Razón Social, CIF, prefijo de facturas y el correo del responsable. El sistema crea su espacio aislado en base de datos y le copia automáticamente el Catálogo Maestro de tarifas de Central.'
+            'El responsable de cada empresa entra en "Usuarios de mi empresa" en el menú lateral y pulsa "+ Añadir usuario". Solo tiene que indicar Nombre, Correo, Contraseña y Puesto (Comercial y Presupuestos, Almacén y Obra, Administración y Facturas o Gerente de Sede).'
         },
         {
           stepNumber: 2,
-          heading: 'Elegir si la sede tiene Tarifa Fijada por Central o Margen Libre',
+          heading: 'Activar, suspender o eliminar empleados al instante',
           detail:
-            'En la tabla de empresas puedes alternar con un clic entre "🔒 Tarifa oficial fijada por Central" (usan tus precios oficiales sin tocarlos) o "🔓 Margen comercial libre".'
+            'En la tabla de usuarios de su empresa, el gerente puede pausar el acceso de un trabajador ("Suspender" / "Activar") o eliminarlo ("✕") sin ver nunca a otras empresas del grupo.'
         },
         {
           stepNumber: 3,
-          heading: 'Cambiar de sede en tiempo real desde la barra superior',
+          heading: 'Alta de nuevas Empresas / Franquicias (exclusivo Central Grupo Soto)',
           detail:
-            'Entrando como gerencia@gruposoto.es, tienes arriba a la derecha el selector "Sede: ..." para entrar en un clic a cualquier delegación y ver sus presupuestos, almacén y facturación sin pedirles su contraseña.'
-        },
-        {
-          stepNumber: 4,
-          heading: 'Crear usuarios por rol y cerrar sesiones remotas',
-          detail:
-            'Con "+ Nuevo usuario" das de alta empleados indicando su rol (que oculta automáticamente las secciones del menú que no les corresponden). Si un empleado causa baja o pierde un dispositivo, pulsa "Cerrar sesiones remotas (Revocar tokens)" para invalidar al instante todos los accesos anteriores.'
+            'Entrando con la cuenta maestra gerencia@gruposoto.es puedes crear nuevas sedes/franquicias (que reciben automáticamente su primer usuario Gerente y el Catálogo Maestro) y cambiar de sede en vivo desde la barra superior.'
         }
       ],
       tips: [
-        'Cada empresa tiene sus propios clientes, presupuestos, almacén y serie de facturación VeriFactu 100% separados en PostgreSQL (Strict Tenant Lock).'
+        'Cada empresa tiene sus propios clientes, presupuestos, almacén, correos, usuarios y serie de facturación VeriFactu 100% separados en PostgreSQL.'
       ]
     }
   ];

@@ -5,6 +5,12 @@
       <p class="login-sub">Introduce tu correo corporativo y contraseña.</p>
     </div>
 
+    @if (errorMsg()) {
+      <div style="border:1px solid #ef4444;color:#b91c1c;background:rgba(239,68,68,0.08);padding:0.65rem 0.85rem;font-size:0.86rem;margin-bottom:0.85rem;">
+        {{ errorMsg() }}
+      </div>
+    }
+
     <div class="login-form">
       <div class="field-group">
         <label for="loginEmail">Correo corporativo</label>
@@ -13,7 +19,7 @@
 
       <div class="field-group">
         <label for="loginPassword">Contraseña</label>
-        <input id="loginPassword" type="password" [(ngModel)]="password" class="login-input" />
+        <input id="loginPassword" type="password" [(ngModel)]="password" class="login-input" (keyup.enter)="enterPortal()" />
       </div>
 
       <button type="button" class="btn btn--champagne w-100" (click)="enterPortal()">

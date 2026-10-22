@@ -272,7 +272,14 @@ export class PortalQuotesComponent {
     );
   }
 
+  private ensureHolesPopulated(): void {
+    if (this.holes().length === 0) {
+      this.holes.set([this.liveHoleCalculation()]);
+    }
+  }
+
   private buildCurrentQuoteSnapshot(): PortalQuote {
+    this.ensureHolesPopulated();
     const totals = this.quoteTotals();
     const assessment = this.vatAssessment();
     const seq = 1 + this.store.quotes().length;
@@ -301,11 +308,7 @@ export class PortalQuotesComponent {
     };
   }
 
-  saveCurrentQuote(): void {
-    const q = this.buildCurrentQuoteSnapshot();
-    this.activeQuoteId.set(q.id);
-    this.activeQuoteCode.set(q.code);
-    this.store.saveQuoteOnly(q);
+  private persistClientIfPresent(refLabel: string): void {
     if (this.clientName().trim()) {
       this.store.registerWebLead({
         fullName: this.clientName().trim(),
@@ -314,9 +317,17 @@ export class PortalQuotesComponent {
         email: this.clientEmail().trim(),
         city: this.workAddress().trim() || 'Murcia',
         projectType: this.projectType(),
-        recommendedSystem: `Presupuesto ${q.code}`
+        recommendedSystem: refLabel
       });
     }
+  }
+
+  saveCurrentQuote(): void {
+    const q = this.buildCurrentQuoteSnapshot();
+    this.activeQuoteId.set(q.id);
+    this.activeQuoteCode.set(q.code);
+    this.store.saveQuoteOnly(q);
+    this.persistClientIfPresent(`Presupuesto ${q.code}`);
     this.statusMessage.set(`✓ Presupuesto ${q.code} y datos del cliente (${q.clientName}) guardados.`);
   }
 
@@ -363,7 +374,13 @@ export class PortalQuotesComponent {
 
   approveAndSendToWarehouse(): void {
     const newQuote = { ...this.buildCurrentQuoteSnapshot(), status: 'ACEPTADO_EN_PEDIDO' as const };
+    this.persistClientIfPresent(`Pedido desde ${newQuote.code}`);
     this.store.saveQuoteAndConvertToOrder(newQuote);
+    this.router.navigate(['/portal/almacen']);
+  }
+
+  sendSavedQuoteToWarehouse(q: PortalQuote): void {
+    this.store.saveQuoteAndConvertToOrder({ ...q, status: 'ACEPTADO_EN_PEDIDO' });
     this.router.navigate(['/portal/almacen']);
   }
 }

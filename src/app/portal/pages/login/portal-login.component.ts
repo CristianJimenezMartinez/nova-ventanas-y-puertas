@@ -17,9 +17,16 @@ export class PortalLoginComponent {
 
   readonly email = signal<string>('gerencia@gruposoto.es');
   readonly password = signal<string>('Soto2026!Seguro');
+  readonly errorMsg = signal<string>('');
 
   enterPortal(): void {
-    this.store.loginWithCredentials(this.email(), this.password());
-    this.router.navigate(['/portal/dashboard']);
+    this.errorMsg.set('');
+    this.store.loginWithCredentials(this.email(), this.password(), (ok, role, err) => {
+      if (!ok) {
+        this.errorMsg.set(err || 'Credenciales incorrectas.');
+        return;
+      }
+      this.router.navigate([role === 'ALMACEN_OBRA' ? '/portal/almacen' : '/portal/dashboard']);
+    });
   }
 }
