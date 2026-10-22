@@ -20,7 +20,7 @@
 
 .inv-title {
   font-size: 1.55rem;
-  font-weight: 300;
+  font-weight: 600;
   color: var(--p-text);
   margin-top: 0.3rem;
 }
@@ -36,7 +36,7 @@
   border: 1px solid var(--p-accent);
   color: var(--p-text);
   padding: 0.85rem 1.15rem;
-  font-size: 0.84rem;
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
@@ -62,10 +62,9 @@
   cursor: pointer;
 
   .mode-tag {
-    font-size: 0.62rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    color: var(--p-accent);
+    font-size: 0.8125rem;
+    font-weight: 600;
+        color: var(--p-accent);
   }
 
   strong {
@@ -74,7 +73,7 @@
   }
 
   p {
-    font-size: 0.78rem;
+    font-size: 0.8125rem;
     color: var(--p-text-sec);
     line-height: 1.45;
     margin: 0;
@@ -114,10 +113,9 @@
   th {
     text-align: left;
     padding: 0.75rem;
-    font-size: 0.62rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    color: var(--p-text-sec);
+    font-size: 0.8125rem;
+    font-weight: 600;
+        color: var(--p-text-sec);
     border-bottom: 1px solid var(--p-border);
   }
 
@@ -134,7 +132,7 @@
   }
 
   .cell-sub {
-    font-size: 0.7rem;
+    font-size: 0.8125rem;
     color: var(--p-text-sec);
     margin-top: 0.2rem;
   }
@@ -149,10 +147,9 @@
 .pay-pill {
   display: inline-block;
   padding: 0.25rem 0.55rem;
-  font-size: 0.64rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  border: 1px solid var(--p-border);
+  font-size: 0.8125rem;
+  font-weight: 600;
+    border: 1px solid var(--p-border);
 }
 
 .pay-pill {
@@ -176,7 +173,7 @@
 }
 
 .hash-line {
-  font-size: 0.68rem;
+  font-size: 0.8125rem;
   color: var(--p-text-sec);
 
   code {
@@ -196,10 +193,9 @@
   border: 1px solid var(--p-border);
   color: var(--p-text);
   font-family: var(--font-family);
-  font-size: 0.66rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  padding: 0.4rem 0.65rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+    padding: 0.4rem 0.65rem;
   cursor: pointer;
 
   &--gold {
@@ -227,7 +223,7 @@
 
   .xml-code {
     margin: 0;
-    font-size: 0.74rem;
+    font-size: 0.8125rem;
     color: #F4F0E9;
     overflow-x: auto;
     line-height: 1.5;
@@ -283,10 +279,9 @@
     gap: 0.3rem;
 
     span {
-      font-size: 0.62rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      color: var(--p-text-sec);
+      font-size: 0.8125rem;
+      font-weight: 600;
+            color: var(--p-text-sec);
     }
   }
 
@@ -308,7 +303,7 @@
   border: 1px solid var(--p-border);
   color: var(--p-text);
   font-family: var(--font-family);
-  font-size: 0.84rem;
+  font-size: 0.875rem;
   padding: 0.65rem 0.85rem;
   outline: none;
 }

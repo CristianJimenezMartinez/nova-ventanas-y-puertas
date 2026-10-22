@@ -121,14 +121,14 @@ export class WindowSketchSvgService {
         ? `
       <rect x="${x0}" y="${y0}" width="${drawW}" height="${boxDrawH}" fill="#1A1A1A" stroke="${champagne}" stroke-width="1.5"/>
       <line x1="${x0 + 6}" y1="${y0 + Math.round(boxDrawH / 2)}" x2="${x0 + drawW - 6}" y2="${y0 + Math.round(boxDrawH / 2)}" stroke="rgba(198,173,130,0.45)" stroke-width="1" stroke-dasharray="3 3"/>
-      <text x="${x0 + Math.round(drawW / 2)}" y="${y0 + Math.round(boxDrawH / 2) + 3}" text-anchor="middle" fill="${champagne}" font-size="8" font-family="Manrope, sans-serif" letter-spacing="1">CAJÓN ${boxMm} MM</text>
+      <text x="${x0 + Math.round(drawW / 2)}" y="${y0 + Math.round(boxDrawH / 2) + 3}" text-anchor="middle" fill="${champagne}" font-size="8" font-family="Inter, sans-serif" letter-spacing="1">CAJÓN ${boxMm} MM</text>
     `
         : '';
 
     return `
       <svg viewBox="0 0 360 280" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
         <rect width="360" height="280" fill="#181816"/>
-        <text x="14" y="18" fill="#C6AD82" font-size="9.5" font-weight="600" font-family="Manrope, sans-serif">Vista interior (${wMm} × ${hMm} mm)</text>
+        <text x="14" y="18" fill="#C6AD82" font-size="9.5" font-weight="600" font-family="Inter, sans-serif">Vista interior (${wMm} × ${hMm} mm)</text>
         ${shutterSvg}
         <!-- Marco Exterior -->
         <rect x="${x0}" y="${winY}" width="${drawW}" height="${winH}" fill="none" stroke="${frameStroke}" stroke-width="3"/>
@@ -137,12 +137,12 @@ export class WindowSketchSvgService {
         <line x1="${x0}" y1="${y0 + drawH + 16}" x2="${x0 + drawW}" y2="${y0 + drawH + 16}" stroke="${champagne}" stroke-width="1"/>
         <line x1="${x0}" y1="${y0 + drawH + 11}" x2="${x0}" y2="${y0 + drawH + 21}" stroke="${champagne}" stroke-width="1"/>
         <line x1="${x0 + drawW}" y1="${y0 + drawH + 11}" x2="${x0 + drawW}" y2="${y0 + drawH + 21}" stroke="${champagne}" stroke-width="1"/>
-        <text x="${x0 + Math.round(drawW / 2)}" y="${y0 + drawH + 28}" text-anchor="middle" fill="${champagne}" font-size="10" font-weight="700" font-family="Manrope, sans-serif">${wMm} mm</text>
+        <text x="${x0 + Math.round(drawW / 2)}" y="${y0 + drawH + 28}" text-anchor="middle" fill="${champagne}" font-size="10" font-weight="700" font-family="Inter, sans-serif">${wMm} mm</text>
         <!-- Cota Vertical (Alto Total mm) -->
         <line x1="${x0 + drawW + 16}" y1="${y0}" x2="${x0 + drawW + 16}" y2="${y0 + drawH}" stroke="${champagne}" stroke-width="1"/>
         <line x1="${x0 + drawW + 11}" y1="${y0}" x2="${x0 + drawW + 21}" y2="${y0}" stroke="${champagne}" stroke-width="1"/>
         <line x1="${x0 + drawW + 11}" y1="${y0 + drawH}" x2="${x0 + drawW + 21}" y2="${y0 + drawH}" stroke="${champagne}" stroke-width="1"/>
-        <text x="${x0 + drawW + 24}" y="${y0 + Math.round(drawH / 2) + 3}" fill="${champagne}" font-size="10" font-weight="700" font-family="Manrope, sans-serif">${hMm} mm</text>
+        <text x="${x0 + drawW + 24}" y="${y0 + Math.round(drawH / 2) + 3}" fill="${champagne}" font-size="10" font-weight="700" font-family="Inter, sans-serif">${hMm} mm</text>
       </svg>
     `;
   }

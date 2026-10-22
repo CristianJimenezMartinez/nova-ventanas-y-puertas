@@ -20,7 +20,7 @@
 
 .cat-title {
   font-size: 1.55rem;
-  font-weight: 300;
+  font-weight: 600;
   color: var(--p-text);
   margin-top: 0.3rem;
 }
@@ -30,7 +30,7 @@
   border: 1px solid var(--p-accent);
   color: var(--p-text);
   padding: 0.9rem 1.2rem;
-  font-size: 0.84rem;
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
@@ -60,10 +60,9 @@
   font-family: var(--font-family);
 
   .tab-code {
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    color: var(--p-accent);
+    font-size: 0.8125rem;
+    font-weight: 600;
+        color: var(--p-accent);
   }
 
   .tab-name {
@@ -123,10 +122,9 @@
   border: 1px solid var(--p-border);
   color: var(--p-text);
   font-family: var(--font-family);
-  font-size: 0.68rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  padding: 0.45rem 0.8rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+    padding: 0.45rem 0.8rem;
   cursor: pointer;
 
   &--online {
@@ -142,7 +140,7 @@
 .matrix-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.82rem;
+  font-size: 0.875rem;
 
   th,
   td {
@@ -154,8 +152,8 @@
   thead th {
     background: var(--p-card);
     color: var(--p-accent);
-    font-size: 0.72rem;
-    font-weight: 700;
+    font-size: 0.8125rem;
+    font-weight: 600;
   }
 
   .corner-th,
@@ -163,7 +161,7 @@
     text-align: left;
     background: var(--p-card);
     color: var(--p-text);
-    font-weight: 700;
+    font-weight: 600;
   }
 }
 
@@ -182,14 +180,13 @@
     gap: 0.2rem;
 
     .rule-lbl {
-      font-size: 0.62rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      color: var(--p-text-sec);
+      font-size: 0.8125rem;
+      font-weight: 600;
+            color: var(--p-text-sec);
     }
 
     strong {
-      font-size: 0.82rem;
+      font-size: 0.875rem;
       color: var(--p-text);
     }
   }
@@ -262,12 +259,12 @@
 
   strong {
     display: block;
-    font-size: 0.78rem;
+    font-size: 0.8125rem;
     color: var(--p-text);
   }
 
   span {
-    font-size: 0.7rem;
+    font-size: 0.8125rem;
     color: var(--p-text-sec);
   }
 
@@ -331,10 +328,9 @@
     gap: 0.3rem;
 
     span {
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      color: var(--p-text-sec);
+      font-size: 0.8125rem;
+      font-weight: 600;
+            color: var(--p-text-sec);
     }
   }
 }

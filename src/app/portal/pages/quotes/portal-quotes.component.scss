@@ -20,7 +20,7 @@
 
 .quo-title {
   font-size: 1.55rem;
-  font-weight: 300;
+  font-weight: 600;
   color: var(--p-text);
   margin-top: 0.3rem;
 }
@@ -30,7 +30,7 @@
   border: 1px solid var(--p-accent);
   color: var(--p-text);
   padding: 0.85rem 1.15rem;
-  font-size: 0.84rem;
+  font-size: 0.875rem;
   font-weight: 600;
 }
 
@@ -80,10 +80,9 @@
     gap: 0.3rem;
 
     span {
-      font-size: 0.64rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      color: var(--p-text-sec);
+      font-size: 0.8125rem;
+      font-weight: 600;
+            color: var(--p-text-sec);
     }
   }
 
@@ -99,7 +98,7 @@
   border: 1px solid var(--p-border);
   color: var(--p-text);
   font-family: var(--font-family);
-  font-size: 0.84rem;
+  font-size: 0.875rem;
   padding: 0.68rem 0.85rem;
   outline: none;
 
@@ -121,7 +120,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  font-size: 0.78rem;
+  font-size: 0.8125rem;
   color: var(--p-text);
   cursor: pointer;
 }
@@ -163,7 +162,7 @@
 .calc-row {
   display: flex;
   justify-content: space-between;
-  font-size: 0.82rem;
+  font-size: 0.875rem;
   padding-bottom: 0.45rem;
   border-bottom: 1px solid var(--p-border);
   color: var(--p-text-sec);
@@ -191,15 +190,14 @@
 .quo-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.82rem;
+  font-size: 0.875rem;
 
   th {
     text-align: left;
     padding: 0.75rem;
-    font-size: 0.65rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    color: var(--p-text-sec);
+    font-size: 0.8125rem;
+    font-weight: 600;
+        color: var(--p-text-sec);
     border-bottom: 1px solid var(--p-border);
   }
 
@@ -210,7 +208,7 @@
   }
 
   .sub-txt {
-    font-size: 0.72rem;
+    font-size: 0.8125rem;
     color: var(--p-text-sec);
   }
 }
@@ -259,8 +257,8 @@
     gap: 0.25rem;
 
     span {
-      font-size: 0.62rem;
-      font-weight: 700;
+      font-size: 0.8125rem;
+      font-weight: 600;
       color: var(--p-text-sec);
     }
   }
@@ -286,7 +284,7 @@
 .tot-row {
   display: flex;
   justify-content: space-between;
-  font-size: 0.84rem;
+  font-size: 0.875rem;
   color: var(--p-text-sec);
 
   strong {

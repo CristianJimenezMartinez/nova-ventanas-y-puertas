@@ -88,16 +88,14 @@
   }
 
   &__title {
-    font-size: 1.15rem;
-    font-weight: 800;
-    letter-spacing: 0.08em;
+    font-size: 1.05rem;
+    font-weight: 600;
     color: #F4F0E9;
   }
 
   &__sub {
-    font-size: 0.65rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
+    font-size: 0.75rem;
+    font-weight: 500;
     color: #C6AD82;
   }
 }
@@ -136,7 +134,7 @@
     min-width: 0;
 
     strong {
-      font-size: 0.84rem;
+      font-size: 0.875rem;
       color: #FFFFFF;
       font-weight: 600;
       overflow: hidden;
@@ -145,7 +143,7 @@
     }
 
     span {
-      font-size: 0.74rem;
+      font-size: 0.8125rem;
       color: #A8A29E;
     }
   }
@@ -163,17 +161,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.8rem 1.35rem;
+  padding: 0.75rem 1.35rem;
   text-decoration: none;
   color: #D6D3CD;
-  font-size: 0.92rem;
+  font-size: 0.875rem;
   font-weight: 500;
   border-left: 3px solid transparent;
   transition: all 0.15s ease;
 
   .link-badge {
-    font-size: 0.75rem;
-    font-weight: 700;
+    font-size: 0.8125rem;
+    font-weight: 600;
     padding: 0.1rem 0.5rem;
     background: #292524;
     color: #C6AD82;
@@ -258,15 +256,14 @@
   border: 1px solid var(--p-border);
   color: var(--p-text-sec);
   padding: 0.55rem 1rem;
-  font-family: var(--font-family);
-  font-size: 0.86rem;
+  font-size: 0.875rem;
   display: flex;
   align-items: center;
   gap: 1.5rem;
   cursor: pointer;
 
   kbd {
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     color: var(--p-text-sec);
     background: var(--p-surface);
     border: 1px solid var(--p-border);
@@ -279,8 +276,7 @@
   background: var(--p-input-bg);
   border: 1px solid var(--p-border);
   color: var(--p-text);
-  font-family: var(--font-family);
-  font-size: 0.86rem;
+  font-size: 0.875rem;
   padding: 0.55rem 0.85rem;
   outline: none;
 }
@@ -289,9 +285,8 @@
   background: var(--p-card);
   border: 1px solid var(--p-border);
   color: var(--p-text);
-  font-family: var(--font-family);
-  font-size: 0.84rem;
-  font-weight: 600;
+  font-size: 0.875rem;
+  font-weight: 500;
   padding: 0.55rem 0.95rem;
   display: inline-flex;
   align-items: center;
