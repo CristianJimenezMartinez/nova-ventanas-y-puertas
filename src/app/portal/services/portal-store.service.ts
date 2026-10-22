@@ -36,7 +36,7 @@ export class PortalStoreService {
   private readonly verifactuXml = inject(VeriFactuXmlService);
   private readonly pricingEngine = inject(PricingMatrixEngineService);
 
-  readonly themeMode = signal<PortalThemeMode>('noir');
+  readonly themeMode = signal<PortalThemeMode>('ivory');
   readonly isAuthenticated = signal<boolean>(true);
   readonly dbSyncedStatus = signal<'CONECTANDO_DB' | 'SINCRONIZADO_DB_NOVA' | 'MODO_LOCAL'>('CONECTANDO_DB');
 

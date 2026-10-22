@@ -1,18 +1,15 @@
 <div class="quo-page">
   <div class="quo-header">
-    <div>
-      <span class="label-tracked">INGENIERÍA POR HUECOS · MATRIZ 2D · CROQUIS UNE-EN 12519</span>
-      <h1 class="quo-title">CONFIGURADOR TÉCNICO Y PRESUPUESTADOR</h1>
-    </div>
+    <h1>Presupuestos</h1>
     <div style="display:flex;flex-wrap:wrap;gap:0.6rem;">
       <button type="button" class="btn btn--outline" (click)="downloadQuotePdf()">
-        ↓ PDF PRESUPUESTO + CROQUIS UNE
+        ↓ Presupuesto PDF
       </button>
       <button type="button" class="btn btn--outline" (click)="downloadFactoryOrderPdf()">
-        ↓ PDF ORDEN A FÁBRICA (SIN PVP)
+        ↓ Orden Taller PDF
       </button>
       <button type="button" class="btn btn--champagne" (click)="approveAndSendToWarehouse()">
-        APROBAR Y ENVIAR A ALMACÉN →
+        Enviar a Almacén →
       </button>
     </div>
   </div>
@@ -21,89 +18,86 @@
     <div class="quo-banner">{{ statusMessage() }}</div>
   }
 
-  <!-- Bloque 1: Configurador de Posición + Croquis Vectorial SVG en Vivo -->
   <div class="configurator-split">
-    <!-- Formulario Técnico del Hueco -->
     <section class="quo-panel">
       <div class="quo-panel__head">
-        <span class="label-tracked">CONFIGURACIÓN DE HUECO DE OBRA (POSICIÓN 0{{ holes().length + 1 }})</span>
-        <h2>DIMENSIONES, SERIE, VIDRIO Y CAJÓN</h2>
+        <h2>Añadir posición (Pos. 0{{ holes().length + 1 }})</h2>
       </div>
 
       <div class="form-grid">
         <label class="field-span-2">
-          <span>ESTANCIA / UBICACIÓN EN PLANO</span>
+          <span>Estancia / Ubicación</span>
           <input type="text" [(ngModel)]="roomLocation" class="quo-input" />
         </label>
 
         <label class="field-span-2">
-          <span>SERIE TÉCNICA NOVA (MATRIZ 2D)</span>
+          <span>Serie</span>
           <select [(ngModel)]="selectedSeriesId" class="quo-input">
             @for (s of store.catalogSeries(); track s.id) {
-              <option [value]="s.id">{{ s.publicName }} ({{ s.pricingMode === 'CARPENTRY_ONLY' ? 'Solo Carp.' : 'Inc. Vidrio Base' }})</option>
+              <option [value]="s.id">{{ s.publicName }}</option>
             }
           </select>
         </label>
 
         <label>
-          <span>ANCHO TOTAL HUECO (mm)</span>
+          <span>Ancho (mm)</span>
           <input type="number" [(ngModel)]="widthMm" step="50" min="400" max="5500" class="quo-input tabular-nums" />
         </label>
 
         <label>
-          <span>ALTO TOTAL HUECO (mm)</span>
+          <span>Alto (mm)</span>
           <input type="number" [(ngModel)]="heightMm" step="50" min="400" max="3200" class="quo-input tabular-nums" />
         </label>
 
         <label>
-          <span>UNIDADES IGUALES</span>
+          <span>Unidades</span>
           <input type="number" [(ngModel)]="quantity" min="1" max="50" class="quo-input tabular-nums" />
         </label>
 
         <label>
-          <span>MANO DE APERTURA (VISTA INTERIOR)</span>
+          <span>Apertura (vista interior)</span>
           <select [(ngModel)]="openingHand" class="quo-input">
-            <option value="DERECHA_INTERIOR">Apertura Derecha (Vista Interior)</option>
-            <option value="IZQUIERDA_INTERIOR">Apertura Izquierda (Vista Interior)</option>
-            <option value="AMBAS_HOJAS_ACTIVA_DER">2 Hojas (Hoja Activa Derecha)</option>
-            <option value="CORREDERA_HOJA_ACTIVA_DER">Corredera / Elevable Derecha</option>
-            <option value="FIJO_SIN_APERTURA">Fijo Panorámico Sin Apertura</option>
+            <option value="DERECHA_INTERIOR">Derecha</option>
+            <option value="IZQUIERDA_INTERIOR">Izquierda</option>
+            <option value="AMBAS_HOJAS_ACTIVA_DER">2 Hojas (Activa derecha)</option>
+            <option value="CORREDERA_HOJA_ACTIVA_DER">Corredera / Elevable</option>
+            <option value="FIJO_SIN_APERTURA">Fijo</option>
           </select>
         </label>
 
         <label>
-          <span>ACABADO / FOLIADO / LACADO</span>
+          <span>Acabado</span>
           <select [(ngModel)]="finishCategory" class="quo-input">
-            <option value="BLANCO_ESTANDAR">Blanco Cálido Estándar (0%)</option>
-            <option value="FOLIO_1_CARA">Foliado Texturado 1 Cara Exterior</option>
-            <option value="FOLIO_2_CARAS">Foliado Bicolor / 2 Caras Antracita o Roble</option>
-            <option value="LACADO_QUALICOAT">Lacado Qualicoat Seaside Negro Mate</option>
-            <option value="BICOLOR_ARQUITECTONICO">Bicolor Arquitectónico Personalizado</option>
-            <option value="MADERA_NOBLE">Interior Madera Noble Maciza</option>
+            <option value="BLANCO_ESTANDAR">Blanco estándar</option>
+            <option value="FOLIO_1_CARA">Foliado 1 cara</option>
+            <option value="FOLIO_2_CARAS">Foliado 2 caras</option>
+            <option value="LACADO_QUALICOAT">Lacado mate</option>
+            <option value="BICOLOR_ARQUITECTONICO">Bicolor</option>
+            <option value="MADERA_NOBLE">Madera interior</option>
           </select>
         </label>
 
         <label>
-          <span>TAPAJUNTAS PERIMETRAL (mm)</span>
+          <span>Tapajuntas</span>
           <select [(ngModel)]="tapajuntasMm" class="quo-input tabular-nums">
-            <option [ngValue]="0">Sin Tapajuntas (A ras de muro)</option>
-            <option [ngValue]="40">Tapajuntas Solape 40 mm</option>
-            <option [ngValue]="60">Tapajuntas Solape 60 mm</option>
-            <option [ngValue]="80">Tapajuntas Solape 80 mm</option>
+            <option [ngValue]="0">Sin tapajuntas</option>
+            <option [ngValue]="40">40 mm</option>
+            <option [ngValue]="60">60 mm</option>
+            <option [ngValue]="80">80 mm</option>
           </select>
         </label>
 
         <label class="field-span-2">
-          <span>COMPOSICIÓN DE VIDRIO (MÍNIMO FACTURABLE 0,50 m² POR HOJA)</span>
+          <span>Vidrio</span>
           <select [(ngModel)]="selectedGlassId" class="quo-input">
             @for (g of store.glassCompositions(); track g.id) {
-              <option [value]="g.id">{{ g.name }} — {{ g.costPerM2Eur }} €/m²</option>
+              <option [value]="g.id">{{ g.name }} ({{ g.costPerM2Eur }} €/m²)</option>
             }
           </select>
         </label>
 
         <label class="field-span-2">
-          <span>CAJÓN DE PERSIANA Y PROTECCIÓN SOLAR</span>
+          <span>Persiana / Cajón</span>
           <select [(ngModel)]="selectedShutterId" class="quo-input">
             @for (sh of store.shutterOptions(); track sh.id) {
               <option [value]="sh.id">{{ sh.name }}</option>
@@ -112,23 +106,22 @@
         </label>
       </div>
 
-      <!-- Checkboxes Técnicos de Obra -->
       <div class="checks-row">
         <label class="check-item">
           <input type="checkbox" [(ngModel)]="hasMotor" />
-          <span>Motorización Somfy / Vía Radio</span>
+          <span>Motor</span>
         </label>
         <label class="check-item">
           <input type="checkbox" [(ngModel)]="hasPremarco" />
-          <span>Incluir Premarco Metálico</span>
+          <span>Premarco</span>
         </label>
         <label class="check-item">
           <input type="checkbox" [(ngModel)]="hasDesmontaje" />
-          <span>Desmontaje y Retirada RCD</span>
+          <span>Desmontaje</span>
         </label>
         <label class="check-item">
           <input type="checkbox" [(ngModel)]="isLowSillUnder900Mm" />
-          <span>Antepecho &lt; 900 mm (Exige CTE DB-SUA 2)</span>
+          <span>Antepecho &lt; 90 cm</span>
         </label>
       </div>
 
@@ -139,63 +132,53 @@
       }
 
       <button type="button" class="btn btn--champagne w-100" (click)="addCurrentHoleToQuote()">
-        + AÑADIR POSICIÓN AL PRESUPUESTO ({{ liveHoleCalculation().totalLinePvpEur | number:'1.2-2' }} € PVP)
+        + Añadir al presupuesto ({{ liveHoleCalculation().totalLinePvpEur | number:'1.2-2' }} €)
       </button>
     </section>
 
-    <!-- Visor Vectorial SVG en Tiempo Real + Desglose de Ingeniería -->
     <aside class="sketch-panel">
       <div class="sketch-box" [innerHTML]="liveSketchSafeSvg()"></div>
 
       <div class="calc-breakdown tabular-nums">
         <div class="calc-row">
-          <span>Escalón Matriz 2D Aplicado:</span>
+          <span>Medida tarifa:</span>
           <strong>{{ liveHoleCalculation().stepWidthUsedMm }} × {{ liveHoleCalculation().stepHeightUsedMm }} mm</strong>
         </div>
         <div class="calc-row">
-          <span>Coste Neto Carpintería (Tras Dto. Fábrica):</span>
+          <span>Coste carpintería:</span>
           <strong>{{ liveHoleCalculation().carpentryNetCostEur | number:'1.2-2' }} €</strong>
         </div>
         <div class="calc-row">
-          <span>Coste Neto Vidrio (Mín. 0,50 m²/hoja):</span>
-          <strong>{{ liveHoleCalculation().glassNetCostEur | number:'1.2-2' }} €</strong>
+          <span>Coste vidrio y extras:</span>
+          <strong>{{ (liveHoleCalculation().glassNetCostEur + liveHoleCalculation().extrasNetCostEur) | number:'1.2-2' }} €</strong>
         </div>
         <div class="calc-row">
-          <span>Coste Neto Cajón, Motor y Perfiles:</span>
-          <strong>{{ liveHoleCalculation().extrasNetCostEur | number:'1.2-2' }} €</strong>
-        </div>
-        <div class="calc-row">
-          <span>Peso Unitario Estimado (Vidrio + Marco):</span>
+          <span>Peso estimado:</span>
           <strong>{{ liveHoleCalculation().unitWeightKg | number:'1.1-1' }} kg</strong>
         </div>
         <div class="calc-row calc-row--total">
-          <span>PVP UNITARIO × {{ liveHoleCalculation().quantity }} UDS.:</span>
+          <span>Total ({{ liveHoleCalculation().quantity }} uds):</span>
           <strong>{{ liveHoleCalculation().totalLinePvpEur | number:'1.2-2' }} €</strong>
         </div>
       </div>
     </aside>
   </div>
 
-  <!-- Bloque 2: Tabla de Posiciones del Presupuesto + Regla del 40% (IVA 10% vs 21%) -->
   <section class="quo-panel">
     <div class="quo-panel__head">
-      <div>
-        <span class="label-tracked">MEMORIA VALORADA POR HUECOS Y FISCALIDAD DE OBRA</span>
-        <h2>POSICIONES DEL PRESUPUESTO ({{ holes().length }} LÍNEAS)</h2>
-      </div>
+      <h2>Posiciones ({{ holes().length }})</h2>
     </div>
 
     <div class="table-scroll">
       <table class="quo-table tabular-nums">
         <thead>
           <tr>
-            <th>POS.</th>
-            <th>ESTANCIA / SISTEMA</th>
-            <th>MEDIDA (mm)</th>
-            <th>VIDRIO Y CAJÓN</th>
-            <th>PESO</th>
-            <th>UDS.</th>
-            <th>TOTAL PVP</th>
+            <th>Pos.</th>
+            <th>Estancia / Serie</th>
+            <th>Medida</th>
+            <th>Vidrio y Persiana</th>
+            <th>Uds.</th>
+            <th>Importe</th>
             <th></th>
           </tr>
         </thead>
@@ -205,14 +188,13 @@
               <td><strong>0{{ h.posNumber }}</strong></td>
               <td>
                 <strong>{{ h.roomLocation }}</strong>
-                <div class="sub-txt">{{ h.seriesName }} · {{ h.openingHand }}</div>
+                <div class="sub-txt">{{ h.seriesName }}</div>
               </td>
               <td>{{ h.widthMm }} × {{ h.heightMm }} mm</td>
               <td>
                 <div>{{ h.glassName }}</div>
                 <div class="sub-txt">{{ h.shutterName }}</div>
               </td>
-              <td>{{ h.unitWeightKg }} kg</td>
               <td>{{ h.quantity }}</td>
               <td><strong>{{ h.totalLinePvpEur | number:'1.2-2' }} €</strong></td>
               <td>
@@ -224,46 +206,39 @@
       </table>
     </div>
 
-    <!-- Calculadora Automática de Regla del 40% para IVA Reducido 10% -->
     <div class="vat-rule-grid tabular-nums">
       <div class="vat-controls">
-        <span class="label-tracked">CÁLCULO AUTOMÁTICO REGLA DEL 40% (ART. 91 LEY IVA · REFORMA 10%)</span>
         <div class="vat-inputs">
           <label>
-            <span>TIPO DE ACTUACIÓN</span>
+            <span>Tipo de trabajo</span>
             <select [(ngModel)]="projectType" class="quo-input">
-              <option value="REFORMA_VIVIENDA">Reforma con Instalación en Vivienda</option>
-              <option value="OBRA_NUEVA">Obra Nueva</option>
-              <option value="SOLO_SUMINISTRO">Solo Suministro Sin Montaje (21%)</option>
+              <option value="REFORMA_VIVIENDA">Reforma con instalación</option>
+              <option value="OBRA_NUEVA">Obra nueva</option>
+              <option value="SOLO_SUMINISTRO">Solo suministro (21%)</option>
             </select>
           </label>
           <label>
-            <span>MANO DE OBRA INSTALACIÓN (€)</span>
+            <span>Montaje (€)</span>
             <input type="number" [(ngModel)]="installationLaborPvpEur" class="quo-input tabular-nums" />
           </label>
           <label>
-            <span>MEDIOS AUXILIARES / GRÚA (€)</span>
+            <span>Medios auxiliares (€)</span>
             <input type="number" [(ngModel)]="auxiliaryMeansPvpEur" class="quo-input tabular-nums" />
           </label>
         </div>
-        <p class="vat-explanation">{{ vatAssessment().explanation }}</p>
       </div>
 
       <div class="totals-card">
         <div class="tot-row">
-          <span>Ratio Coste Materiales Aportados:</span>
-          <strong>{{ vatAssessment().materialsRatioPercent }}% (Límite 40%)</strong>
-        </div>
-        <div class="tot-row">
-          <span>Base Imponible Total:</span>
+          <span>Base imponible:</span>
           <strong>{{ quoteTotals().base | number:'1.2-2' }} €</strong>
         </div>
         <div class="tot-row">
-          <span>IVA Aplicable ({{ quoteTotals().vatPct }}%):</span>
+          <span>IVA ({{ quoteTotals().vatPct }}%):</span>
           <strong>{{ quoteTotals().vatEur | number:'1.2-2' }} €</strong>
         </div>
         <div class="tot-row tot-row--grand">
-          <span>TOTAL PRESUPUESTO:</span>
+          <span>Total presupuesto:</span>
           <strong>{{ quoteTotals().totalEur | number:'1.2-2' }} €</strong>
         </div>
       </div>

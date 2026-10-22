@@ -127,9 +127,8 @@ export class WindowSketchSvgService {
 
     return `
       <svg viewBox="0 0 360 280" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-        <rect width="360" height="280" fill="#0D0D0D"/>
-        <!-- Etiqueta normativa superior -->
-        <text x="14" y="18" fill="#A9A39A" font-size="8.5" font-family="Manrope, sans-serif" letter-spacing="1.4">CROQUIS UNE-EN 12519 · VISTA INTERIOR</text>
+        <rect width="360" height="280" fill="#181816"/>
+        <text x="14" y="18" fill="#C6AD82" font-size="9.5" font-weight="600" font-family="Manrope, sans-serif">Vista interior (${wMm} × ${hMm} mm)</text>
         ${shutterSvg}
         <!-- Marco Exterior -->
         <rect x="${x0}" y="${winY}" width="${drawW}" height="${winH}" fill="none" stroke="${frameStroke}" stroke-width="3"/>

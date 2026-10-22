@@ -3,7 +3,7 @@
   [class.portal-workspace--noir]="store.themeMode() === 'noir'"
   [class.portal-workspace--ivory]="store.themeMode() === 'ivory'">
 
-  <!-- SIDEBAR ARQUITECTÓNICO FIJO EN NEGRO #0D0D0D CON ACENTO LATÓN #C6AD82 -->
+  <!-- MENÚ LATERAL LIMPIO -->
   <aside class="portal-sidebar" [class.portal-sidebar--open]="mobileSidebarOpen()">
     <div class="sidebar-brand">
       <a routerLink="/portal/dashboard" class="sidebar-logo" (click)="closeMobileSidebar()">
@@ -14,153 +14,127 @@
         </svg>
         <div class="sidebar-logo__text">
           <span class="sidebar-logo__title">NOVA</span>
-          <span class="sidebar-logo__sub">PORTAL · GRUPO SOTO</span>
+          <span class="sidebar-logo__sub">GRUPO SOTO</span>
         </div>
       </a>
       <button type="button" class="sidebar-close-mobile" (click)="closeMobileSidebar()" aria-label="Cerrar menú">✕</button>
     </div>
 
-    <div class="sidebar-tenant-box">
-      <span class="tenant-kicker">ADMINISTRADOR ACTIVO · {{ store.currentUser().email }}</span>
-      <strong class="tenant-name">{{ store.currentUser().branchName }}</strong>
+    <div class="sidebar-user-box">
+      <span class="user-dot"></span>
+      <div class="user-info">
+        <strong>{{ store.currentUser().email }}</strong>
+        <span>{{ store.currentUser().roleLabel }}</span>
+      </div>
     </div>
 
-    <nav class="sidebar-nav" aria-label="Menú principal del Portal ERP">
-      <span class="nav-group-label">OPERACIONES &amp; INGENIERÍA</span>
-
+    <nav class="sidebar-nav" aria-label="Menú principal">
       <a routerLink="/portal/dashboard" routerLinkActive="sidebar-link--active" class="sidebar-link" (click)="closeMobileSidebar()">
-        <span class="link-code tabular-nums">01</span>
-        <span class="link-text">DASHBOARD &amp; LEADS WEB</span>
-      </a>
-
-      <a routerLink="/portal/catalogo" routerLinkActive="sidebar-link--active" class="sidebar-link" (click)="closeMobileSidebar()">
-        <span class="link-code tabular-nums">02</span>
-        <span class="link-text">CATÁLOGO &amp; MATRICES 2D</span>
+        <span class="link-text">Inicio</span>
       </a>
 
       <a routerLink="/portal/presupuestos" routerLinkActive="sidebar-link--active" class="sidebar-link" (click)="closeMobileSidebar()">
-        <span class="link-code tabular-nums">03</span>
-        <span class="link-text">PRESUPUESTOS &amp; CROQUIS</span>
+        <span class="link-text">Presupuestos</span>
       </a>
 
       <a routerLink="/portal/almacen" routerLinkActive="sidebar-link--active" class="sidebar-link" (click)="closeMobileSidebar()">
-        <span class="link-code tabular-nums">04</span>
-        <span class="link-text">ALMACÉN &amp; CABALLETES</span>
+        <span class="link-text">Almacén</span>
         <span class="link-badge tabular-nums">{{ store.activeWarehouseCount() }}</span>
       </a>
 
-      <span class="nav-group-label">FINANZAS, AEAT &amp; COMUNICACIÓN</span>
-
       <a routerLink="/portal/facturacion" routerLinkActive="sidebar-link--active" class="sidebar-link" (click)="closeMobileSidebar()">
-        <span class="link-code tabular-nums">05</span>
-        <span class="link-text">FACTURACIÓN &amp; VERIFACTU</span>
+        <span class="link-text">Facturas</span>
+      </a>
+
+      <a routerLink="/portal/catalogo" routerLinkActive="sidebar-link--active" class="sidebar-link" (click)="closeMobileSidebar()">
+        <span class="link-text">Catálogo y Tarifas</span>
       </a>
 
       <a routerLink="/portal/correos" routerLinkActive="sidebar-link--active" class="sidebar-link" (click)="closeMobileSidebar()">
-        <span class="link-code tabular-nums">06</span>
-        <span class="link-text">CORREOS SMTP / IMAP</span>
+        <span class="link-text">Correos</span>
       </a>
 
       <a routerLink="/portal/login" routerLinkActive="sidebar-link--active" class="sidebar-link" (click)="closeMobileSidebar()">
-        <span class="link-code tabular-nums">07</span>
-        <span class="link-text">PERFIL &amp; ACCESO MULTITENANT</span>
+        <span class="link-text">Acceso / Perfil</span>
       </a>
     </nav>
 
     <div class="sidebar-footer">
-      <a routerLink="/" class="back-web-link">
-        <span>← VOLVER A LA WEB PÚBLICA</span>
-      </a>
+      <a routerLink="/" class="back-web-link">← Volver a la web</a>
     </div>
   </aside>
 
-  <!-- CONTENEDOR PRINCIPAL -->
+  <!-- ÁREA DE TRABAJO -->
   <div class="portal-main">
-
-    <!-- TOPBAR SUPERIOR -->
     <header class="portal-topbar">
       <div class="topbar-left">
-        <button type="button" class="topbar-burger" (click)="toggleMobileSidebar()" aria-label="Abrir menú lateral">
+        <button type="button" class="topbar-burger" (click)="toggleMobileSidebar()" aria-label="Abrir menú">
           ☰
         </button>
 
         <button type="button" class="topbar-search-btn" (click)="searchModalOpen.set(true)">
-          <span>BUSCAR EXPEDIENTE, CLIENTE, CABALLETE O FACTURA...</span>
+          <span>Buscar cliente, presupuesto o factura...</span>
           <kbd class="tabular-nums">Ctrl + K</kbd>
         </button>
       </div>
 
       <div class="topbar-right">
-        <!-- Selector de Rol en Tiempo Real -->
-        <div class="role-selector-wrap">
-          <label for="roleSwitch" class="sr-only">Cambiar vista por rol</label>
-          <select
-            id="roleSwitch"
-            class="portal-select portal-select--compact"
-            [ngModel]="store.currentUser().role"
-            (ngModelChange)="onRoleChange($event)">
-            @for (r of availableRoles; track r.role) {
-              <option [value]="r.role">ROL: {{ r.label }}</option>
-            }
-          </select>
-        </div>
+        <select
+          id="roleSwitch"
+          aria-label="Cambiar perfil"
+          class="portal-select"
+          [ngModel]="store.currentUser().role"
+          (ngModelChange)="onRoleChange($event)">
+          @for (r of availableRoles; track r.role) {
+            <option [value]="r.role">{{ r.label }}</option>
+          }
+        </select>
 
-        <!-- Conmutador de Doble Tema (Noir Showroom vs Warm Ivory) -->
         <button
           type="button"
           class="theme-toggle-btn"
-          (click)="store.toggleTheme()"
-          [attr.aria-label]="'Cambiar tema visual actual: ' + store.themeMode()">
+          (click)="store.toggleTheme()">
           <span class="theme-dot"></span>
-          <span>{{ store.themeMode() === 'noir' ? 'TEMA: NOIR SHOWROOM' : 'TEMA: WARM IVORY' }}</span>
+          <span>{{ store.themeMode() === 'ivory' ? 'Modo Claro' : 'Modo Oscuro' }}</span>
         </button>
-
-        <!-- Estado VeriFactu AEAT -->
-        <a routerLink="/portal/facturacion" class="verifactu-pill tabular-nums">
-          <span class="vf-dot"></span>
-          <span>VERIFACTU SHA-256 ACTIVO</span>
-        </a>
       </div>
     </header>
 
-    <!-- CONTENIDO DE LA VISTA ACTIVA -->
     <main class="portal-content">
       <router-outlet></router-outlet>
     </main>
-
   </div>
 
-  <!-- BUSCADOR GLOBAL OMNIBOX (Ctrl + K) -->
+  <!-- BUSCADOR RÁPIDO (Ctrl + K) -->
   @if (searchModalOpen()) {
     <div class="omnibox-backdrop" (click)="searchModalOpen.set(false)">
       <div class="omnibox-modal" (click)="$event.stopPropagation()">
         <div class="omnibox-header">
-          <span class="label-tracked">BUSCADOR GLOBAL DE EXPEDIENTES · NOVA ERP</span>
-          <button type="button" class="omnibox-close" (click)="searchModalOpen.set(false)">ESC</button>
+          <strong>Ir a sección</strong>
+          <button type="button" class="omnibox-close" (click)="searchModalOpen.set(false)">Cerrar ✕</button>
         </div>
         <input
           type="text"
           [(ngModel)]="globalSearchQuery"
           class="portal-input"
-          placeholder="Escribe código de presupuesto (PRE-2026), pedido (PED-2026), caballete o NIF..."
+          placeholder="Buscar código o cliente..."
           autofocus />
 
         <div class="omnibox-links">
           <a routerLink="/portal/presupuestos" class="omnibox-item" (click)="searchModalOpen.set(false)">
-            <strong>NUEVO PRESUPUESTO POR HUECOS + CROQUIS SVG</strong>
-            <span>Abrir configurador paramétrico UNE-EN 12519</span>
+            <strong>Presupuestos</strong>
+            <span>Crear o descargar presupuesto PDF</span>
           </a>
           <a routerLink="/portal/almacen" class="omnibox-item" (click)="searchModalOpen.set(false)">
-            <strong>RECEPCIÓN DE FÁBRICA Y CABALLETES (4 CIRCUITOS)</strong>
-            <span>Pasar directamente de Almacén a Factura VeriFactu</span>
+            <strong>Almacén</strong>
+            <span>Recepción de material y paso a factura</span>
           </a>
           <a routerLink="/portal/facturacion" class="omnibox-item" (click)="searchModalOpen.set(false)">
-            <strong>LIBRO VERIFACTU AEAT · DESCARGA XML Y PACK GESTORÍA</strong>
-            <span>Huella encadenada SHA-256 y Cofre de Certificado .P12</span>
+            <strong>Facturas</strong>
+            <span>Emitir factura, registrar cobro o descargar XML</span>
           </a>
         </div>
       </div>
     </div>
   }
-
 </div>

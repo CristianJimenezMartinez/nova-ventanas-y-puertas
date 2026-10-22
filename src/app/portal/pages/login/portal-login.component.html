@@ -1,80 +1,51 @@
 <div class="login-split">
-  <!-- Panel Izquierdo Arquitectónico -->
-  <div class="login-showcase">
-    <div class="login-showcase__top">
-      <span class="label-tracked">PORTAL MULTITENANT · ARQUITECTURA &amp; ERP</span>
-      <h1 class="login-showcase__title">NOVA VENTANAS &amp; PUERTAS</h1>
-      <p class="login-showcase__lead">
-        Plataforma de ingeniería por huecos, matrices 2D de fábrica, recepción por caballetes en 4 circuitos, correo corporativo multi-cuenta y facturación encadenada VeriFactu AEAT.
-      </p>
-    </div>
-
-    <div class="login-metrics tabular-nums">
-      <div class="metric-box">
-        <span class="metric-box__val">SHA-256</span>
-        <span class="metric-box__lbl">ENCADENADO VERIFACTU AEAT</span>
-      </div>
-      <div class="metric-box">
-        <span class="metric-box__val">UNE-EN 12519</span>
-        <span class="metric-box__lbl">CROQUIS VECTORIAL PARAMÉTRICO</span>
-      </div>
-      <div class="metric-box">
-        <span class="metric-box__val">4 CIRCUITOS</span>
-        <span class="metric-box__lbl">ALMACÉN DIRECTO A FACTURA</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- Panel Derecho de Acceso -->
-  <div class="login-card">
+  <div class="login-card" style="max-width:520px;margin:2rem auto;width:100%;">
     <div class="login-card__header">
-      <span class="label-tracked">AUTENTICACIÓN CORPORATIVA · GRUPO SOTO</span>
-      <h2>ACCESO AL PORTAL PROFESIONAL</h2>
+      <h2>Acceso al Portal NOVA</h2>
     </div>
 
     <div class="login-form">
       <div class="field-group">
-        <label for="loginEmail">USUARIO / CORREO CORPORATIVO</label>
+        <label for="loginEmail">Correo corporativo</label>
         <input id="loginEmail" type="email" [(ngModel)]="email" class="login-input" />
       </div>
 
       <div class="field-group">
-        <label for="loginPassword">CONTRASEÑA CORPORATIVA GRUPO SOTO</label>
+        <label for="loginPassword">Contraseña</label>
         <input id="loginPassword" type="password" [(ngModel)]="password" class="login-input" />
       </div>
 
       <div class="field-group">
-        <label for="loginRole">PERFIL OPERATIVO (RBAC 8 ROLES)</label>
+        <label for="loginRole">Perfil</label>
         <select id="loginRole" [(ngModel)]="selectedRole" class="login-input">
-          <option value="SUPERADMIN">Administrador Total · Gerencia Grupo Soto (gerencia&#64;gruposoto.es)</option>
-          <option value="GERENCIA">Gerencia &amp; Dirección General</option>
-          <option value="OFICINA_TECNICA">Oficina Técnica &amp; Presupuestación</option>
-          <option value="COMERCIAL">Asesor Comercial Showroom</option>
-          <option value="MEDIDOR_OBRA">Técnico Medidor / Almacén de Obra</option>
-          <option value="ADMINISTRACION_FACTURACION">Administración &amp; VeriFactu AEAT</option>
+          <option value="SUPERADMIN">Administrador Total (gerencia&#64;gruposoto.es)</option>
+          <option value="GERENCIA">Gerencia</option>
+          <option value="OFICINA_TECNICA">Oficina Técnica</option>
+          <option value="COMERCIAL">Comercial</option>
+          <option value="MEDIDOR_OBRA">Almacén y Obra</option>
+          <option value="ADMINISTRACION_FACTURACION">Administración</option>
         </select>
       </div>
 
       <button type="button" class="btn btn--champagne w-100" (click)="enterPortal()">
-        ENTRAR COMO {{ email() === 'gerencia@gruposoto.es' ? 'ADMINISTRADOR TOTAL (gerencia@gruposoto.es)' : 'PROFESIONAL' }} →
+        Entrar al portal →
       </button>
     </div>
 
-    <!-- Accesos Rápidos de Demostración en Producción -->
     <div class="quick-roles">
-      <span class="quick-roles__label">ACCESO DIRECTO 1-CLIC POR PERFIL CORPORATIVO:</span>
+      <span class="quick-roles__label">Acceso rápido:</span>
       <div class="quick-roles__grid">
         <button type="button" class="role-btn" (click)="quickRoleAccess('SUPERADMIN', 'gerencia@gruposoto.es')">
-          ★ Admin Total (gerencia&#64;gruposoto.es)
+          gerencia&#64;gruposoto.es
         </button>
         <button type="button" class="role-btn" (click)="quickRoleAccess('OFICINA_TECNICA', 'presupuestos@novaventanasypuertas.com')">
           Oficina Técnica
         </button>
         <button type="button" class="role-btn" (click)="quickRoleAccess('MEDIDOR_OBRA', 'almacen@novaventanasypuertas.com')">
-          Almacén &amp; Obra
+          Almacén
         </button>
         <button type="button" class="role-btn" (click)="quickRoleAccess('ADMINISTRACION_FACTURACION', 'administracion@novaventanasypuertas.com')">
-          Facturación VeriFactu
+          Facturación
         </button>
       </div>
     </div>

@@ -1,11 +1,8 @@
 <div class="cat-page">
   <div class="cat-header">
-    <div>
-      <span class="label-tracked">AUTOGESTIÓN DE TARIFAS, MATRICES 2D Y COMPOSICIONES</span>
-      <h1 class="cat-title">CATÁLOGO TÉCNICO &amp; MOTOR DE PRECIOS</h1>
-    </div>
+    <h1>Catálogo y Tarifas</h1>
     <button type="button" class="btn btn--champagne" (click)="showNewSeriesModal.set(true)">
-      + AÑADIR NUEVA SERIE / TARIFA
+      + Añadir serie
     </button>
   </div>
 
@@ -15,7 +12,6 @@
     </div>
   }
 
-  <!-- Selector de Series del Catálogo -->
   <div class="series-tabs">
     @for (s of store.catalogSeries(); track s.id) {
       <button
@@ -31,19 +27,15 @@
 
   @if (activeSeries(); as serie) {
     <div class="cat-grid">
-      <!-- Panel Izquierdo: Matriz 2D (Ancho x Alto mm) -->
       <section class="cat-panel">
         <div class="cat-panel__head">
-          <div>
-            <span class="label-tracked">MATRIZ DE TARIFA BASE ANCHO × ALTO (ESCALÓN SUPERIOR)</span>
-            <h2>{{ serie.publicName }}</h2>
-          </div>
+          <h2>{{ serie.publicName }}</h2>
           <div class="mode-badges">
             <button type="button" class="mode-pill" (click)="togglePricingMode(serie)">
-              MODO: {{ serie.pricingMode === 'CARPENTRY_ONLY' ? 'SOLO CARPINTERÍA (SIN VIDRIO)' : 'INCLUYE VIDRIO BASE (-' + serie.baseGlassIncludedCreditPerM2 + ' €/m²)' }}
+              {{ serie.pricingMode === 'CARPENTRY_ONLY' ? 'Solo carpintería' : 'Incluye vidrio base (-' + serie.baseGlassIncludedCreditPerM2 + ' €/m²)' }}
             </button>
             <button type="button" class="mode-pill" [class.mode-pill--online]="serie.onlineStoreEnabled" (click)="toggleOnlineSale(serie)">
-              {{ serie.onlineStoreEnabled ? '● E-COMMERCE HABILITADO' : '○ SOLO PRESUPUESTO TÉCNICO' }}
+              {{ serie.onlineStoreEnabled ? '● Venta activa' : '○ Solo presupuesto' }}
             </button>
           </div>
         </div>
@@ -52,7 +44,7 @@
           <table class="matrix-table tabular-nums">
             <thead>
               <tr>
-                <th class="corner-th">ALTO \ ANCHO (mm)</th>
+                <th class="corner-th">Alto \ Ancho</th>
                 @for (w of serie.widthsMm; track w) {
                   <th>{{ w }} mm</th>
                 }
@@ -71,65 +63,53 @@
           </table>
         </div>
 
-        <!-- Descuentos en Cascada y Recargos de Acabado -->
         <div class="rules-bar tabular-nums">
           <div class="rule-item">
-            <span class="rule-lbl">DESCUENTO COMPRA FÁBRICA:</span>
-            <strong>-{{ serie.supplierDiscountChain.join('% - ') }}% (Cascada)</strong>
+            <span class="rule-lbl">Dto. compra:</span>
+            <strong>-{{ serie.supplierDiscountChain.join('% - ') }}%</strong>
           </div>
           <div class="rule-item">
-            <span class="rule-lbl">MULTIPLICADOR PVP NOVA:</span>
+            <span class="rule-lbl">Multiplicador PVP:</span>
             <strong>× {{ serie.retailMarginMultiplier }}</strong>
           </div>
           <div class="rule-item">
-            <span class="rule-lbl">RECARGO FOLIO 1C / 2C / BICOLOR:</span>
+            <span class="rule-lbl">Recargos color (1C / 2C / Bicolor):</span>
             <strong>+{{ serie.colorSurchargePercent.FOLIO_1_CARA }}% / +{{ serie.colorSurchargePercent.FOLIO_2_CARAS }}% / +{{ serie.colorSurchargePercent.BICOLOR_ARQUITECTONICO }}%</strong>
-          </div>
-          <div class="rule-item">
-            <span class="rule-lbl">MARCA INTERNA (OCULTA EN WEB):</span>
-            <strong>{{ serie.supplierBrand }}</strong>
           </div>
         </div>
       </section>
 
-      <!-- Panel Derecho: Herramientas Masivas (+X% y Pegado Excel) -->
       <aside class="cat-tools">
         <div class="tool-box">
-          <span class="label-tracked">ACTUALIZACIÓN MASIVA DE TARIFA</span>
-          <h3>APLICAR SUBIDA / BAJADA (% GLOBAL)</h3>
-          <p>Actualiza al instante todas las celdas de esta matriz cuando el fabricante comunique una revisión de precios.</p>
+          <h3>Modificar tarifa (%)</h3>
           <div class="tool-inline">
             <input type="number" [(ngModel)]="bulkPercentDelta" class="tool-input tabular-nums" step="0.5" />
             <button type="button" class="btn btn--champagne" (click)="applyBulkPercentage()">
-              APLICAR {{ bulkPercentDelta() > 0 ? '+' : '' }}{{ bulkPercentDelta() }}%
+              Aplicar {{ bulkPercentDelta() > 0 ? '+' : '' }}{{ bulkPercentDelta() }}%
             </button>
           </div>
         </div>
 
         <div class="tool-box">
-          <span class="label-tracked">IMPORTADOR DIRECTO EXCEL / CSV</span>
-          <h3>PEGAR MATRIZ DESDE HOJA DE CÁLCULO</h3>
-          <p>Copia un rango de precios en Excel y pégalo aquí para sustituir la cuadrícula de la serie seleccionada:</p>
+          <h3>Pegar tabla desde Excel</h3>
           <textarea
             rows="4"
             [(ngModel)]="excelPasteText"
             class="tool-textarea tabular-nums"
-            placeholder="420&#9;465&#9;515&#9;565&#10;460&#9;510&#9;565&#9;625&#10;505&#9;560&#9;620&#9;685"></textarea>
+            placeholder="420&#9;465&#9;515&#9;565&#10;460&#9;510&#9;565&#9;625"></textarea>
           <button type="button" class="btn btn--outline w-100" (click)="applyExcelPaste()">
-            IMPORTAR MATRIZ PEGADA →
+            Importar tabla
           </button>
         </div>
 
-        <!-- Resumen de Vidrios con Mínimo de 0.50 m² -->
         <div class="tool-box">
-          <span class="label-tracked">TARIFA DE VIDRIOS Y SEGURIDAD CTE DB-SUA 2</span>
-          <h3>COMPOSICIONES ACTIVAS (MÍN. 0,50 m²)</h3>
+          <h3>Tarifas de vidrio</h3>
           <div class="glass-mini-list tabular-nums">
             @for (g of store.glassCompositions(); track g.id) {
               <div class="glass-mini-row">
                 <div>
                   <strong>{{ g.name }}</strong>
-                  <span>Ug {{ g.ugValue }} · {{ g.rwDb }} dB · {{ g.weightKgPerM2 }} kg/m²</span>
+                  <span>Ug {{ g.ugValue }} · {{ g.rwDb }} dB</span>
                 </div>
                 <strong class="glass-price">{{ g.costPerM2Eur }} €/m²</strong>
               </div>
@@ -140,52 +120,48 @@
     </div>
   }
 
-  <!-- Modal para Crear Nueva Serie Autogestionada -->
   @if (showNewSeriesModal()) {
     <div class="modal-backdrop" (click)="showNewSeriesModal.set(false)">
       <div class="modal-box" (click)="$event.stopPropagation()">
         <div class="modal-head">
-          <div>
-            <span class="label-tracked">ALTA DE NUEVA SERIE EN EL MOTOR DE PRECIOS</span>
-            <h3>CREAR SERIE / TARIFA AUTOGESTIONADA</h3>
-          </div>
+          <h3>Añadir serie</h3>
           <button type="button" class="modal-close" (click)="showNewSeriesModal.set(false)">✕</button>
         </div>
 
         <div class="modal-form">
           <label>
-            <span>CÓDIGO INTERNO DE SERIE</span>
+            <span>Código</span>
             <input type="text" [(ngModel)]="newCode" class="tool-input" />
           </label>
           <label>
-            <span>NOMBRE COMERCIAL NOVA (VISIBLE EN PRESUPUESTOS)</span>
+            <span>Nombre de la serie</span>
             <input type="text" [(ngModel)]="newPublicName" class="tool-input" />
           </label>
           <label>
-            <span>FABRICANTE / EXTRUSOR INTERNO (OCULTO EN WEB PÚBLICA)</span>
+            <span>Proveedor interno</span>
             <input type="text" [(ngModel)]="newSupplierBrand" class="tool-input" />
           </label>
           <label>
-            <span>FAMILIA DE MATERIAL</span>
+            <span>Material</span>
             <select [(ngModel)]="newMaterial" class="tool-input">
-              <option value="PVC">PVC Clase A</option>
-              <option value="ALUMINIO">Aluminio con RPT</option>
+              <option value="PVC">PVC</option>
+              <option value="ALUMINIO">Aluminio</option>
               <option value="MIXTO">Mixto Aluminio-Madera</option>
-              <option value="PUERTAS">Puertas Acorazadas / Pivotantes</option>
+              <option value="PUERTAS">Puertas</option>
             </select>
           </label>
           <label>
-            <span>MODALIDAD DE LA MATRIZ DEL PROVEEDOR</span>
+            <span>Tipo de tarifa</span>
             <select [(ngModel)]="newPricingMode" class="tool-input">
-              <option value="CARPENTRY_ONLY">Solo Carpintería (Sin Vidrio)</option>
-              <option value="INCLUDES_BASE_GLASS">Incluye Vidrio Base 4/16/4 (Descuenta abono al cambiar vidrio)</option>
+              <option value="CARPENTRY_ONLY">Solo carpintería (sin vidrio)</option>
+              <option value="INCLUDES_BASE_GLASS">Incluye vidrio base</option>
             </select>
           </label>
         </div>
 
         <div class="modal-actions">
-          <button type="button" class="btn btn--outline" (click)="showNewSeriesModal.set(false)">CANCELAR</button>
-          <button type="button" class="btn btn--champagne" (click)="createNewSeries()">CREAR SERIE Y MATRIZ →</button>
+          <button type="button" class="btn btn--outline" (click)="showNewSeriesModal.set(false)">Cancelar</button>
+          <button type="button" class="btn btn--champagne" (click)="createNewSeries()">Guardar serie</button>
         </div>
       </div>
     </div>

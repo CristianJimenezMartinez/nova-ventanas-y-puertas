@@ -1,11 +1,8 @@
 <div class="mail-page">
   <div class="mail-header">
-    <div>
-      <span class="label-tracked">CENTRO DE COMUNICACIONES MULTI-CUENTA · SMTP / IMAP TLS</span>
-      <h1 class="mail-title">CORREOS CORPORATIVOS Y ENVÍO DE EXPEDIENTES</h1>
-    </div>
+    <h1>Correos</h1>
     <button type="button" class="btn btn--champagne" (click)="showNewAccountModal.set(true)">
-      + VINCULAR NUEVA CUENTA DE CORREO (SMTP / IMAP)
+      + Añadir cuenta
     </button>
   </div>
 
@@ -13,87 +10,74 @@
     <div class="mail-banner">{{ feedbackMsg() }}</div>
   }
 
-  <!-- Cuentas SMTP / IMAP Conectadas -->
   <div class="accounts-grid tabular-nums">
     @for (acc of store.emailAccounts(); track acc.id) {
       <article class="account-card">
         <div class="account-card__top">
           <span class="dept-tag">{{ acc.department }}</span>
-          <span class="conn-pill">● {{ acc.status }}</span>
+          <span class="badge-ok">Conectado</span>
         </div>
         <strong class="acc-email">{{ acc.emailAddress }}</strong>
         <span class="acc-alias">{{ acc.aliasName }}</span>
-        <div class="acc-servers">
-          <span>SMTP: {{ acc.smtpHost }}:{{ acc.smtpPort }} (TLS)</span>
-          <span>IMAP: {{ acc.imapHost }}:{{ acc.imapPort }} (SSL)</span>
-        </div>
       </article>
     }
   </div>
 
-  <!-- Dos Columnas: Redactor con Plantillas + Historial de Envíos por Expediente -->
   <div class="mail-split">
     <section class="mail-panel">
       <div class="mail-panel__head">
-        <div>
-          <span class="label-tracked">ENVÍO DIRECTO CON PLANTILLAS ARQUITECTÓNICAS</span>
-          <h2>REDACTAR COMUNICACIÓN OFICIAL</h2>
-        </div>
+        <h2>Nuevo mensaje</h2>
         <div class="tpl-btns">
-          <button type="button" class="tpl-btn" (click)="applyTemplate('PRESUPUESTO')">PLANTILLA PRESUPUESTO</button>
-          <button type="button" class="tpl-btn" (click)="applyTemplate('ALMACEN')">AVISO ALMACÉN</button>
-          <button type="button" class="tpl-btn" (click)="applyTemplate('FACTURA')">FACTURA VERIFACTU</button>
+          <button type="button" class="tpl-btn" (click)="applyTemplate('PRESUPUESTO')">Presupuesto</button>
+          <button type="button" class="tpl-btn" (click)="applyTemplate('ALMACEN')">Almacén</button>
+          <button type="button" class="tpl-btn" (click)="applyTemplate('FACTURA')">Factura</button>
         </div>
       </div>
 
       <div class="compose-grid">
         <label>
-          <span>CUENTA REMITENTE (SMTP PROPIO)</span>
+          <span>Desde</span>
           <select [(ngModel)]="selectedSenderEmail" class="mail-input">
             @for (acc of store.emailAccounts(); track acc.id) {
-              <option [value]="acc.emailAddress">{{ acc.aliasName }} ({{ acc.emailAddress }})</option>
+              <option [value]="acc.emailAddress">{{ acc.emailAddress }}</option>
             }
           </select>
         </label>
 
         <label>
-          <span>EXPEDIENTE VINCULADO (PRESUPUESTO / PEDIDO / FACTURA)</span>
+          <span>Expediente</span>
           <input type="text" [(ngModel)]="linkedDocCode" class="mail-input tabular-nums" />
         </label>
 
         <label>
-          <span>DESTINATARIO (CLIENTE / PROVEEDOR)</span>
+          <span>Destinatario</span>
           <input type="text" [(ngModel)]="recipientName" class="mail-input" />
         </label>
 
         <label>
-          <span>CORREO DEL DESTINATARIO</span>
+          <span>Correo destinatario</span>
           <input type="email" [(ngModel)]="recipientEmail" class="mail-input" />
         </label>
 
         <label class="span-2">
-          <span>ASUNTO DEL MENSAJE</span>
+          <span>Asunto</span>
           <input type="text" [(ngModel)]="subject" class="mail-input" />
         </label>
 
         <label class="span-2">
-          <span>CUERPO DEL MENSAJE (INCLUYE FIRMA CORPORATIVA AUTOMÁTICA)</span>
+          <span>Mensaje</span>
           <textarea rows="4" [(ngModel)]="messageBody" class="mail-input"></textarea>
         </label>
       </div>
 
       <button type="button" class="btn btn--champagne w-100" (click)="sendTrackedMessage()">
-        ENVIAR CORREO Y REGISTRAR EN HISTORIAL DEL EXPEDIENTE →
+        Enviar correo
       </button>
     </section>
 
-    <!-- Bandeja de Trazabilidad de Correos Enviados -->
     <section class="mail-panel">
       <div class="mail-panel__head">
-        <div>
-          <span class="label-tracked">TRAZABILIDAD DE COMUNICACIONES</span>
-          <h2>HISTORIAL VINCULADO A OBRAS ({{ store.emailMessages().length }})</h2>
-        </div>
+        <h2>Enviados ({{ store.emailMessages().length }})</h2>
       </div>
 
       <div class="msg-list tabular-nums">
@@ -101,10 +85,10 @@
           <article class="msg-item">
             <div class="msg-item__top">
               <span class="doc-pill">{{ msg.linkedDocumentCode }}</span>
-              <span class="msg-date">{{ msg.sentAtIso | slice:0:10 }} · {{ msg.openedByClient ? '✓ LEÍDO POR CLIENTE' : 'ENVIADO' }}</span>
+              <span class="msg-date">{{ msg.sentAtIso | slice:0:10 }}</span>
             </div>
             <strong class="msg-subj">{{ msg.subject }}</strong>
-            <span class="msg-meta">De: {{ msg.accountEmail }} → Para: {{ msg.counterpartName }} ({{ msg.counterpartEmail }})</span>
+            <span class="msg-meta">{{ msg.accountEmail }} → {{ msg.counterpartEmail }}</span>
             <p class="msg-snip">{{ msg.snippet }}</p>
           </article>
         }
@@ -112,53 +96,49 @@
     </section>
   </div>
 
-  <!-- Modal: Añadir Cuenta de Correo Propia SMTP / IMAP -->
   @if (showNewAccountModal()) {
     <div class="modal-backdrop" (click)="showNewAccountModal.set(false)">
       <div class="modal-box" (click)="$event.stopPropagation()">
         <div class="modal-head">
-          <div>
-            <span class="label-tracked">CONFIGURACIÓN SMTP / IMAP MULTICUENTA</span>
-            <h3>AÑADIR CUENTA DE CORREO CORPORATIVA PROPIA</h3>
-          </div>
+          <h3>Añadir cuenta de correo</h3>
           <button type="button" class="tpl-btn" (click)="showNewAccountModal.set(false)">✕</button>
         </div>
 
         <div class="compose-grid tabular-nums">
           <label>
-            <span>NOMBRE O ALIAS DEL BUZÓN</span>
+            <span>Nombre</span>
             <input type="text" [(ngModel)]="newAlias" class="mail-input" />
           </label>
           <label>
-            <span>DIRECCIÓN DE CORREO ELECTRÓNICO</span>
+            <span>Correo electrónico</span>
             <input type="email" [(ngModel)]="newEmailAddress" class="mail-input" />
           </label>
           <label>
-            <span>SERVIDOR SALIENTE SMTP</span>
+            <span>Servidor SMTP</span>
             <input type="text" [(ngModel)]="newSmtpHost" class="mail-input" />
           </label>
           <label>
-            <span>PUERTO SMTP (587 STARTTLS / 465 SSL)</span>
+            <span>Puerto SMTP</span>
             <input type="number" [(ngModel)]="newSmtpPort" class="mail-input" />
           </label>
           <label>
-            <span>SERVIDOR ENTRANTE IMAP</span>
+            <span>Servidor IMAP</span>
             <input type="text" [(ngModel)]="newImapHost" class="mail-input" />
           </label>
           <label>
-            <span>PUERTO IMAP (993 SSL)</span>
+            <span>Puerto IMAP</span>
             <input type="number" [(ngModel)]="newImapPort" class="mail-input" />
           </label>
           <label class="span-2">
-            <span>FIRMA CORPORATIVA DEL DEPARTAMENTO</span>
+            <span>Firma</span>
             <input type="text" [(ngModel)]="newSignature" class="mail-input" />
           </label>
         </div>
 
         <div class="modal-foot">
-          <button type="button" class="btn btn--outline" (click)="showNewAccountModal.set(false)">CANCELAR</button>
+          <button type="button" class="btn btn--outline" (click)="showNewAccountModal.set(false)">Cancelar</button>
           <button type="button" class="btn btn--champagne" (click)="saveNewEmailAccount()">
-            VERIFICAR CONEXIÓN Y GUARDAR CUENTA →
+            Guardar cuenta
           </button>
         </div>
       </div>

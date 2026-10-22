@@ -1,19 +1,16 @@
 <div class="inv-page">
   <div class="inv-header">
-    <div>
-      <span class="label-tracked">FACTURACIÓN DE CONSTRUCCIÓN · RD 1007/2023 · ORDEN HAC/1177/2024</span>
-      <h1 class="inv-title">LIBRO DE FACTURACIÓN &amp; VERIFACTU AEAT (SHA-256)</h1>
-    </div>
+    <h1>Facturas</h1>
 
     <div class="inv-actions">
       <button type="button" class="btn btn--outline" (click)="exportGestoriaPack()">
-        ↓ EXPORTAR PACK GESTORÍA (.CSV)
+        ↓ Exportar Gestoría (.CSV)
       </button>
       <button type="button" class="btn btn--outline" (click)="showVaultModal.set(true)">
-        COFRE CERTIFICADO .P12 / AEAT
+        Certificado digital
       </button>
       <button type="button" class="btn btn--champagne" (click)="showIssueModal.set(true)">
-        + EMITIR FACTURA ENCADENADA
+        + Nueva factura
       </button>
     </div>
   </div>
@@ -22,62 +19,22 @@
     <div class="inv-banner">{{ feedbackMsg() }}</div>
   }
 
-  <!-- Selector de los 3 Modos Evolutivos de VeriFactu -->
-  <div class="modes-grid">
-    <button
-      type="button"
-      class="vf-mode-card"
-      [class.vf-mode-card--active]="store.verifactuVault().activeMode === 'MODO_1_XML_QR'"
-      (click)="setVeriFactuMode('MODO_1_XML_QR')">
-      <span class="mode-tag">MODO 1 · ACTIVO SIN CERTIFICADO</span>
-      <strong>Huella SHA-256 + Código QR + Descarga XML</strong>
-      <p>Encadena cada factura con la anterior y genera el código QR verificable y el XML oficial `SuministroLR.xsd`.</p>
-    </button>
-
-    <button
-      type="button"
-      class="vf-mode-card"
-      [class.vf-mode-card--active]="store.verifactuVault().activeMode === 'MODO_2_PACK_GESTORIA'"
-      (click)="setVeriFactuMode('MODO_2_PACK_GESTORIA')">
-      <span class="mode-tag">MODO 2 · PUENTE GESTORÍA / ASESORÍA</span>
-      <strong>Exportación Pack Gestoría (Libro + XMLs)</strong>
-      <p>Genera el paquete mensual con todas las huellas SHA-256 para que la gestoría lo remita o audite en un clic.</p>
-    </button>
-
-    <button
-      type="button"
-      class="vf-mode-card"
-      [class.vf-mode-card--active]="store.verifactuVault().activeMode === 'MODO_3_ENVIO_DIRECTO_AEAT'"
-      (click)="showVaultModal.set(true)">
-      <span class="mode-tag">MODO 3 · ENVÍO AUTOMÁTICO AEAT (.P12)</span>
-      <strong>Cofre Criptográfico AES-256-GCM + SOAP AEAT</strong>
-      <p>
-        {{ store.verifactuVault().certificateLoaded ? '✓ Certificado Activo: ' + store.verifactuVault().certificateFileName : 'Preparado para cargar certificado .p12/.pfx cuando lo entreguen.' }}
-      </p>
-    </button>
-  </div>
-
-  <!-- Tabla de Facturas Blindada contra los 5 Bugs de Riesgo (REGLA 5) -->
   <section class="inv-panel">
     <div class="inv-panel__head">
-      <div>
-        <span class="label-tracked">SEPARACIÓN ESTRICTA: ESTADO OPERATIVO VS ESTADO FINANCIERO (VENCIMIENTO 23:59:59.999)</span>
-        <h2>REGISTROS DE FACTURACIÓN ENCADENADOS ({{ store.invoices().length }})</h2>
-      </div>
+      <h2>Listado de facturas ({{ store.invoices().length }})</h2>
     </div>
 
     <div class="table-scroll">
       <table class="inv-table tabular-nums">
         <thead>
           <tr>
-            <th>FACTURA / TIPO</th>
-            <th>CLIENTE / OBRA</th>
-            <th>EMISIÓN / VENCIMIENTO</th>
-            <th>EST. OPERATIVO</th>
-            <th>EST. FINANCIERO</th>
-            <th>BASE / IVA / TOTAL</th>
-            <th>CADENA SHA-256 AEAT</th>
-            <th>ACCIONES SIEMPRE ACTIVAS</th>
+            <th>Nº Factura</th>
+            <th>Cliente / Obra</th>
+            <th>Emisión / Vencimiento</th>
+            <th>Estado obra</th>
+            <th>Cobro</th>
+            <th>Total</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -85,26 +42,25 @@
             <tr>
               <td>
                 <strong class="serie-num">{{ inv.seriesAndNumber }}</strong>
-                <div class="cell-sub">{{ inv.invoiceType }} · {{ inv.orderCode }}</div>
+                <div class="cell-sub">{{ inv.orderCode }}</div>
               </td>
               <td>
                 <strong>{{ inv.clientName }}</strong>
-                <div class="cell-sub">NIF: {{ inv.clientNif }} · {{ inv.workDescription }}</div>
+                <div class="cell-sub">{{ inv.clientNif }} · {{ inv.workDescription }}</div>
               </td>
               <td>
-                <div>Exp: {{ inv.issueDateIso | slice:0:10 }}</div>
-                <div class="cell-sub">Venc ({{ inv.diasPago }}d): {{ inv.dueDateIso | slice:0:10 }}</div>
+                <div>{{ inv.issueDateIso | slice:0:10 }}</div>
+                <div class="cell-sub">Vence: {{ inv.dueDateIso | slice:0:10 }}</div>
               </td>
               <td>
-                <span class="op-pill">{{ inv.operationalStatus }}</span>
+                <span class="badge-info">
+                  {{ inv.operationalStatus === 'INSTALADO' ? 'Instalado' : inv.operationalStatus === 'COMPLETO_EN_ALMACEN' ? 'En almacén' : 'En curso' }}
+                </span>
               </td>
               <td>
                 <span
-                  class="pay-pill"
-                  [class.pay-pill--cobrada]="inv.paymentStatus === 'COBRADA'"
-                  [class.pay-pill--hoy]="inv.paymentStatus === 'HOY_VENCE'"
-                  [class.pay-pill--vencida]="inv.paymentStatus === 'VENCIDA'">
-                  {{ inv.paymentStatus }}
+                  [class]="inv.paymentStatus === 'COBRADA' ? 'badge-ok' : 'badge-warn'">
+                  {{ inv.paymentStatus === 'COBRADA' ? 'Cobrada' : inv.paymentStatus === 'VENCIDA' ? 'Vencida' : 'Pendiente' }}
                 </span>
               </td>
               <td>
@@ -112,27 +68,16 @@
                 <strong class="total-num">{{ inv.totalImporteEur | number:'1.2-2' }} €</strong>
               </td>
               <td>
-                <div class="hash-line" [title]="inv.currentHash64">
-                  <span>H.Act:</span> <code>{{ inv.currentHash64 | slice:0:14 }}...</code>
-                </div>
-                <div class="hash-line" [title]="inv.previousHash64">
-                  <span>H.Ant:</span> <code>{{ inv.previousHash64 | slice:0:14 }}...</code>
-                </div>
-              </td>
-              <td>
                 <div class="row-btns">
                   <button type="button" class="mini-btn mini-btn--gold" (click)="downloadInvoicePdf(inv)">
-                    ↓ PDF + QR AEAT
+                    ↓ PDF
                   </button>
-                  <button type="button" class="mini-btn mini-btn--gold" (click)="downloadOfficialXml(inv)">
-                    ↓ XML AEAT
-                  </button>
-                  <button type="button" class="mini-btn" (click)="previewXml(inv)">
-                    VER XML
+                  <button type="button" class="mini-btn" (click)="downloadOfficialXml(inv)">
+                    ↓ XML
                   </button>
                   @if (inv.paymentStatus !== 'COBRADA') {
                     <button type="button" class="mini-btn mini-btn--green" (click)="collectInvoice(inv)">
-                      ✓ COBRAR
+                      ✓ Cobrar
                     </button>
                   }
                 </div>
@@ -144,110 +89,101 @@
     </div>
   </section>
 
-  <!-- Visor de XML Oficial AEAT SuministroLR.xsd -->
   @if (selectedXmlPreview()) {
     <section class="xml-preview-box">
       <div class="xml-preview-box__head">
-        <span class="label-tracked">PREVISUALIZACIÓN DEL ARCHIVO XML OFICIAL VERIFACTU AEAT (SuministroLR.xsd)</span>
-        <button type="button" class="mini-btn" (click)="selectedXmlPreview.set('')">CERRAR VISOR ✕</button>
+        <strong>XML Factura</strong>
+        <button type="button" class="mini-btn" (click)="selectedXmlPreview.set('')">Cerrar ✕</button>
       </div>
       <pre class="xml-code">{{ selectedXmlPreview() }}</pre>
     </section>
   }
 
-  <!-- Modal: Emitir Nueva Factura Encadenada -->
   @if (showIssueModal()) {
     <div class="modal-backdrop" (click)="showIssueModal.set(false)">
       <div class="modal-box" (click)="$event.stopPropagation()">
         <div class="modal-head">
-          <div>
-            <span class="label-tracked">ALTA DE REGISTRO DE FACTURACIÓN CON HUELLA SHA-256</span>
-            <h3>EMITIR FACTURA ORDINARIA / ANTICIPO / CERTIFICACIÓN</h3>
-          </div>
+          <h3>Nueva factura</h3>
           <button type="button" class="mini-btn" (click)="showIssueModal.set(false)">✕</button>
         </div>
 
         <div class="modal-grid tabular-nums">
           <label>
-            <span>TIPO DE FACTURA AEAT</span>
+            <span>Tipo</span>
             <select [(ngModel)]="newInvoiceType" class="inv-input">
-              <option value="F1_ORDINARIA">F1 · Factura Ordinaria Completa</option>
-              <option value="ANTICIPO_OBRA">F1 · Factura de Anticipo de Obra (50%)</option>
-              <option value="CERTIFICACION">F1 · Certificación a Origen de Obra</option>
-              <option value="R1_RECTIFICATIVA">R1 · Factura Rectificativa por Diferencias</option>
+              <option value="F1_ORDINARIA">Factura ordinaria</option>
+              <option value="ANTICIPO_OBRA">Anticipo de obra</option>
+              <option value="CERTIFICACION">Certificación</option>
+              <option value="R1_RECTIFICATIVA">Rectificativa</option>
             </select>
           </label>
           <label>
-            <span>DÍAS DE PAGO (diasPago ?? 0)</span>
+            <span>Días de pago</span>
             <input type="number" [(ngModel)]="newDiasPago" min="0" max="180" class="inv-input" />
           </label>
           <label>
-            <span>CLIENTE / RAZÓN SOCIAL</span>
+            <span>Cliente</span>
             <input type="text" [(ngModel)]="newClientName" class="inv-input" />
           </label>
           <label>
-            <span>NIF / CIF CLIENTE</span>
+            <span>NIF / CIF</span>
             <input type="text" [(ngModel)]="newClientNif" class="inv-input" />
           </label>
           <label>
-            <span>BASE IMPONIBLE (€)</span>
+            <span>Base imponible (€)</span>
             <input type="number" [(ngModel)]="newBaseImponible" class="inv-input" />
           </label>
           <label>
-            <span>TIPO DE IVA APLICABLE</span>
+            <span>IVA</span>
             <select [(ngModel)]="newVatRate" class="inv-input">
-              <option [ngValue]="10">10% · IVA Reducido Reforma Vivienda</option>
-              <option [ngValue]="21">21% · IVA General / Solo Suministro</option>
-              <option [ngValue]="0">0% · Inversión del Sujeto Pasivo (Art. 84)</option>
+              <option [ngValue]="10">10% (Reforma vivienda)</option>
+              <option [ngValue]="21">21% (General)</option>
+              <option [ngValue]="0">0% (Inversión sujeto pasivo)</option>
             </select>
           </label>
           <label class="span-2">
-            <span>DESCRIPCIÓN DE LA OPERACIÓN / OBRA</span>
+            <span>Concepto / Obra</span>
             <input type="text" [(ngModel)]="newDescription" class="inv-input" />
           </label>
           <label class="span-2 check-row">
             <input type="checkbox" [(ngModel)]="newRetencion5Pct" />
-            <span>Aplicar Retención del 5% por Garantía de Buena Ejecución (1 año)</span>
+            <span>Aplicar retención del 5% por garantía</span>
           </label>
         </div>
 
         <div class="modal-foot">
-          <button type="button" class="btn btn--outline" (click)="showIssueModal.set(false)">CANCELAR</button>
+          <button type="button" class="btn btn--outline" (click)="showIssueModal.set(false)">Cancelar</button>
           <button type="button" class="btn btn--champagne" (click)="issueNewChainedInvoice()">
-            GENERAR HUELLA SHA-256 Y EMITIR FACTURA →
+            Emitir factura
           </button>
         </div>
       </div>
     </div>
   }
 
-  <!-- Modal: Cofre Criptográfico de Certificado Digital .P12 / .PFX -->
   @if (showVaultModal()) {
     <div class="modal-backdrop" (click)="showVaultModal.set(false)">
       <div class="modal-box" (click)="$event.stopPropagation()">
         <div class="modal-head">
-          <div>
-            <span class="label-tracked">COFRE CRIPTOGRÁFICO AES-256-GCM · MODO 3 AEAT</span>
-            <h3>CONFIGURACIÓN DE CERTIFICADO DIGITAL (.P12 / .PFX)</h3>
-          </div>
+          <h3>Certificado digital (.p12 / .pfx)</h3>
           <button type="button" class="mini-btn" (click)="showVaultModal.set(false)">✕</button>
         </div>
 
         <div class="modal-grid">
           <label class="span-2">
-            <span>ARCHIVO DE CERTIFICADO DIGITAL DE REPRESENTANTE (.P12 / .PFX)</span>
+            <span>Archivo de certificado</span>
             <input type="text" [(ngModel)]="certFilenameInput" class="inv-input" />
           </label>
           <label class="span-2">
-            <span>TITULAR Y NIF DEL CERTIFICADO RECONOCIDO</span>
+            <span>Titular</span>
             <input type="text" [(ngModel)]="certSubjectInput" class="inv-input" />
           </label>
         </div>
 
         <div class="modal-foot">
-          <button type="button" class="btn btn--outline" (click)="showVaultModal.set(false)">CERRAR</button>
+          <button type="button" class="btn btn--outline" (click)="showVaultModal.set(false)">Cerrar</button>
           <button type="button" class="btn btn--champagne" (click)="activateCertificateInVault()">
-            VINCULAR CERTIFICADO Y ACTIVAR MODO 3 AEAT →
+            Guardar certificado
           </button>
         </div>
       </div>
