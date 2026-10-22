@@ -1,0 +1,258 @@
+<div class="ten-page">
+  <div class="ten-header">
+    <div>
+      <h1>Empresas, Usuarios y Seguridad</h1>
+      <p class="ten-subtitle">
+        Gestión de sedes/franquicias aisladas, usuarios por rol y seguridad de sesiones desde Central ({{ store.currentUser().email }}).
+      </p>
+    </div>
+
+    <div class="ten-actions">
+      <button type="button" class="btn btn--outline" (click)="showNewUserModal.set(true)">
+        + Nuevo usuario
+      </button>
+      <button type="button" class="btn btn--champagne" (click)="showNewTenantModal.set(true)">
+        + Nueva empresa / sede
+      </button>
+    </div>
+  </div>
+
+  @if (security.securityBanner()) {
+    <div class="ten-banner">
+      <span>{{ security.securityBanner() }}</span>
+    </div>
+  }
+
+  <!-- Bloque 1: Estado de Seguridad Activa -->
+  <div class="sec-grid tabular-nums">
+    <div class="sec-card">
+      <span class="sec-lbl">Autenticación y Contraseñas</span>
+      <strong>JWT HS256 + Cifrado scrypt</strong>
+      <span class="badge-ok">Protección activa</span>
+    </div>
+
+    <div class="sec-card">
+      <span class="sec-lbl">Aislamiento entre Sedes</span>
+      <strong>Strict Tenant Lock ({{ security.tenants().length }} sedes)</strong>
+      <span class="badge-ok">Datos separados en DB</span>
+    </div>
+
+    <div class="sec-card">
+      <span class="sec-lbl">Escudo Anti-Fuerza Bruta y Cabeceras</span>
+      <strong>Rate-Limit IP + HSTS / CSP</strong>
+      <span class="badge-ok">Activo en API y Nginx</span>
+    </div>
+
+    <div class="sec-card">
+      <span class="sec-lbl">Control de Sesiones Abiertas</span>
+      <button type="button" class="btn btn--outline" (click)="security.revokeAllSessions()">
+        Cerrar sesiones remotas (Revocar tokens)
+      </button>
+    </div>
+  </div>
+
+  <!-- Bloque 2: Empresas / Franquicias / Delegaciones -->
+  <section class="ten-panel">
+    <div class="ten-panel__head">
+      <h2>Empresas y delegaciones activas ({{ security.tenants().length }})</h2>
+      <span class="badge-info">Sede en pantalla: {{ security.activeTenant().commercialName }}</span>
+    </div>
+
+    <div class="table-wrap">
+      <table class="ten-table tabular-nums">
+        <thead>
+          <tr>
+            <th>Empresa / Sede</th>
+            <th>Razón Social y CIF</th>
+            <th>Responsable</th>
+            <th>Política de Catálogo y Precios</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (t of security.tenants(); track t.id) {
+            <tr>
+              <td>
+                <strong>{{ t.commercialName }}</strong>
+                <div class="cell-sub">{{ t.city }} · Serie facturas: {{ t.invoicePrefix }}</div>
+              </td>
+              <td>
+                <div>{{ t.legalName }}</div>
+                <div class="cell-sub">CIF: {{ t.cif }}</div>
+              </td>
+              <td>{{ t.adminEmail }}</td>
+              <td>
+                <button
+                  type="button"
+                  class="policy-btn"
+                  (click)="toggleCatalogPolicy(t)">
+                  {{ t.catalogPolicy === 'LOCKED_BY_CENTRAL' ? '🔒 Tarifa oficial fijada por Central' : '🔓 Margen comercial libre' }}
+                </button>
+              </td>
+              <td>
+                @if (security.activeTenantId() === t.id) {
+                  <span class="badge-ok">Viendo esta sede</span>
+                } @else {
+                  <button
+                    type="button"
+                    class="btn btn--champagne"
+                    (click)="enterTenantWorkspace(t)">
+                    Entrar en sede →
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Bloque 3: Usuarios y Permisos por Rol -->
+  <section class="ten-panel">
+    <div class="ten-panel__head">
+      <h2>Usuarios y permisos de acceso ({{ security.managedUsers().length }})</h2>
+    </div>
+
+    <div class="table-wrap">
+      <table class="ten-table tabular-nums">
+        <thead>
+          <tr>
+            <th>Usuario</th>
+            <th>Empresa asignada</th>
+            <th>Rol</th>
+            <th>Pantallas visibles</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (u of security.managedUsers(); track u.id) {
+            <tr>
+              <td>
+                <strong>{{ u.fullName }}</strong>
+                <div class="cell-sub">{{ u.email }}</div>
+              </td>
+              <td>{{ getTenantLabel(u.tenantId) }}</td>
+              <td><span class="badge-info">{{ u.role }}</span></td>
+              <td>{{ getRolePermissionsSummary(u.role) }}</td>
+              <td>
+                <span [class]="u.active ? 'badge-ok' : 'badge-warn'">
+                  {{ u.active ? 'Activo (v' + (u.tokenVersion || 1) + ')' : 'Inactivo' }}
+                </span>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Modal: Dar de alta Nueva Empresa / Franquicia -->
+  @if (showNewTenantModal()) {
+    <div class="modal-backdrop" (click)="showNewTenantModal.set(false)">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <div class="modal-head">
+          <h3>Dar de alta nueva empresa / franquicia</h3>
+          <button type="button" class="close-btn" (click)="showNewTenantModal.set(false)">✕</button>
+        </div>
+
+        <div class="modal-grid">
+          <label>
+            <span>Nombre comercial de la sede</span>
+            <input type="text" [(ngModel)]="newCommercialName" />
+          </label>
+          <label>
+            <span>Ciudad / Zona</span>
+            <input type="text" [(ngModel)]="newCity" />
+          </label>
+          <label>
+            <span>Razón Social (para sus facturas)</span>
+            <input type="text" [(ngModel)]="newLegalName" />
+          </label>
+          <label>
+            <span>CIF / NIF</span>
+            <input type="text" [(ngModel)]="newCif" />
+          </label>
+          <label>
+            <span>Prefijo de numeración de facturas</span>
+            <input type="text" [(ngModel)]="newInvoicePrefix" />
+          </label>
+          <label>
+            <span>Política de tarifas (hereda catálogo de Central)</span>
+            <select [(ngModel)]="newCatalogPolicy">
+              <option value="LOCKED_BY_CENTRAL">Tarifa oficial bloqueada por Central</option>
+              <option value="CUSTOM_MARGIN_ALLOWED">Permitir ajustar margen propio</option>
+            </select>
+          </label>
+          <label>
+            <span>Correo del responsable de la sede</span>
+            <input type="email" [(ngModel)]="newAdminEmail" />
+          </label>
+          <label>
+            <span>Contraseña inicial (se cifra con scrypt)</span>
+            <input type="text" [(ngModel)]="newAdminPassword" />
+          </label>
+        </div>
+
+        <div class="modal-foot">
+          <button type="button" class="btn btn--outline" (click)="showNewTenantModal.set(false)">Cancelar</button>
+          <button type="button" class="btn btn--champagne" (click)="createNewFranchise()">
+            Crear sede y clonar catálogo →
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal: Dar de alta Nuevo Usuario -->
+  @if (showNewUserModal()) {
+    <div class="modal-backdrop" (click)="showNewUserModal.set(false)">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <div class="modal-head">
+          <h3>Añadir usuario y permisos</h3>
+          <button type="button" class="close-btn" (click)="showNewUserModal.set(false)">✕</button>
+        </div>
+
+        <div class="modal-grid">
+          <label>
+            <span>Nombre y apellidos</span>
+            <input type="text" [(ngModel)]="newUserFullName" />
+          </label>
+          <label>
+            <span>Correo de acceso</span>
+            <input type="email" [(ngModel)]="newUserEmail" />
+          </label>
+          <label>
+            <span>Empresa / Sede a la que pertenece</span>
+            <select [(ngModel)]="newUserTenantId">
+              @for (t of security.tenants(); track t.id) {
+                <option [value]="t.id">{{ t.commercialName }}</option>
+              }
+            </select>
+          </label>
+          <label>
+            <span>Rol y permisos de menú</span>
+            <select [(ngModel)]="newUserRole">
+              <option value="GERENCIA">Gerente de Sede (Todo en su sede)</option>
+              <option value="OFICINA_TECNICA">Oficina Técnica (Presupuestos y Catálogo)</option>
+              <option value="MEDIDOR_OBRA">Almacén y Obra (Solo Almacén)</option>
+              <option value="ADMINISTRACION_FACTURACION">Administración (Facturas y Almacén)</option>
+              <option value="SUPERADMIN">Superadministrador Central Grupo Soto</option>
+            </select>
+          </label>
+          <label class="span-2">
+            <span>Contraseña de acceso</span>
+            <input type="text" [(ngModel)]="newUserPassword" />
+          </label>
+        </div>
+
+        <div class="modal-foot">
+          <button type="button" class="btn btn--outline" (click)="showNewUserModal.set(false)">Cancelar</button>
+          <button type="button" class="btn btn--champagne" (click)="createNewUser()">
+            Guardar usuario →
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

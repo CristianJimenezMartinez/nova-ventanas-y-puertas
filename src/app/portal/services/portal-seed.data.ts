@@ -4,9 +4,13 @@ import {
   EmailAccountConfig,
   EmailMessageItem,
   GlassComposition,
+  PortalQuote,
   ShutterAndSolarOption,
+  VeriFactuInvoice,
   WarehouseOrder
 } from '../models/portal.models';
+import { PricingMatrixEngineService } from './pricing-matrix-engine.service';
+import { VeriFactuXmlService } from './verifactu-xml.service';
 
 export const INITIAL_CATALOG_SERIES: CatalogSeries[] = [
   {
@@ -397,3 +401,63 @@ export const INITIAL_CRM_LEADS: CrmLeadItem[] = [
     status: 'VISITA_AGENDADA'
   }
 ];
+
+export function buildSeedQuotes(pricingEngine: PricingMatrixEngineService): PortalQuote[] {
+  const h1 = pricingEngine.calculateHoleLine({
+    id: 'h-init-1', posNumber: 1, roomLocation: 'Salón Principal · Mirador Sur',
+    series: INITIAL_CATALOG_SERIES[0], openingHand: 'AMBAS_HOJAS_ACTIVA_DER',
+    widthMm: 1600, heightMm: 1400, quantity: 2, finishCategory: 'FOLIO_2_CARAS',
+    glass: INITIAL_GLASS_COMPOSITIONS[1], shutter: INITIAL_SHUTTER_OPTIONS[1],
+    hasMotor: true, tapajuntasMm: 60, hasPremarco: true, hasDesmontaje: true, isLowSillUnder900Mm: false
+  });
+  const base = h1.totalLinePvpEur + 1770;
+  return [{
+    id: 'quo-init-1', code: 'PRE-2026-0192', clientName: 'Estudio Arquitectura Valcárcel SLP',
+    clientNif: 'B73910245', clientPhone: '+34 620 44 18 90', clientEmail: 'estudio@valcarcelarquitectura.es',
+    workAddress: 'Urb. Altorreal, Av. del Golf 42 · Molina de Segura', projectType: 'REFORMA_VIVIENDA',
+    isHabitualResidence: true, clientSigned10PercentDeclaration: true, holes: [h1],
+    installationLaborPvpEur: 1450, auxiliaryMeansPvpEur: 320, materialsCostRatioPercent: 36.4,
+    qualifiesForReducedVat10: true, appliedVatPercent: 10, subtotalPvpEur: base,
+    vatAmountEur: Math.round(base * 10) / 100, totalPvpEur: Math.round(base * 110) / 100,
+    status: 'ACEPTADO_EN_PEDIDO', createdAtIso: new Date(Date.now() - 86400000 * 3).toISOString()
+  }];
+}
+
+export function buildSeedChainedInvoices(verifactuXml: VeriFactuXmlService): VeriFactuInvoice[] {
+  const nifEmisor = 'B73849102';
+  const genesis = '0'.repeat(64);
+  const fiveDaysAgo = new Date(Date.now() - 86400000 * 5).toISOString();
+  const todayIso = new Date().toISOString();
+  const h1 = verifactuXml.computeDeterministicAeatHash64({
+    nifEmisor, seriesAndNumber: 'FAC-2026001', issueDateIso: fiveDaysAgo,
+    invoiceType: 'ANTICIPO_OBRA', vatAmountEur: 675.0, totalImporteEur: 7425.0, previousHash64: genesis
+  });
+  const h2 = verifactuXml.computeDeterministicAeatHash64({
+    nifEmisor, seriesAndNumber: 'FAC-2026002', issueDateIso: todayIso,
+    invoiceType: 'F1_ORDINARIA', vatAmountEur: 631.73, totalImporteEur: 3640.0, previousHash64: h1
+  });
+  return [
+    {
+      id: 'inv-02', seriesAndNumber: 'FAC-2026002', invoiceType: 'F1_ORDINARIA', orderCode: 'PED-2026-0107',
+      clientName: 'Reformas Integrales Levante SL (Recogida Almacén)', clientNif: 'B30884129',
+      workDescription: 'Suministro Carpintería NOVA THERM 82 · Albarán ALB-2026-0091 (Sin Montaje)',
+      issueDateIso: todayIso, diasPago: 0, dueDateIso: verifactuXml.computeNormalizedDueDateIso(todayIso, 0),
+      baseImponibleEur: 3008.27, vatRatePercent: 21, vatAmountEur: 631.73, retencionGarantia5PercentEur: 0,
+      totalImporteEur: 3640.0, cobradoEur: 0, operationalStatus: 'LISTO_RECOGIDA_ENTREGA', paymentStatus: 'HOY_VENCE',
+      previousHash64: h1, currentHash64: h2,
+      aeatQrUrl: verifactuXml.buildAeatQrVerificationUrl(nifEmisor, 'FAC-2026002', todayIso, 3640, h2),
+      aeatSubmissionState: 'HUELLA_GENERADA'
+    },
+    {
+      id: 'inv-01', seriesAndNumber: 'FAC-2026001', invoiceType: 'ANTICIPO_OBRA', orderCode: 'PED-2026-0104',
+      clientName: 'Estudio Arquitectura Valcárcel SLP', clientNif: 'B73910245',
+      workDescription: 'Anticipo 50% Pedido PED-2026-0104 · Villa Altorreal',
+      issueDateIso: fiveDaysAgo, diasPago: 15, dueDateIso: verifactuXml.computeNormalizedDueDateIso(fiveDaysAgo, 15),
+      baseImponibleEur: 6750.0, vatRatePercent: 10, vatAmountEur: 675.0, retencionGarantia5PercentEur: 0,
+      totalImporteEur: 7425.0, cobradoEur: 7425.0, operationalStatus: 'COMPLETO_EN_ALMACEN', paymentStatus: 'COBRADA',
+      previousHash64: genesis, currentHash64: h1,
+      aeatQrUrl: verifactuXml.buildAeatQrVerificationUrl(nifEmisor, 'FAC-2026001', fiveDaysAgo, 7425, h1),
+      aeatSubmissionState: 'EXPORTADO_GESTORIA'
+    }
+  ];
+}

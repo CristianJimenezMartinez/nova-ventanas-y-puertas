@@ -252,6 +252,44 @@ export class PortalDocsComponent {
       tips: [
         'Ya tienes preconfiguradas las cuentas de gerencia@gruposoto.es, presupuestos@, administracion@ y compras@novaventanasypuertas.com.'
       ]
+    },
+    {
+      id: 'empresas-seguridad',
+      category: '7. Empresas, Usuarios y Seguridad',
+      title: 'Cómo dar de alta nuevas empresas/franquicias, usuarios por rol y blindar accesos',
+      summary:
+        'Funcionamiento del modelo Central + Delegaciones (tipo franquicia), herencia del catálogo maestro y revocación de sesiones.',
+      routeLink: '/portal/empresas',
+      routeLabel: 'Ir a Empresas y Usuarios',
+      steps: [
+        {
+          stepNumber: 1,
+          heading: 'Dar de alta una nueva Empresa / Franquicia en 30 segundos',
+          detail:
+            'En Empresas y Usuarios pulsa "+ Nueva empresa / sede". Indica su nombre comercial, Razón Social, CIF, prefijo de facturas y el correo del responsable. El sistema crea su espacio aislado en base de datos y le copia automáticamente el Catálogo Maestro de tarifas de Central.'
+        },
+        {
+          stepNumber: 2,
+          heading: 'Elegir si la sede tiene Tarifa Fijada por Central o Margen Libre',
+          detail:
+            'En la tabla de empresas puedes alternar con un clic entre "🔒 Tarifa oficial fijada por Central" (usan tus precios oficiales sin tocarlos) o "🔓 Margen comercial libre".'
+        },
+        {
+          stepNumber: 3,
+          heading: 'Cambiar de sede en tiempo real desde la barra superior',
+          detail:
+            'Entrando como gerencia@gruposoto.es, tienes arriba a la derecha el selector "Sede: ..." para entrar en un clic a cualquier delegación y ver sus presupuestos, almacén y facturación sin pedirles su contraseña.'
+        },
+        {
+          stepNumber: 4,
+          heading: 'Crear usuarios por rol y cerrar sesiones remotas',
+          detail:
+            'Con "+ Nuevo usuario" das de alta empleados indicando su rol (que oculta automáticamente las secciones del menú que no les corresponden). Si un empleado causa baja o pierde un dispositivo, pulsa "Cerrar sesiones remotas (Revocar tokens)" para invalidar al instante todos los accesos anteriores.'
+        }
+      ],
+      tips: [
+        'Cada empresa tiene sus propios clientes, presupuestos, almacén y serie de facturación VeriFactu 100% separados en PostgreSQL (Strict Tenant Lock).'
+      ]
     }
   ];
 

@@ -1,7 +1,26 @@
 -- ============================================================================
 -- ESQUEMA OFICIAL POSTGRESQL — NOVA VENTANAS & PUERTAS (db_nova)
--- Portabilidad 100% parametrizada por variables de entorno (.env)
+-- Multi-Empresa (Franquicias / Delegaciones) + Seguridad TokenVersion
 -- ============================================================================
+
+CREATE TABLE IF NOT EXISTS nova_tenants (
+  id VARCHAR(64) PRIMARY KEY,
+  commercial_name VARCHAR(200) NOT NULL,
+  legal_name VARCHAR(200) NOT NULL,
+  cif VARCHAR(40) NOT NULL,
+  city VARCHAR(120) NOT NULL,
+  invoice_prefix VARCHAR(24) NOT NULL DEFAULT 'FAC',
+  catalog_policy VARCHAR(40) NOT NULL DEFAULT 'LOCKED_BY_CENTRAL',
+  admin_email VARCHAR(200) NOT NULL,
+  active BOOLEAN NOT NULL DEFAULT TRUE,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+INSERT INTO nova_tenants (id, commercial_name, legal_name, cif, city, invoice_prefix, catalog_policy, admin_email, active)
+VALUES
+  ('tenant-nova-soto', 'NOVA Central · Murcia (Matriz)', 'GRUPO SOTO EMPRESARIAL SL', 'B73849102', 'Molina de Segura · Murcia', 'FAC-MUR', 'LOCKED_BY_CENTRAL', 'gerencia@gruposoto.es', TRUE),
+  ('tenant-nova-alicante', 'NOVA Delegación Alicante Sur', 'CERRAMIENTOS ARQUITECTÓNICOS LEVANTE SL', 'B03948120', 'Alicante', 'FAC-ALI', 'LOCKED_BY_CENTRAL', 'alicante@novaventanasypuertas.com', TRUE)
+ON CONFLICT (id) DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS nova_state_store (
   tenant_id VARCHAR(64) PRIMARY KEY,
@@ -68,19 +87,20 @@ CREATE TABLE IF NOT EXISTS nova_users (
   email VARCHAR(200) NOT NULL UNIQUE,
   full_name VARCHAR(200) NOT NULL,
   role VARCHAR(50) NOT NULL DEFAULT 'SUPERADMIN',
-  password_plain VARCHAR(120) NOT NULL DEFAULT 'Soto2026!Seguro',
+  password_plain VARCHAR(255) NOT NULL DEFAULT 'Soto2026!Seguro',
+  token_version INTEGER NOT NULL DEFAULT 1,
   active BOOLEAN NOT NULL DEFAULT TRUE,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-INSERT INTO nova_users (id, tenant_id, email, full_name, role, password_plain, active)
+ALTER TABLE nova_users ADD COLUMN IF NOT EXISTS token_version INTEGER NOT NULL DEFAULT 1;
+
+INSERT INTO nova_users (id, tenant_id, email, full_name, role, password_plain, token_version, active)
 VALUES
-  ('usr-gerencia-soto', 'tenant-nova-soto', 'gerencia@gruposoto.es', 'Gerencia General · Grupo Soto', 'SUPERADMIN', 'Soto2026!Seguro', TRUE),
-  ('usr-admin-soto', 'tenant-nova-soto', 'admin@gruposoto.es', 'Administrador · Grupo Soto', 'SUPERADMIN', 'Soto2026!Seguro', TRUE),
-  ('usr-presupuestos', 'tenant-nova-soto', 'presupuestos@novaventanasypuertas.com', 'Oficina Técnica · NOVA', 'OFICINA_TECNICA', 'Soto2026!Seguro', TRUE),
-  ('usr-almacen', 'tenant-nova-soto', 'almacen@novaventanasypuertas.com', 'Almacén & Recepción · NOVA', 'MEDIDOR_OBRA', 'Soto2026!Seguro', TRUE),
-  ('usr-facturacion', 'tenant-nova-soto', 'administracion@novaventanasypuertas.com', 'Administración & VeriFactu · NOVA', 'ADMINISTRACION_FACTURACION', 'Soto2026!Seguro', TRUE)
-ON CONFLICT (email) DO UPDATE SET
-  role = EXCLUDED.role,
-  full_name = EXCLUDED.full_name,
-  active = TRUE;
+  ('usr-gerencia-soto', 'tenant-nova-soto', 'gerencia@gruposoto.es', 'Gerencia General · Grupo Soto', 'SUPERADMIN', 'Soto2026!Seguro', 1, TRUE),
+  ('usr-admin-soto', 'tenant-nova-soto', 'admin@gruposoto.es', 'Administrador · Grupo Soto', 'SUPERADMIN', 'Soto2026!Seguro', 1, TRUE),
+  ('usr-presupuestos', 'tenant-nova-soto', 'presupuestos@novaventanasypuertas.com', 'Oficina Técnica · Central Murcia', 'OFICINA_TECNICA', 'Soto2026!Seguro', 1, TRUE),
+  ('usr-almacen', 'tenant-nova-soto', 'almacen@novaventanasypuertas.com', 'Almacén & Recepción · Central Murcia', 'MEDIDOR_OBRA', 'Soto2026!Seguro', 1, TRUE),
+  ('usr-facturacion', 'tenant-nova-soto', 'administracion@novaventanasypuertas.com', 'Administración · Central Murcia', 'ADMINISTRACION_FACTURACION', 'Soto2026!Seguro', 1, TRUE),
+  ('usr-alicante-dir', 'tenant-nova-alicante', 'alicante@novaventanasypuertas.com', 'Dirección · Delegación Alicante', 'GERENCIA', 'Soto2026!Seguro', 1, TRUE)
+ON CONFLICT (email) DO NOTHING;

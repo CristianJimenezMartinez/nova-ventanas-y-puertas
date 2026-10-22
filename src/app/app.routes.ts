@@ -6,6 +6,13 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/home/home.component').then(m => m.HomeComponent)
   },
   {
+    path: 'portal/login',
+    loadComponent: () =>
+      import('./portal/pages/login/portal-login.component').then(
+        m => m.PortalLoginComponent
+      )
+  },
+  {
     path: 'portal',
     loadComponent: () =>
       import('./portal/layout/portal-shell.component').then(m => m.PortalShellComponent),
@@ -58,17 +65,17 @@ export const routes: Routes = [
           )
       },
       {
+        path: 'empresas',
+        loadComponent: () =>
+          import('./portal/pages/tenants/portal-tenants.component').then(
+            m => m.PortalTenantsComponent
+          )
+      },
+      {
         path: 'documentacion',
         loadComponent: () =>
           import('./portal/pages/docs/portal-docs.component').then(
             m => m.PortalDocsComponent
-          )
-      },
-      {
-        path: 'login',
-        loadComponent: () =>
-          import('./portal/pages/login/portal-login.component').then(
-            m => m.PortalLoginComponent
           )
       }
     ]

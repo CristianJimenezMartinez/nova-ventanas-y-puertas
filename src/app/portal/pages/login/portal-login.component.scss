@@ -1,17 +1,35 @@
-.login-split {
+.login-standalone {
+  --p-bg: #F3F2EE;
+  --p-surface: #FFFFFF;
+  --p-card: #F9F8F6;
+  --p-border: #D6D3CD;
+  --p-text: #141413;
+  --p-text-sec: #4A4843;
+  --p-accent: #8C6D3B;
+  --p-input-bg: #FFFFFF;
+  min-height: 100vh;
+  background-color: var(--p-bg);
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  padding: 1rem 0;
+  align-items: center;
+  padding: 2rem 1rem;
 }
 
 .login-card {
   background-color: var(--p-surface);
   border: 1px solid var(--p-border);
-  padding: 2rem;
+  max-width: 480px;
+  width: 100%;
+  padding: 2.25rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
+}
+
+.login-sub {
+  margin-top: 0.3rem;
+  color: var(--p-text-sec);
+  font-size: 0.875rem;
 }
 
 .login-form {

@@ -272,3 +272,25 @@ export interface CrmLeadItem {
   recommendedSystem: string;
   status: 'NUEVO_WEB' | 'VISITA_AGENDADA' | 'PRESUPUESTADO';
 }
+
+export interface PortalTenantCompany {
+  id: string;
+  commercialName: string;
+  legalName: string;
+  cif: string;
+  city: string;
+  invoicePrefix: string;
+  catalogPolicy: 'LOCKED_BY_CENTRAL' | 'CUSTOM_MARGIN_ALLOWED';
+  adminEmail: string;
+  active: boolean;
+}
+
+export interface PortalManagedUser {
+  id: string;
+  tenantId: string;
+  email: string;
+  fullName: string;
+  role: UserRole;
+  active: boolean;
+  tokenVersion?: number;
+}

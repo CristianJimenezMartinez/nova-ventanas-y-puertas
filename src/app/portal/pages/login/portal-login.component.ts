@@ -21,14 +21,16 @@ export class PortalLoginComponent {
   readonly selectedRole = signal<UserRole>('SUPERADMIN');
 
   enterPortal(): void {
-    this.store.loginWithCredentials(this.email(), this.selectedRole());
-    this.router.navigate(['/portal/dashboard']);
+    this.store.loginWithCredentials(this.email(), this.selectedRole(), this.password());
+    const target = this.selectedRole() === 'MEDIDOR_OBRA' ? '/portal/almacen' : '/portal/dashboard';
+    this.router.navigate([target]);
   }
 
   quickRoleAccess(role: UserRole, email: string): void {
     this.email.set(email);
     this.selectedRole.set(role);
-    this.store.loginWithCredentials(email, role);
-    this.router.navigate(['/portal/dashboard']);
+    this.store.loginWithCredentials(email, role, 'Soto2026!Seguro');
+    const target = role === 'MEDIDOR_OBRA' ? '/portal/almacen' : '/portal/dashboard';
+    this.router.navigate([target]);
   }
 }

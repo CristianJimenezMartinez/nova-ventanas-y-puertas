@@ -23,10 +23,13 @@ import {
   INITIAL_EMAIL_MESSAGES,
   INITIAL_GLASS_COMPOSITIONS,
   INITIAL_SHUTTER_OPTIONS,
-  INITIAL_WAREHOUSE_ORDERS
+  INITIAL_WAREHOUSE_ORDERS,
+  buildSeedChainedInvoices,
+  buildSeedQuotes
 } from './portal-seed.data';
 import { VeriFactuXmlService } from './verifactu-xml.service';
 import { PricingMatrixEngineService } from './pricing-matrix-engine.service';
+import { PortalSecurityService } from './portal-security.service';
 
 @Injectable({
   providedIn: 'root'
@@ -35,6 +38,7 @@ export class PortalStoreService {
   private readonly http = inject(HttpClient);
   private readonly verifactuXml = inject(VeriFactuXmlService);
   private readonly pricingEngine = inject(PricingMatrixEngineService);
+  readonly security = inject(PortalSecurityService);
 
   readonly themeMode = signal<PortalThemeMode>('ivory');
   readonly isAuthenticated = signal<boolean>(true);
@@ -87,13 +91,14 @@ export class PortalStoreService {
     this.hydrateFromPostgresDb();
   }
 
-  private hydrateFromPostgresDb(): void {
+  private hydrateFromPostgresDb(targetTenantId?: string): void {
+    const headers = this.security.getAuthHeaders(targetTenantId);
     this.http
       .get<{
         hasStoredState: boolean;
         state: Record<string, unknown> | null;
         leads: CrmLeadItem[];
-      }>('/api/v1/state')
+      }>('/api/v1/state', { headers })
       .subscribe({
         next: res => {
           if (res.hasStoredState && res.state) {
@@ -111,7 +116,7 @@ export class PortalStoreService {
           } else {
             this.persistStateToPostgresDb();
           }
-          if (Array.isArray(res.leads) && res.leads.length > 0) {
+          if (Array.isArray(res.leads)) {
             this.leads.set(res.leads);
           }
           this.dbSyncedStatus.set('SINCRONIZADO_DB_NOVA');
@@ -133,10 +138,34 @@ export class PortalStoreService {
       emailMessages: this.emailMessages(),
       leads: this.leads()
     };
-    this.http.put('/api/v1/state', payload).subscribe({
+    this.http.put('/api/v1/state', payload, { headers: this.security.getAuthHeaders() }).subscribe({
       next: () => this.dbSyncedStatus.set('SINCRONIZADO_DB_NOVA'),
       error: () => this.dbSyncedStatus.set('MODO_LOCAL')
     });
+  }
+
+  switchActiveTenant(tenantId: string): void {
+    this.security.activeTenantId.set(tenantId);
+    const tenant = this.security.tenants().find(t => t.id === tenantId);
+    if (tenant) {
+      this.currentUser.update(u => ({
+        ...u,
+        tenantId: tenant.id,
+        tenantName: tenant.legalName,
+        branchName: tenant.commercialName
+      }));
+      this.verifactuVault.update(v => ({
+        ...v,
+        nifEmisor: tenant.cif,
+        razonSocialEmisor: tenant.legalName
+      }));
+    }
+    this.hydrateFromPostgresDb(tenantId);
+  }
+
+  logout(): void {
+    this.security.saveSessionToken('');
+    this.isAuthenticated.set(false);
   }
 
   toggleTheme(): void {
@@ -147,7 +176,7 @@ export class PortalStoreService {
     this.currentUser.update(u => ({ ...u, role, roleLabel }));
   }
 
-  loginWithCredentials(email: string, role: UserRole = 'SUPERADMIN'): void {
+  loginWithCredentials(email: string, role: UserRole = 'SUPERADMIN', password?: string): void {
     const labels: Record<UserRole, string> = {
       SUPERADMIN: 'Administrador Total · Gerencia Grupo Soto',
       GERENCIA: 'Gerencia & Dirección',
@@ -159,13 +188,33 @@ export class PortalStoreService {
       COLABORADOR_EXTERNO: 'Arquitecto / Distribuidor B2B'
     };
     const normalizedEmail = (email || 'gerencia@gruposoto.es').trim().toLowerCase();
-    const fullName =
-      normalizedEmail === 'gerencia@gruposoto.es'
-        ? 'Gerencia General · Grupo Soto'
-        : 'Usuario Corporativo · NOVA';
+    this.http
+      .post<{
+        ok: boolean;
+        token?: string;
+        user?: { id: string; email: string; fullName: string; role: UserRole; tenantId: string };
+      }>('/api/v1/auth/login', { email: normalizedEmail, password })
+      .subscribe({
+        next: res => {
+          if (res.token) this.security.saveSessionToken(res.token);
+          if (res.user) {
+            this.currentUser.update(u => ({
+              ...u,
+              id: res.user!.id,
+              email: res.user!.email,
+              fullName: res.user!.fullName,
+              role: res.user!.role,
+              roleLabel: labels[res.user!.role] || labels[role],
+              tenantId: res.user!.tenantId
+            }));
+            this.switchActiveTenant(res.user.tenantId);
+          }
+        },
+        error: () => {}
+      });
     this.currentUser.update(u => ({
       ...u,
-      fullName,
+      fullName: normalizedEmail === 'gerencia@gruposoto.es' ? 'Gerencia General · Grupo Soto' : 'Usuario Corporativo · NOVA',
       email: normalizedEmail,
       role,
       roleLabel: labels[role]
@@ -420,62 +469,10 @@ export class PortalStoreService {
   }
 
   private buildInitialQuotes(): PortalQuote[] {
-    const h1 = this.pricingEngine.calculateHoleLine({
-      id: 'h-init-1', posNumber: 1, roomLocation: 'Salón Principal · Mirador Sur',
-      series: INITIAL_CATALOG_SERIES[0], openingHand: 'AMBAS_HOJAS_ACTIVA_DER',
-      widthMm: 1600, heightMm: 1400, quantity: 2, finishCategory: 'FOLIO_2_CARAS',
-      glass: INITIAL_GLASS_COMPOSITIONS[1], shutter: INITIAL_SHUTTER_OPTIONS[1],
-      hasMotor: true, tapajuntasMm: 60, hasPremarco: true, hasDesmontaje: true, isLowSillUnder900Mm: false
-    });
-    const base = h1.totalLinePvpEur + 1770;
-    return [{
-      id: 'quo-init-1', code: 'PRE-2026-0192', clientName: 'Estudio Arquitectura Valcárcel SLP',
-      clientNif: 'B73910245', clientPhone: '+34 620 44 18 90', clientEmail: 'estudio@valcarcelarquitectura.es',
-      workAddress: 'Urb. Altorreal, Av. del Golf 42 · Molina de Segura', projectType: 'REFORMA_VIVIENDA',
-      isHabitualResidence: true, clientSigned10PercentDeclaration: true, holes: [h1],
-      installationLaborPvpEur: 1450, auxiliaryMeansPvpEur: 320, materialsCostRatioPercent: 36.4,
-      qualifiesForReducedVat10: true, appliedVatPercent: 10, subtotalPvpEur: base,
-      vatAmountEur: Math.round(base * 10) / 100, totalPvpEur: Math.round(base * 110) / 100,
-      status: 'ACEPTADO_EN_PEDIDO', createdAtIso: new Date(Date.now() - 86400000 * 3).toISOString()
-    }];
+    return buildSeedQuotes(this.pricingEngine);
   }
 
   private buildInitialChainedInvoices(): VeriFactuInvoice[] {
-    const nifEmisor = 'B73849102';
-    const genesis = '0'.repeat(64);
-    const fiveDaysAgo = new Date(Date.now() - 86400000 * 5).toISOString();
-    const todayIso = new Date().toISOString();
-    const h1 = this.verifactuXml.computeDeterministicAeatHash64({
-      nifEmisor, seriesAndNumber: 'FAC-2026001', issueDateIso: fiveDaysAgo,
-      invoiceType: 'ANTICIPO_OBRA', vatAmountEur: 675.0, totalImporteEur: 7425.0, previousHash64: genesis
-    });
-    const h2 = this.verifactuXml.computeDeterministicAeatHash64({
-      nifEmisor, seriesAndNumber: 'FAC-2026002', issueDateIso: todayIso,
-      invoiceType: 'F1_ORDINARIA', vatAmountEur: 631.73, totalImporteEur: 3640.0, previousHash64: h1
-    });
-    return [
-      {
-        id: 'inv-02', seriesAndNumber: 'FAC-2026002', invoiceType: 'F1_ORDINARIA', orderCode: 'PED-2026-0107',
-        clientName: 'Reformas Integrales Levante SL (Recogida Almacén)', clientNif: 'B30884129',
-        workDescription: 'Suministro Carpintería NOVA THERM 82 · Albarán ALB-2026-0091 (Sin Montaje)',
-        issueDateIso: todayIso, diasPago: 0, dueDateIso: this.verifactuXml.computeNormalizedDueDateIso(todayIso, 0),
-        baseImponibleEur: 3008.27, vatRatePercent: 21, vatAmountEur: 631.73, retencionGarantia5PercentEur: 0,
-        totalImporteEur: 3640.0, cobradoEur: 0, operationalStatus: 'LISTO_RECOGIDA_ENTREGA', paymentStatus: 'HOY_VENCE',
-        previousHash64: h1, currentHash64: h2,
-        aeatQrUrl: this.verifactuXml.buildAeatQrVerificationUrl(nifEmisor, 'FAC-2026002', todayIso, 3640, h2),
-        aeatSubmissionState: 'HUELLA_GENERADA'
-      },
-      {
-        id: 'inv-01', seriesAndNumber: 'FAC-2026001', invoiceType: 'ANTICIPO_OBRA', orderCode: 'PED-2026-0104',
-        clientName: 'Estudio Arquitectura Valcárcel SLP', clientNif: 'B73910245',
-        workDescription: 'Anticipo 50% Pedido PED-2026-0104 · Villa Altorreal',
-        issueDateIso: fiveDaysAgo, diasPago: 15, dueDateIso: this.verifactuXml.computeNormalizedDueDateIso(fiveDaysAgo, 15),
-        baseImponibleEur: 6750.0, vatRatePercent: 10, vatAmountEur: 675.0, retencionGarantia5PercentEur: 0,
-        totalImporteEur: 7425.0, cobradoEur: 7425.0, operationalStatus: 'COMPLETO_EN_ALMACEN', paymentStatus: 'COBRADA',
-        previousHash64: genesis, currentHash64: h1,
-        aeatQrUrl: this.verifactuXml.buildAeatQrVerificationUrl(nifEmisor, 'FAC-2026001', fiveDaysAgo, 7425, h1),
-        aeatSubmissionState: 'EXPORTADO_GESTORIA'
-      }
-    ];
+    return buildSeedChainedInvoices(this.verifactuXml);
   }
 }

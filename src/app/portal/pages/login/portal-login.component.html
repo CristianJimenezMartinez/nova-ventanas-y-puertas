@@ -1,7 +1,8 @@
-<div class="login-split">
-  <div class="login-card" style="max-width:520px;margin:2rem auto;width:100%;">
+<div class="portal-workspace portal-workspace--ivory login-standalone">
+  <div class="login-card">
     <div class="login-card__header">
-      <h2>Acceso al Portal NOVA</h2>
+      <h1>Acceso al Portal NOVA</h1>
+      <p class="login-sub">Introduce tu correo corporativo de Central o de tu Delegación.</p>
     </div>
 
     <div class="login-form">
@@ -18,25 +19,27 @@
       <div class="field-group">
         <label for="loginRole">Perfil</label>
         <select id="loginRole" [(ngModel)]="selectedRole" class="login-input">
-          <option value="SUPERADMIN">Administrador Total (gerencia&#64;gruposoto.es)</option>
-          <option value="GERENCIA">Gerencia</option>
-          <option value="OFICINA_TECNICA">Oficina Técnica</option>
-          <option value="COMERCIAL">Comercial</option>
-          <option value="MEDIDOR_OBRA">Almacén y Obra</option>
-          <option value="ADMINISTRACION_FACTURACION">Administración</option>
+          <option value="SUPERADMIN">Administrador Total · Central Grupo Soto (gerencia&#64;gruposoto.es)</option>
+          <option value="GERENCIA">Gerente de Sede / Franquicia</option>
+          <option value="OFICINA_TECNICA">Oficina Técnica y Presupuestos</option>
+          <option value="MEDIDOR_OBRA">Almacén y Montaje</option>
+          <option value="ADMINISTRACION_FACTURACION">Administración y Facturas</option>
         </select>
       </div>
 
       <button type="button" class="btn btn--champagne w-100" (click)="enterPortal()">
-        Entrar al portal →
+        Iniciar sesión →
       </button>
     </div>
 
     <div class="quick-roles">
-      <span class="quick-roles__label">Acceso rápido:</span>
+      <span class="quick-roles__label">Acceso rápido por perfil:</span>
       <div class="quick-roles__grid">
         <button type="button" class="role-btn" (click)="quickRoleAccess('SUPERADMIN', 'gerencia@gruposoto.es')">
-          gerencia&#64;gruposoto.es
+          Central (gerencia&#64;gruposoto.es)
+        </button>
+        <button type="button" class="role-btn" (click)="quickRoleAccess('GERENCIA', 'alicante@novaventanasypuertas.com')">
+          Sede Alicante
         </button>
         <button type="button" class="role-btn" (click)="quickRoleAccess('OFICINA_TECNICA', 'presupuestos@novaventanasypuertas.com')">
           Oficina Técnica
@@ -44,10 +47,11 @@
         <button type="button" class="role-btn" (click)="quickRoleAccess('MEDIDOR_OBRA', 'almacen@novaventanasypuertas.com')">
           Almacén
         </button>
-        <button type="button" class="role-btn" (click)="quickRoleAccess('ADMINISTRACION_FACTURACION', 'administracion@novaventanasypuertas.com')">
-          Facturación
-        </button>
       </div>
+    </div>
+
+    <div style="text-align:center;padding-top:0.5rem;">
+      <a routerLink="/" style="font-size:0.8125rem;color:#4A4843;">← Volver a la web pública</a>
     </div>
   </div>
 </div>
