@@ -1,7 +1,8 @@
 import { inject } from '@angular/core';
 import { CanActivateFn, Router, Routes } from '@angular/router';
 import { PortalStoreService } from './portal/services/portal-store.service';
-import { PortalModuleKey } from './portal/models/portal.models';
+
+type PortalModuleKey = 'dashboard' | 'catalogo' | 'presupuestos' | 'almacen' | 'facturacion' | 'correos' | 'empresas';
 
 const requirePortalModule = (moduleKey: PortalModuleKey): CanActivateFn => {
   return () => {
