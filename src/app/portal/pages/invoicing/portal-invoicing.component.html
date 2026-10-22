@@ -118,6 +118,17 @@
         </div>
 
         <div class="modal-grid tabular-nums">
+          @if (store.leads().length > 0) {
+            <label class="span-2">
+              <span>Seleccionar cliente guardado (opcional)</span>
+              <select class="inv-input" (change)="loadFromSavedClient($any($event.target).value)">
+                <option value="">-- Escribir manualmente o elegir cliente --</option>
+                @for (c of store.leads(); track c.id) {
+                  <option [value]="c.id">{{ c.fullName }}{{ c.nif ? ' (' + c.nif + ')' : '' }} · {{ c.city }}</option>
+                }
+              </select>
+            </label>
+          }
           @if (store.warehouseOrders().length > 0) {
             <label class="span-2">
               <span>Cargar datos desde pedido de almacén (opcional)</span>

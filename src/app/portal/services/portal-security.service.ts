@@ -35,6 +35,7 @@ export class PortalSecurityService {
 
   readonly pendingQuoteDraft = signal<{
     clientName: string;
+    clientNif?: string;
     clientPhone: string;
     clientEmail: string;
     workAddress: string;

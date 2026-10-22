@@ -262,6 +262,7 @@ export interface CrmLeadItem {
   id: string;
   createdAtIso: string;
   fullName: string;
+  nif?: string;
   phone: string;
   email: string;
   city: string;

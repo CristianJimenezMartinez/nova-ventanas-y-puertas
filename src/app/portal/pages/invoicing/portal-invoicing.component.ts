@@ -52,6 +52,16 @@ export class PortalInvoicingComponent {
     this.newBaseImponible.set(Math.round((ord.totalAmountEur / (1 + vatPct / 100)) * 100) / 100);
   }
 
+  loadFromSavedClient(clientId: string): void {
+    const c = this.store.leads().find(l => l.id === clientId);
+    if (!c) return;
+    this.newClientName.set(c.fullName);
+    this.newClientNif.set(c.nif || '');
+    if (!this.newDescription()) {
+      this.newDescription.set(`Trabajos de carpintería · ${c.city}`);
+    }
+  }
+
   deleteInvoice(id: string): void {
     this.store.removeInvoice(id);
   }

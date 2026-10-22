@@ -46,6 +46,14 @@ export class PortalWarehouseComponent {
     this.selectedCircuit.set(c);
   }
 
+  selectSavedClientForOrder(clientId: string): void {
+    const c = this.store.leads().find(l => l.id === clientId);
+    if (!c) return;
+    this.newClientName.set(c.fullName);
+    this.newClientNif.set(c.nif || '');
+    this.newWorkAddress.set(c.city);
+  }
+
   createManualOrder(): void {
     const name = this.newClientName().trim();
     if (!name) return;

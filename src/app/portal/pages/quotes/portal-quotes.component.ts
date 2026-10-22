@@ -76,12 +76,39 @@ export class PortalQuotesComponent {
     const draft = this.store.security.pendingQuoteDraft();
     if (draft) {
       this.clientName.set(draft.clientName);
+      this.clientNif.set(draft.clientNif || '');
       this.clientPhone.set(draft.clientPhone);
       this.clientEmail.set(draft.clientEmail);
       this.workAddress.set(draft.workAddress);
       this.projectType.set(draft.projectType);
       this.store.security.pendingQuoteDraft.set(null);
     }
+  }
+
+  selectSavedClient(clientId: string): void {
+    const c = this.store.leads().find(l => l.id === clientId);
+    if (!c) return;
+    this.clientName.set(c.fullName);
+    this.clientNif.set(c.nif || '');
+    this.clientPhone.set(c.phone);
+    this.clientEmail.set(c.email);
+    this.workAddress.set(c.city);
+    this.statusMessage.set(`✓ Datos del cliente "${c.fullName}" cargados.`);
+  }
+
+  saveCurrentClientToDirectory(): void {
+    const name = this.clientName().trim();
+    if (!name) return;
+    this.store.registerWebLead({
+      fullName: name,
+      nif: this.clientNif().trim(),
+      phone: this.clientPhone().trim(),
+      email: this.clientEmail().trim(),
+      city: this.workAddress().trim() || 'Murcia',
+      projectType: this.projectType(),
+      recommendedSystem: 'Cliente guardado desde Presupuestos'
+    });
+    this.statusMessage.set(`✓ Cliente "${name}" guardado en la cartera de clientes para próximos presupuestos.`);
   }
 
   readonly activeSeries = computed(() =>
@@ -279,7 +306,18 @@ export class PortalQuotesComponent {
     this.activeQuoteId.set(q.id);
     this.activeQuoteCode.set(q.code);
     this.store.saveQuoteOnly(q);
-    this.statusMessage.set(`✓ Presupuesto ${q.code} (${q.clientName}) guardado.`);
+    if (this.clientName().trim()) {
+      this.store.registerWebLead({
+        fullName: this.clientName().trim(),
+        nif: this.clientNif().trim(),
+        phone: this.clientPhone().trim(),
+        email: this.clientEmail().trim(),
+        city: this.workAddress().trim() || 'Murcia',
+        projectType: this.projectType(),
+        recommendedSystem: `Presupuesto ${q.code}`
+      });
+    }
+    this.statusMessage.set(`✓ Presupuesto ${q.code} y datos del cliente (${q.clientName}) guardados.`);
   }
 
   resetQuoteForm(): void {

@@ -18,10 +18,11 @@ export class PortalDashboardComponent {
 
   readonly showNewLeadModal = signal<boolean>(false);
   readonly newLeadName = signal<string>('');
+  readonly newLeadNif = signal<string>('');
   readonly newLeadPhone = signal<string>('');
   readonly newLeadEmail = signal<string>('');
   readonly newLeadCity = signal<string>('');
-  readonly newLeadSystem = signal<string>('Ventanas y cerramientos');
+  readonly newLeadSystem = signal<string>('Carpintería a medida');
   readonly newLeadType = signal<'OBRA_NUEVA' | 'REFORMA_VIVIENDA' | 'SOLO_SUMINISTRO'>('REFORMA_VIVIENDA');
 
   saveNewLead(): void {
@@ -29,6 +30,7 @@ export class PortalDashboardComponent {
     if (!name) return;
     this.store.registerWebLead({
       fullName: name,
+      nif: this.newLeadNif().trim(),
       phone: this.newLeadPhone().trim(),
       email: this.newLeadEmail().trim(),
       city: this.newLeadCity().trim() || 'Murcia',
@@ -36,6 +38,7 @@ export class PortalDashboardComponent {
       recommendedSystem: this.newLeadSystem().trim() || 'Carpintería a medida'
     });
     this.newLeadName.set('');
+    this.newLeadNif.set('');
     this.newLeadPhone.set('');
     this.newLeadEmail.set('');
     this.newLeadCity.set('');
@@ -49,6 +52,7 @@ export class PortalDashboardComponent {
         : 'REFORMA_VIVIENDA';
     this.store.security.pendingQuoteDraft.set({
       clientName: lead.fullName,
+      clientNif: lead.nif || '',
       clientPhone: lead.phone,
       clientEmail: lead.email,
       workAddress: lead.city,

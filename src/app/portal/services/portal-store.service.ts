@@ -433,14 +433,29 @@ export class PortalStoreService {
   }
 
   registerWebLead(lead: Omit<CrmLeadItem, 'id' | 'createdAtIso' | 'status'>): void {
-    const item: CrmLeadItem = {
-      ...lead,
-      id: `lead-${Date.now()}`,
-      createdAtIso: new Date().toISOString(),
-      status: 'NUEVO_WEB'
-    };
-    this.leads.update(list => [item, ...list]);
-    this.http.post('/api/v1/leads', item).subscribe({ error: () => {} });
+    const cleanName = lead.fullName.trim();
+    if (!cleanName) return;
+    this.leads.update(list => {
+      const existingIdx = list.findIndex(
+        l =>
+          l.fullName.toLowerCase() === cleanName.toLowerCase() ||
+          (lead.nif && l.nif && l.nif.toLowerCase() === lead.nif.toLowerCase())
+      );
+      if (existingIdx >= 0) {
+        return list.map((item, idx) =>
+          idx === existingIdx ? { ...item, ...lead, fullName: cleanName } : item
+        );
+      }
+      const item: CrmLeadItem = {
+        ...lead,
+        fullName: cleanName,
+        id: `lead-${Date.now()}`,
+        createdAtIso: new Date().toISOString(),
+        status: 'NUEVO_WEB'
+      };
+      this.http.post('/api/v1/leads', item).subscribe({ error: () => {} });
+      return [item, ...list];
+    });
     this.persistStateToPostgresDb();
   }
 

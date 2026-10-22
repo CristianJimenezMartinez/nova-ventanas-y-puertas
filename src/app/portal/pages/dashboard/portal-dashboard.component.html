@@ -35,7 +35,7 @@
   <div class="dash-columns">
     <section class="dash-panel">
       <div class="dash-panel__head">
-        <h2>Solicitudes de clientes ({{ store.leads().length }})</h2>
+        <h2>Clientes guardados ({{ store.leads().length }})</h2>
         <button type="button" class="panel-link" style="background:none;border:none;cursor:pointer;" (click)="showNewLeadModal.set(true)">
           + Añadir cliente
         </button>
@@ -45,9 +45,9 @@
         <table class="portal-table tabular-nums">
           <thead>
             <tr>
-              <th>Cliente</th>
-              <th>Municipio / Obra</th>
-              <th>Trabajo</th>
+              <th>Cliente / NIF</th>
+              <th>Dirección / Municipio</th>
+              <th>Notas</th>
               <th>Acciones</th>
             </tr>
           </thead>
@@ -55,7 +55,7 @@
             @if (store.leads().length === 0) {
               <tr>
                 <td colspan="4" class="cell-sub" style="padding:1.25rem 0.75rem;">
-                  No hay solicitudes registradas. Pulsa «+ Nuevo cliente / solicitud» para registrar una.
+                  No hay clientes registrados. Pulsa «+ Nuevo cliente» o guárdalos directamente desde Presupuestos.
                 </td>
               </tr>
             }
@@ -63,7 +63,7 @@
               <tr>
                 <td>
                   <strong>{{ lead.fullName }}</strong>
-                  <div class="cell-sub">{{ lead.phone }} · {{ lead.email }}</div>
+                  <div class="cell-sub">{{ lead.nif ? lead.nif + ' · ' : '' }}{{ lead.phone }} · {{ lead.email }}</div>
                 </td>
                 <td>{{ lead.city }}</td>
                 <td>{{ lead.recommendedSystem }}</td>
@@ -137,9 +137,13 @@
           <button type="button" class="dash-mini-btn" (click)="showNewLeadModal.set(false)">✕</button>
         </div>
         <div class="dash-modal__grid">
-          <label class="span-2">
+          <label>
             <span>Nombre o empresa</span>
             <input type="text" [(ngModel)]="newLeadName" class="dash-input" placeholder="Nombre del cliente o empresa" />
+          </label>
+          <label>
+            <span>NIF / CIF</span>
+            <input type="text" [(ngModel)]="newLeadNif" class="dash-input" placeholder="12345678A / B00000000" />
           </label>
           <label>
             <span>Teléfono</span>
@@ -150,8 +154,8 @@
             <input type="email" [(ngModel)]="newLeadEmail" class="dash-input" placeholder="cliente@correo.es" />
           </label>
           <label>
-            <span>Municipio / Dirección</span>
-            <input type="text" [(ngModel)]="newLeadCity" class="dash-input" placeholder="Murcia" />
+            <span>Dirección / Municipio</span>
+            <input type="text" [(ngModel)]="newLeadCity" class="dash-input" placeholder="Dirección o Municipio" />
           </label>
           <label>
             <span>Tipo de trabajo</span>
@@ -162,8 +166,8 @@
             </select>
           </label>
           <label class="span-2">
-            <span>Notas / Sistemas solicitados</span>
-            <input type="text" [(ngModel)]="newLeadSystem" class="dash-input" placeholder="Ej: 4 ventanas oscilobatientes + 1 corredera" />
+            <span>Notas (opcional)</span>
+            <input type="text" [(ngModel)]="newLeadSystem" class="dash-input" placeholder="Notas o referencia de obra" />
           </label>
         </div>
         <div class="dash-modal__foot">
