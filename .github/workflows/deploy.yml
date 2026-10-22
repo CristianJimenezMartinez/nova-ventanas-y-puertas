@@ -5,6 +5,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+concurrency:
+  group: deploy-nova-production
+  cancel-in-progress: true
+
 jobs:
   build-and-deploy:
     name: 🏗️ Compilar en Runner & Desplegar en VPS (Frontend + nova-api :3006)
@@ -19,9 +23,10 @@ jobs:
         with:
           node-version: 22
           cache: 'npm'
+          cache-dependency-path: 'package-lock.json'
 
       - name: 📦 Instalar Dependencias Frontend en Runner
-        run: npm ci
+        run: npm ci --prefer-offline --no-audit
 
       - name: 🔨 Compilar Frontend Angular (SPA + Portal) en Runner (16GB RAM)
         # CRÍTICO: Compilación exclusiva en GitHub Actions Runner.
@@ -30,7 +35,7 @@ jobs:
       - name: 📦 Instalar Dependencias de Producción de nova-api en Runner
         run: |
           cd backend
-          npm install --omit=dev
+          npm ci --omit=dev --no-audit
 
       - name: 🗜️ Empaquetar artefactos (Frontend + Backend + Nginx) en tarball atómico
         run: |
