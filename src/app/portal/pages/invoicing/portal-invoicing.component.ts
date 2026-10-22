@@ -116,17 +116,6 @@ export class PortalInvoicingComponent {
     this.pdfGenerator.generateVeriFactuInvoicePdf(inv, this.store.verifactuVault());
   }
 
-  sendInvoiceByEmail(inv: VeriFactuInvoice): void {
-    this.store.security.pendingEmailDraft.set({
-      recipientName: inv.clientName,
-      recipientEmail: 'facturacion@cliente.es',
-      linkedDocCode: inv.seriesAndNumber,
-      subject: `Factura ${inv.seriesAndNumber} (${inv.totalImporteEur.toFixed(2)} €) · ${this.store.security.activeTenant().commercialName}`,
-      messageBody: `Estimado/a ${inv.clientName},\n\nAdjuntamos la factura ${inv.seriesAndNumber} correspondiente a ${inv.workDescription} por un importe total de ${inv.totalImporteEur.toFixed(2)} €.`
-    });
-    this.router.navigate(['/portal/correos']);
-  }
-
   previewXml(inv: VeriFactuInvoice): void {
     const xml = this.xmlService.generateOfficialRegistroAltaXml(inv, this.store.verifactuVault());
     this.selectedXmlPreview.set(xml);

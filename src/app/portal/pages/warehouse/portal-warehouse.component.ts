@@ -109,15 +109,4 @@ export class PortalWarehouseComponent {
   downloadDeliveryNotePdf(order: WarehouseOrder): void {
     this.pdfGenerator.generateWarehouseDeliveryNotePdf(order);
   }
-
-  notifyClientWarehouseReady(order: WarehouseOrder): void {
-    this.store.security.pendingEmailDraft.set({
-      recipientName: order.clientName,
-      recipientEmail: 'cliente@obra.es',
-      linkedDocCode: order.orderCode,
-      subject: `Aviso de material en almacén · Pedido ${order.orderCode} (${order.assignedCaballete})`,
-      messageBody: `Estimado/a ${order.clientName},\n\nSu pedido ${order.orderCode} (${order.unitsCount} unidades) se encuentra en ${order.assignedCaballete}, listo para recogida o coordinación de montaje.`
-    });
-    this.router.navigate(['/portal/correos']);
-  }
 }

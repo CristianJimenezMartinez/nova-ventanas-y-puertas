@@ -95,9 +95,7 @@ export class PortalStoreService {
             if (Array.isArray(st['warehouseOrders'])) this.warehouseOrders.set(st['warehouseOrders'] as WarehouseOrder[]);
             if (Array.isArray(st['invoices'])) this.invoices.set(st['invoices'] as VeriFactuInvoice[]);
             if (Array.isArray(st['emailAccounts'])) {
-              const loaded = st['emailAccounts'] as EmailAccountConfig[];
-              const hasGerencia = loaded.some(a => a.emailAddress.toLowerCase() === 'gerencia@gruposoto.es');
-              this.emailAccounts.set(hasGerencia ? loaded : [INITIAL_EMAIL_ACCOUNTS[0], ...loaded]);
+              this.emailAccounts.set(st['emailAccounts'] as EmailAccountConfig[]);
             }
             if (Array.isArray(st['emailMessages'])) this.emailMessages.set(st['emailMessages'] as EmailMessageItem[]);
             if (Array.isArray(st['leads'])) this.leads.set(st['leads'] as CrmLeadItem[]);
@@ -148,6 +146,32 @@ export class PortalStoreService {
         razonSocialEmisor: tenant.legalName
       }));
     }
+    this.quotes.set([]);
+    this.warehouseOrders.set([]);
+    this.invoices.set([]);
+    this.leads.set([]);
+    this.emailMessages.set([]);
+    this.emailAccounts.set(
+      tenantId === 'tenant-nova-soto'
+        ? INITIAL_EMAIL_ACCOUNTS
+        : tenant?.adminEmail
+          ? [
+              {
+                id: `mail-${tenant.id}`,
+                aliasName: tenant.commercialName,
+                emailAddress: tenant.adminEmail,
+                department: 'GENERAL',
+                smtpHost: 'smtp.ionos.es',
+                smtpPort: 587,
+                imapHost: 'imap.ionos.es',
+                imapPort: 993,
+                useTls: true,
+                status: 'CONECTADO_OK',
+                signatureHtml: `${tenant.commercialName} · ${tenant.legalName}`
+              }
+            ]
+          : []
+    );
     this.hydrateFromPostgresDb(tenantId);
   }
 
@@ -461,15 +485,8 @@ export class PortalStoreService {
     this.persistStateToPostgresDb();
   }
 
-  sendEmailMessage(msg: Omit<EmailMessageItem, 'id' | 'sentAtIso' | 'openedByClient'>): void {
-    const created: EmailMessageItem = {
-      ...msg,
-      id: `emsg-${Date.now()}`,
-      sentAtIso: new Date().toISOString(),
-      openedByClient: false
-    };
-    this.emailMessages.update(list => [created, ...list]);
-    this.http.post('/api/v1/emails/send', created).subscribe({ error: () => {} });
+  removeEmailAccount(accountId: string): void {
+    this.emailAccounts.update(list => list.filter(a => a.id !== accountId));
     this.persistStateToPostgresDb();
   }
 

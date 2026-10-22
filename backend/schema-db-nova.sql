@@ -114,13 +114,23 @@ SET state_json = jsonb_set(
   jsonb_set(
     jsonb_set(
       jsonb_set(
-        jsonb_set(state_json, '{quotes}', '[]'::jsonb, true),
-        '{warehouseOrders}', '[]'::jsonb, true
+        jsonb_set(
+          jsonb_set(state_json, '{quotes}', '[]'::jsonb, true),
+          '{warehouseOrders}', '[]'::jsonb, true
+        ),
+        '{invoices}', '[]'::jsonb, true
       ),
-      '{invoices}', '[]'::jsonb, true
+      '{emailMessages}', '[]'::jsonb, true
     ),
-    '{emailMessages}', '[]'::jsonb, true
+    '{leads}', '[]'::jsonb, true
   ),
-  '{leads}', '[]'::jsonb, true
+  '{emailAccounts}',
+  '[{"id":"mail-gerencia-soto","aliasName":"Gerencia General · Grupo Soto","emailAddress":"gerencia@gruposoto.es","department":"GENERAL","smtpHost":"smtp.ionos.es","smtpPort":587,"imapHost":"imap.ionos.es","imapPort":993,"useTls":true,"status":"CONECTADO_OK","signatureHtml":"GRUPO SOTO EMPRESARIAL SL · NOVA Ventanas & Puertas"}]'::jsonb,
+  true
 )
-WHERE state_json::text LIKE '%quo-init-1%' OR state_json::text LIKE '%ord-01%' OR state_json::text LIKE '%inv-01%';
+WHERE tenant_id = 'tenant-nova-soto' AND (
+  state_json::text LIKE '%quo-init-1%' OR
+  state_json::text LIKE '%ord-01%' OR
+  state_json::text LIKE '%inv-01%' OR
+  state_json::text LIKE '%mail-presupuestos%'
+);
