@@ -21,11 +21,11 @@ export class PortalShellComponent {
   readonly searchModalOpen = signal<boolean>(false);
 
   readonly availableRoles: { role: UserRole; label: string }[] = [
-    { role: 'SUPERADMIN', label: 'Ver como: Administrador Total (gerencia@gruposoto.es)' },
+    { role: 'SUPERADMIN', label: 'Ver como: Superadministrador Central' },
     { role: 'GERENCIA', label: 'Ver como: Gerente de Sede' },
-    { role: 'OFICINA_TECNICA', label: 'Ver como: Oficina Técnica' },
-    { role: 'MEDIDOR_OBRA', label: 'Ver como: Almacén y Obra' },
-    { role: 'ADMINISTRACION_FACTURACION', label: 'Ver como: Administración' }
+    { role: 'OFICINA_TECNICA', label: 'Ver como: Comercial y Presupuestos' },
+    { role: 'ALMACEN_OBRA', label: 'Ver como: Almacén y Obra' },
+    { role: 'ADMINISTRACION', label: 'Ver como: Administración y Facturas' }
   ];
 
   @HostListener('window:keydown', ['$event'])
@@ -54,7 +54,7 @@ export class PortalShellComponent {
     const found = this.availableRoles.find(r => r.role === role);
     if (found) {
       this.store.setRole(found.role, found.label.replace('Ver como: ', ''));
-      if (role === 'MEDIDOR_OBRA') {
+      if (role === 'ALMACEN_OBRA') {
         this.router.navigate(['/portal/almacen']);
       }
     }

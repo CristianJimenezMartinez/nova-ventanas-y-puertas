@@ -107,29 +107,29 @@
       </div>
 
       <div class="topbar-right">
-        <!-- Selector de Empresa / Franquicia (Exclusivo para Central Grupo Soto) -->
-        <select
-          id="tenantSwitch"
-          aria-label="Cambiar empresa o sede activa"
-          class="portal-select"
-          [ngModel]="store.security.activeTenantId()"
-          (ngModelChange)="onTenantChange($event)">
-          @for (t of store.security.tenants(); track t.id) {
-            <option [value]="t.id">Sede: {{ t.commercialName }}</option>
-          }
-        </select>
+        @if (store.isSuperAdminAccount()) {
+          <select
+            id="tenantSwitch"
+            aria-label="Cambiar empresa o sede activa"
+            class="portal-select"
+            [ngModel]="store.security.activeTenantId()"
+            (ngModelChange)="onTenantChange($event)">
+            @for (t of store.security.tenants(); track t.id) {
+              <option [value]="t.id">Sede: {{ t.commercialName }}</option>
+            }
+          </select>
 
-        <!-- Simulador de Permisos por Rol -->
-        <select
-          id="roleSwitch"
-          aria-label="Cambiar perfil"
-          class="portal-select"
-          [ngModel]="store.currentUser().role"
-          (ngModelChange)="onRoleChange($event)">
-          @for (r of availableRoles; track r.role) {
-            <option [value]="r.role">{{ r.label }}</option>
-          }
-        </select>
+          <select
+            id="roleSwitch"
+            aria-label="Cambiar perfil"
+            class="portal-select"
+            [ngModel]="store.currentUser().role"
+            (ngModelChange)="onRoleChange($event)">
+            @for (r of availableRoles; track r.role) {
+              <option [value]="r.role">{{ r.label }}</option>
+            }
+          </select>
+        }
 
         <button
           type="button"

@@ -70,6 +70,9 @@ export class PortalStoreService {
     this.invoices().reduce((acc, inv) => acc + inv.cobradoEur, 0)
   );
   readonly activeWarehouseCount = computed(() => this.warehouseOrders().length);
+  readonly isSuperAdminAccount = computed(
+    () => this.currentUser().email.toLowerCase() === 'gerencia@gruposoto.es' || this.currentUser().role === 'SUPERADMIN'
+  );
 
   constructor() {
     this.hydrateFromPostgresDb();
@@ -161,18 +164,16 @@ export class PortalStoreService {
     this.currentUser.update(u => ({ ...u, role, roleLabel }));
   }
 
-  loginWithCredentials(email: string, role: UserRole = 'SUPERADMIN', password?: string): void {
+  loginWithCredentials(email: string, password?: string): void {
     const labels: Record<UserRole, string> = {
-      SUPERADMIN: 'Administrador Total · Gerencia Grupo Soto',
-      GERENCIA: 'Gerencia & Dirección',
-      OFICINA_TECNICA: 'Oficina Técnica & Presupuestos',
-      COMERCIAL: 'Asesor Comercial Showroom',
-      MEDIDOR_OBRA: 'Técnico Medidor en Obra',
-      INSTALADOR_MONTAJE: 'Jefe de Equipo Instalador',
-      ADMINISTRACION_FACTURACION: 'Administración & VeriFactu',
-      COLABORADOR_EXTERNO: 'Arquitecto / Distribuidor B2B'
+      SUPERADMIN: 'Superadministrador Central · Grupo Soto',
+      GERENCIA: 'Gerente de Sede',
+      OFICINA_TECNICA: 'Comercial y Presupuestos',
+      ALMACEN_OBRA: 'Almacén y Obra',
+      ADMINISTRACION: 'Administración y Facturas'
     };
     const normalizedEmail = (email || 'gerencia@gruposoto.es').trim().toLowerCase();
+    const fallbackRole: UserRole = normalizedEmail === 'gerencia@gruposoto.es' ? 'SUPERADMIN' : 'GERENCIA';
     this.http
       .post<{
         ok: boolean;
@@ -183,13 +184,14 @@ export class PortalStoreService {
         next: res => {
           if (res.token) this.security.saveSessionToken(res.token);
           if (res.user) {
+            const mappedRole: UserRole = labels[res.user.role] ? res.user.role : fallbackRole;
             this.currentUser.update(u => ({
               ...u,
               id: res.user!.id,
               email: res.user!.email,
               fullName: res.user!.fullName,
-              role: res.user!.role,
-              roleLabel: labels[res.user!.role] || labels[role],
+              role: mappedRole,
+              roleLabel: labels[mappedRole],
               tenantId: res.user!.tenantId
             }));
             this.switchActiveTenant(res.user.tenantId);
@@ -199,10 +201,10 @@ export class PortalStoreService {
       });
     this.currentUser.update(u => ({
       ...u,
-      fullName: normalizedEmail === 'gerencia@gruposoto.es' ? 'Gerencia General · Grupo Soto' : 'Usuario Corporativo · NOVA',
+      fullName: normalizedEmail === 'gerencia@gruposoto.es' ? 'Gerencia General · Grupo Soto' : normalizedEmail,
       email: normalizedEmail,
-      role,
-      roleLabel: labels[role]
+      role: fallbackRole,
+      roleLabel: labels[fallbackRole]
     }));
     this.isAuthenticated.set(true);
   }

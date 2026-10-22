@@ -2,13 +2,13 @@
   <div class="login-card">
     <div class="login-card__header">
       <h1>Acceso al Portal NOVA</h1>
-      <p class="login-sub">Introduce tu correo corporativo de Central o de tu Delegación.</p>
+      <p class="login-sub">Introduce tu correo corporativo y contraseña.</p>
     </div>
 
     <div class="login-form">
       <div class="field-group">
         <label for="loginEmail">Correo corporativo</label>
-        <input id="loginEmail" type="email" [(ngModel)]="email" class="login-input" />
+        <input id="loginEmail" type="email" [(ngModel)]="email" class="login-input" placeholder="gerencia@gruposoto.es" />
       </div>
 
       <div class="field-group">
@@ -16,38 +16,9 @@
         <input id="loginPassword" type="password" [(ngModel)]="password" class="login-input" />
       </div>
 
-      <div class="field-group">
-        <label for="loginRole">Perfil</label>
-        <select id="loginRole" [(ngModel)]="selectedRole" class="login-input">
-          <option value="SUPERADMIN">Administrador Total · Central Grupo Soto (gerencia&#64;gruposoto.es)</option>
-          <option value="GERENCIA">Gerente de Sede / Franquicia</option>
-          <option value="OFICINA_TECNICA">Oficina Técnica y Presupuestos</option>
-          <option value="MEDIDOR_OBRA">Almacén y Montaje</option>
-          <option value="ADMINISTRACION_FACTURACION">Administración y Facturas</option>
-        </select>
-      </div>
-
       <button type="button" class="btn btn--champagne w-100" (click)="enterPortal()">
         Iniciar sesión →
       </button>
-    </div>
-
-    <div class="quick-roles">
-      <span class="quick-roles__label">Acceso rápido por perfil:</span>
-      <div class="quick-roles__grid">
-        <button type="button" class="role-btn" (click)="quickRoleAccess('SUPERADMIN', 'gerencia@gruposoto.es')">
-          Central (gerencia&#64;gruposoto.es)
-        </button>
-        <button type="button" class="role-btn" (click)="quickRoleAccess('GERENCIA', 'alicante@novaventanasypuertas.com')">
-          Sede Alicante
-        </button>
-        <button type="button" class="role-btn" (click)="quickRoleAccess('OFICINA_TECNICA', 'presupuestos@novaventanasypuertas.com')">
-          Oficina Técnica
-        </button>
-        <button type="button" class="role-btn" (click)="quickRoleAccess('MEDIDOR_OBRA', 'almacen@novaventanasypuertas.com')">
-          Almacén
-        </button>
-      </div>
     </div>
   </div>
 </div>

@@ -86,14 +86,12 @@ export class PortalTenantsComponent {
       case 'SUPERADMIN':
         return 'Control total + Alta de Empresas y Seguridad';
       case 'GERENCIA':
-        return 'Dirección de su sede (Presupuestos, Almacén, Facturas, Catálogo)';
+        return 'Dirección de su sede (Inicio, Presupuestos, Almacén, Facturas, Catálogo)';
       case 'OFICINA_TECNICA':
-      case 'COMERCIAL':
-        return 'Inicio, Presupuestos, Catálogo y Correos';
-      case 'MEDIDOR_OBRA':
-      case 'INSTALADOR_MONTAJE':
+        return 'Inicio, Presupuestos y Correos (sin editar tarifas maestras)';
+      case 'ALMACEN_OBRA':
         return 'Solo Almacén y Documentación';
-      case 'ADMINISTRACION_FACTURACION':
+      case 'ADMINISTRACION':
         return 'Inicio, Facturas, Almacén y Correos';
       default:
         return 'Acceso básico';

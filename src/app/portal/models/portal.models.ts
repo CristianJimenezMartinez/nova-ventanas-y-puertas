@@ -2,11 +2,8 @@ export type UserRole =
   | 'SUPERADMIN'
   | 'GERENCIA'
   | 'OFICINA_TECNICA'
-  | 'COMERCIAL'
-  | 'MEDIDOR_OBRA'
-  | 'INSTALADOR_MONTAJE'
-  | 'ADMINISTRACION_FACTURACION'
-  | 'COLABORADOR_EXTERNO';
+  | 'ALMACEN_OBRA'
+  | 'ADMINISTRACION';
 
 export type PortalThemeMode = 'noir' | 'ivory';
 

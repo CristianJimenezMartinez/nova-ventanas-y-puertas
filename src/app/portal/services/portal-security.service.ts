@@ -108,15 +108,14 @@ export class PortalSecurityService {
     if (moduleKey === 'documentacion') return true;
     switch (role) {
       case 'SUPERADMIN':
-      case 'GERENCIA':
         return true;
+      case 'GERENCIA':
+        return moduleKey !== 'empresas';
       case 'OFICINA_TECNICA':
-      case 'COMERCIAL':
-        return ['dashboard', 'presupuestos', 'catalogo', 'correos'].includes(moduleKey);
-      case 'MEDIDOR_OBRA':
-      case 'INSTALADOR_MONTAJE':
+        return ['dashboard', 'presupuestos', 'correos'].includes(moduleKey);
+      case 'ALMACEN_OBRA':
         return ['almacen'].includes(moduleKey);
-      case 'ADMINISTRACION_FACTURACION':
+      case 'ADMINISTRACION':
         return ['dashboard', 'facturacion', 'almacen', 'correos'].includes(moduleKey);
       default:
         return ['dashboard', 'presupuestos'].includes(moduleKey);

@@ -102,7 +102,13 @@ ON CONFLICT (email) DO NOTHING;
 -- Limpieza de datos mock antiguos de demostración
 DELETE FROM nova_leads WHERE id = 'lead-01' OR email = 'carmen.riquelme@clinicarq.es';
 DELETE FROM nova_tenants WHERE id IN ('tenant-nova-alicante', 'tenant-nova-valencia');
-DELETE FROM nova_users WHERE email IN ('alicante@novaventanasypuertas.com', 'valencia@novaventanasypuertas.com');
+DELETE FROM nova_users WHERE email IN (
+  'alicante@novaventanasypuertas.com',
+  'valencia@novaventanasypuertas.com',
+  'presupuestos@novaventanasypuertas.com',
+  'almacen@novaventanasypuertas.com',
+  'administracion@novaventanasypuertas.com'
+);
 UPDATE nova_state_store
 SET state_json = jsonb_set(
   jsonb_set(
