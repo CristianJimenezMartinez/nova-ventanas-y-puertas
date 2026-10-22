@@ -59,6 +59,15 @@ export class PortalQuotesComponent {
   readonly hasDesmontaje = signal<boolean>(false);
   readonly isLowSillUnder900Mm = signal<boolean>(false);
 
+  // Ajuste de Ganancia por Porcentaje (%) y por Precio (€) en la ventana activa
+  readonly customMarginPct = signal<number | null>(null);
+  readonly customExtraEur = signal<number>(0);
+  readonly manualUnitPriceEur = signal<number | null>(null);
+
+  // Ajuste Global al pie del presupuesto (% y €)
+  readonly globalAdjustPercent = signal<number>(0);
+  readonly globalAdjustEur = signal<number>(0);
+
   // Lista de Huecos del Presupuesto
   readonly holes = signal<QuoteHoleLine[]>([]);
   readonly statusMessage = signal<string>('');
@@ -87,9 +96,9 @@ export class PortalQuotesComponent {
     this.store.shutterOptions().find(sh => sh.id === this.selectedShutterId()) || this.store.shutterOptions()[0]
   );
 
-  // Cálculo en tiempo real de la posición actual
-  readonly liveHoleCalculation = computed<QuoteHoleLine>(() =>
-    this.pricingEngine.calculateHoleLine({
+  // Cálculo en tiempo real de la posición actual (conectando Catálogo + Ganancia % + Precio €)
+  readonly liveHoleCalculation = computed<QuoteHoleLine>(() => {
+    const baseLine = this.pricingEngine.calculateHoleLine({
       posNumber: this.holes().length + 1,
       roomLocation: this.roomLocation(),
       series: this.activeSeries(),
@@ -105,8 +114,85 @@ export class PortalQuotesComponent {
       hasPremarco: this.hasPremarco(),
       hasDesmontaje: this.hasDesmontaje(),
       isLowSillUnder900Mm: this.isLowSillUnder900Mm()
-    })
-  );
+    });
+    const unitNetCost =
+      Math.round(
+        (baseLine.carpentryNetCostEur + baseLine.glassNetCostEur + baseLine.extrasNetCostEur) * 100
+      ) / 100;
+    const defaultPct = Math.round((this.activeSeries().retailMarginMultiplier - 1) * 100);
+    const activePct = this.customMarginPct() ?? defaultPct;
+    const extraEur = Number(this.customExtraEur()) || 0;
+    const manualUnit = this.manualUnitPriceEur();
+
+    const finalUnitPvp =
+      manualUnit !== null && manualUnit > 0
+        ? Math.round(manualUnit * 100) / 100
+        : Math.max(1, Math.round((unitNetCost * (1 + activePct / 100) + extraEur) * 100) / 100);
+    const qty = Math.max(1, baseLine.quantity);
+    return {
+      ...baseLine,
+      unitPvpEur: finalUnitPvp,
+      totalLinePvpEur: Math.round(finalUnitPvp * qty * 100) / 100
+    };
+  });
+
+  readonly effectiveMarginPercent = computed<number>(() => {
+    const calc = this.liveHoleCalculation();
+    const net = calc.carpentryNetCostEur + calc.glassNetCostEur + calc.extrasNetCostEur;
+    if (net <= 0) return 0;
+    return Math.round(((calc.unitPvpEur - net) / net) * 100);
+  });
+
+  readonly effectiveProfitEurPerUnit = computed<number>(() => {
+    const calc = this.liveHoleCalculation();
+    const net = calc.carpentryNetCostEur + calc.glassNetCostEur + calc.extrasNetCostEur;
+    return Math.round((calc.unitPvpEur - net) * 100) / 100;
+  });
+
+  onMarginPercentInput(pct: number): void {
+    this.manualUnitPriceEur.set(null);
+    this.customMarginPct.set(Number(pct) || 0);
+  }
+
+  onExtraEuroInput(eur: number): void {
+    this.manualUnitPriceEur.set(null);
+    this.customExtraEur.set(Number(eur) || 0);
+  }
+
+  onManualUnitPriceInput(price: number): void {
+    const val = Number(price);
+    this.manualUnitPriceEur.set(val > 0 ? val : null);
+  }
+
+  updateHoleRowUnitPrice(holeId: string, newUnitPvp: number): void {
+    const price = Math.max(0, Number(newUnitPvp) || 0);
+    this.holes.update(list =>
+      list.map(h =>
+        h.id !== holeId
+          ? h
+          : {
+              ...h,
+              unitPvpEur: price,
+              totalLinePvpEur: Math.round(price * h.quantity * 100) / 100
+            }
+      )
+    );
+  }
+
+  updateHoleRowQuantity(holeId: string, newQty: number): void {
+    const qty = Math.max(1, Math.round(Number(newQty) || 1));
+    this.holes.update(list =>
+      list.map(h =>
+        h.id !== holeId
+          ? h
+          : {
+              ...h,
+              quantity: qty,
+              totalLinePvpEur: Math.round(h.unitPvpEur * qty * 100) / 100
+            }
+      )
+    );
+  }
 
   // Croquis Vectorial SVG UNE-EN 12519 en tiempo real
   readonly liveSketchSafeSvg = computed<SafeHtml>(() => {
@@ -135,7 +221,10 @@ export class PortalQuotesComponent {
 
   readonly quoteTotals = computed(() => {
     const assessment = this.vatAssessment();
-    const base = assessment.totalQuoteBaseEur;
+    const rawBase = assessment.totalQuoteBaseEur;
+    const pctAdj = Number(this.globalAdjustPercent()) || 0;
+    const eurAdj = Number(this.globalAdjustEur()) || 0;
+    const base = Math.max(0, Math.round((rawBase * (1 + pctAdj / 100) + eurAdj) * 100) / 100);
     const vatPct = assessment.recommendedVatPercent;
     const vatEur = Math.round(base * (vatPct / 100) * 100) / 100;
     const totalEur = Math.round((base + vatEur) * 100) / 100;

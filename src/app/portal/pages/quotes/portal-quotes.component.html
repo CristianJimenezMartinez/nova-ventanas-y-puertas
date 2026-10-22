@@ -166,6 +166,35 @@
         </div>
       }
 
+      <!-- AJUSTE DUAL DE GANANCIA: POR PORCENTAJE (%) Y POR PRECIO (€) -->
+      <div class="form-grid tabular-nums" style="grid-template-columns:repeat(3,1fr);background:var(--p-card);border:1px solid var(--p-border);padding:0.85rem;">
+        <label>
+          <span>Ganancia (%)</span>
+          <input
+            type="number"
+            class="quo-input tabular-nums"
+            [ngModel]="effectiveMarginPercent()"
+            (ngModelChange)="onMarginPercentInput($event)" />
+        </label>
+        <label>
+          <span>Sumar / Restar (€)</span>
+          <input
+            type="number"
+            class="quo-input tabular-nums"
+            [ngModel]="customExtraEur()"
+            (ngModelChange)="onExtraEuroInput($event)" />
+        </label>
+        <label>
+          <span>Precio final / ud (€)</span>
+          <input
+            type="number"
+            class="quo-input tabular-nums"
+            style="font-weight:600;border-color:var(--p-accent);"
+            [ngModel]="liveHoleCalculation().unitPvpEur"
+            (ngModelChange)="onManualUnitPriceInput($event)" />
+        </label>
+      </div>
+
       <button type="button" class="btn btn--champagne w-100" (click)="addCurrentHoleToQuote()">
         + Añadir al presupuesto ({{ liveHoleCalculation().totalLinePvpEur | number:'1.2-2' }} €)
       </button>
@@ -180,19 +209,21 @@
           <strong>{{ liveHoleCalculation().stepWidthUsedMm }} × {{ liveHoleCalculation().stepHeightUsedMm }} mm</strong>
         </div>
         <div class="calc-row">
-          <span>Coste carpintería:</span>
-          <strong>{{ liveHoleCalculation().carpentryNetCostEur | number:'1.2-2' }} €</strong>
+          <span>Coste base catálogo (1 ud):</span>
+          <strong>{{ (liveHoleCalculation().carpentryNetCostEur + liveHoleCalculation().glassNetCostEur + liveHoleCalculation().extrasNetCostEur) | number:'1.2-2' }} €</strong>
         </div>
         <div class="calc-row">
-          <span>Coste vidrio y extras:</span>
-          <strong>{{ (liveHoleCalculation().glassNetCostEur + liveHoleCalculation().extrasNetCostEur) | number:'1.2-2' }} €</strong>
+          <span>Tu ganancia por ventana:</span>
+          <strong style="color:var(--p-accent);">
+            +{{ effectiveProfitEurPerUnit() | number:'1.2-2' }} € (+{{ effectiveMarginPercent() }}%)
+          </strong>
         </div>
         <div class="calc-row">
-          <span>Peso estimado:</span>
-          <strong>{{ liveHoleCalculation().unitWeightKg | number:'1.1-1' }} kg</strong>
+          <span>Precio venta 1 ud:</span>
+          <strong>{{ liveHoleCalculation().unitPvpEur | number:'1.2-2' }} €</strong>
         </div>
         <div class="calc-row calc-row--total">
-          <span>Total ({{ liveHoleCalculation().quantity }} uds):</span>
+          <span>Total línea ({{ liveHoleCalculation().quantity }} uds):</span>
           <strong>{{ liveHoleCalculation().totalLinePvpEur | number:'1.2-2' }} €</strong>
         </div>
       </div>
@@ -213,14 +244,15 @@
             <th>Medida</th>
             <th>Vidrio y Persiana</th>
             <th>Uds.</th>
-            <th>Importe</th>
+            <th>Precio Ud. (€)</th>
+            <th>Total (€)</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
           @if (holes().length === 0) {
             <tr>
-              <td colspan="7" class="sub-txt" style="padding:1.25rem 0.75rem;">
+              <td colspan="8" class="sub-txt" style="padding:1.25rem 0.75rem;">
                 Aún no has añadido posiciones. Configura las medidas arriba y pulsa «+ Añadir al presupuesto».
               </td>
             </tr>
@@ -237,7 +269,24 @@
                 <div>{{ h.glassName }}</div>
                 <div class="sub-txt">{{ h.shutterName }}</div>
               </td>
-              <td>{{ h.quantity }}</td>
+              <td>
+                <input
+                  type="number"
+                  min="1"
+                  class="quo-input tabular-nums"
+                  style="width:62px;padding:0.3rem 0.4rem;"
+                  [ngModel]="h.quantity"
+                  (ngModelChange)="updateHoleRowQuantity(h.id, $event)" />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  min="0"
+                  class="quo-input tabular-nums"
+                  style="width:95px;padding:0.3rem 0.4rem;"
+                  [ngModel]="h.unitPvpEur"
+                  (ngModelChange)="updateHoleRowUnitPrice(h.id, $event)" />
+              </td>
               <td><strong>{{ h.totalLinePvpEur | number:'1.2-2' }} €</strong></td>
               <td>
                 <button type="button" class="del-btn" (click)="removeHole(h.id)">✕</button>
@@ -266,6 +315,14 @@
           <label>
             <span>Medios auxiliares (€)</span>
             <input type="number" [(ngModel)]="auxiliaryMeansPvpEur" class="quo-input tabular-nums" />
+          </label>
+          <label>
+            <span>Ajustar total (%)</span>
+            <input type="number" [(ngModel)]="globalAdjustPercent" class="quo-input tabular-nums" placeholder="+% o -%" />
+          </label>
+          <label>
+            <span>Ajustar total (€)</span>
+            <input type="number" [(ngModel)]="globalAdjustEur" class="quo-input tabular-nums" placeholder="+€ o -€" />
           </label>
         </div>
       </div>

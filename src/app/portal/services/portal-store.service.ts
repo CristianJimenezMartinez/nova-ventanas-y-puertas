@@ -233,37 +233,6 @@ export class PortalStoreService {
     this.isAuthenticated.set(true);
   }
 
-  applyBulkTariffPercentage(seriesId: string, percentageDelta: number): void {
-    const factor = 1 + percentageDelta / 100;
-    this.catalogSeries.update(list =>
-      list.map(s =>
-        s.id !== seriesId
-          ? s
-          : { ...s, matrixTariffPrices: s.matrixTariffPrices.map(row => row.map(cell => Math.round(cell * factor * 100) / 100)) }
-      )
-    );
-    this.persistStateToPostgresDb();
-  }
-
-  updateSeriesMatrixFromPastedText(seriesId: string, rawText: string): boolean {
-    const rows = rawText
-      .trim()
-      .split(/\r?\n/)
-      .map(line => line.trim().split(/[\t;,\s]+/).map(v => Number(v.replace(',', '.'))).filter(n => !Number.isNaN(n) && n > 0))
-      .filter(r => r.length >= 2);
-    if (rows.length < 2) return false;
-    this.catalogSeries.update(list =>
-      list.map(s => {
-        if (s.id !== seriesId) return s;
-        const widthsMm = Array.from({ length: rows[0].length }, (_, idx) => 800 + idx * 200);
-        const heightsMm = Array.from({ length: rows.length }, (_, idx) => 800 + idx * 200);
-        return { ...s, widthsMm, heightsMm, matrixTariffPrices: rows };
-      })
-    );
-    this.persistStateToPostgresDb();
-    return true;
-  }
-
   addCatalogSeries(newSeries: CatalogSeries): void {
     this.catalogSeries.update(list => [newSeries, ...list]);
     this.persistStateToPostgresDb();

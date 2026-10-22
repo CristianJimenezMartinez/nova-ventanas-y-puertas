@@ -1,9 +1,11 @@
 <div class="cat-page">
   <div class="cat-header">
-    <h1>Catálogo y Tarifas</h1>
-    <button type="button" class="btn btn--champagne" (click)="showNewSeriesModal.set(true)">
-      + Añadir serie
-    </button>
+    <h1>Catálogo y Ajuste de Ganancia ({{ store.security.activeTenant().commercialName }})</h1>
+    @if (store.isSuperAdminAccount()) {
+      <button type="button" class="btn btn--champagne" (click)="showNewSeriesModal.set(true)">
+        + Añadir serie al catálogo maestro
+      </button>
+    }
   </div>
 
   @if (feedbackBanner()) {
@@ -29,15 +31,7 @@
     <div class="cat-grid">
       <section class="cat-panel">
         <div class="cat-panel__head">
-          <h2>{{ serie.publicName }}</h2>
-          <div class="mode-badges">
-            <button type="button" class="mode-pill" (click)="togglePricingMode(serie)">
-              {{ serie.pricingMode === 'CARPENTRY_ONLY' ? 'Solo carpintería' : 'Incluye vidrio base (-' + serie.baseGlassIncludedCreditPerM2 + ' €/m²)' }}
-            </button>
-            <button type="button" class="mode-pill" [class.mode-pill--online]="serie.onlineStoreEnabled" (click)="toggleOnlineSale(serie)">
-              {{ serie.onlineStoreEnabled ? '● Venta activa' : '○ Solo presupuesto' }}
-            </button>
-          </div>
+          <h2>{{ serie.publicName }} (Puedes editar cualquier precio en € directamente)</h2>
         </div>
 
         <div class="matrix-scroll">
@@ -55,7 +49,14 @@
                 <tr>
                   <th class="row-th">{{ h }} mm</th>
                   @for (w of serie.widthsMm; track w; let cIdx = $index) {
-                    <td>{{ serie.matrixTariffPrices[rIdx][cIdx] | number:'1.0-2' }} €</td>
+                    <td style="padding:0.25rem;">
+                      <input
+                        type="number"
+                        class="tool-input tabular-nums"
+                        style="width:78px;padding:0.3rem 0.4rem;text-align:right;"
+                        [ngModel]="serie.matrixTariffPrices[rIdx][cIdx]"
+                        (ngModelChange)="updateCellPrice(rIdx, cIdx, $event)" />
+                    </td>
                   }
                 </tr>
               }
@@ -65,12 +66,8 @@
 
         <div class="rules-bar tabular-nums">
           <div class="rule-item">
-            <span class="rule-lbl">Dto. compra:</span>
-            <strong>-{{ serie.supplierDiscountChain.join('% - ') }}%</strong>
-          </div>
-          <div class="rule-item">
-            <span class="rule-lbl">Multiplicador PVP:</span>
-            <strong>× {{ serie.retailMarginMultiplier }}</strong>
+            <span class="rule-lbl">Ganancia comercial activa:</span>
+            <strong>+{{ activeMarginPercent() }}% (×{{ serie.retailMarginMultiplier }})</strong>
           </div>
           <div class="rule-item">
             <span class="rule-lbl">Recargos color (1C / 2C / Bicolor):</span>
@@ -81,9 +78,24 @@
 
       <aside class="cat-tools">
         <div class="tool-box">
-          <h3>Modificar tarifa (%)</h3>
+          <h3>1. Ganancia sobre coste (%)</h3>
           <div class="tool-inline">
-            <input type="number" [(ngModel)]="bulkPercentDelta" class="tool-input tabular-nums" step="0.5" />
+            <input
+              type="number"
+              [ngModel]="activeMarginPercent()"
+              (ngModelChange)="updateMarginPercent($event)"
+              class="tool-input tabular-nums"
+              step="1"
+              min="0"
+              max="300" />
+            <span style="font-weight:600;">% de beneficio</span>
+          </div>
+        </div>
+
+        <div class="tool-box">
+          <h3>2. Subir o bajar precios por %</h3>
+          <div class="tool-inline">
+            <input type="number" [(ngModel)]="bulkPercentDelta" class="tool-input tabular-nums" step="1" />
             <button type="button" class="btn btn--champagne" (click)="applyBulkPercentage()">
               Aplicar {{ bulkPercentDelta() > 0 ? '+' : '' }}{{ bulkPercentDelta() }}%
             </button>
@@ -91,31 +103,48 @@
         </div>
 
         <div class="tool-box">
-          <h3>Pegar tabla desde Excel</h3>
-          <textarea
-            rows="4"
-            [(ngModel)]="excelPasteText"
-            class="tool-textarea tabular-nums"
-            placeholder="420&#9;465&#9;515&#9;565&#10;460&#9;510&#9;565&#9;625"></textarea>
-          <button type="button" class="btn btn--outline w-100" (click)="applyExcelPaste()">
-            Importar tabla
-          </button>
+          <h3>3. Sumar o restar Euros (€)</h3>
+          <div class="tool-inline">
+            <input type="number" [(ngModel)]="bulkEuroDelta" class="tool-input tabular-nums" step="5" />
+            <button type="button" class="btn btn--champagne" (click)="applyBulkEuroAmount()">
+              Sumar {{ bulkEuroDelta() > 0 ? '+' : '' }}{{ bulkEuroDelta() }} €
+            </button>
+          </div>
         </div>
 
         <div class="tool-box">
-          <h3>Tarifas de vidrio</h3>
+          <h3>4. Precios de vidrio (€/m²)</h3>
           <div class="glass-mini-list tabular-nums">
             @for (g of store.glassCompositions(); track g.id) {
-              <div class="glass-mini-row">
-                <div>
+              <div class="glass-mini-row" style="align-items:center;gap:0.5rem;">
+                <div style="flex:1;">
                   <strong>{{ g.name }}</strong>
-                  <span>Ug {{ g.ugValue }} · {{ g.rwDb }} dB</span>
                 </div>
-                <strong class="glass-price">{{ g.costPerM2Eur }} €/m²</strong>
+                <input
+                  type="number"
+                  class="tool-input tabular-nums"
+                  style="width:75px;text-align:right;"
+                  [ngModel]="g.costPerM2Eur"
+                  (ngModelChange)="updateGlassPrice(g.id, $event)" />
+                <span>€/m²</span>
               </div>
             }
           </div>
         </div>
+
+        @if (store.isSuperAdminAccount()) {
+          <div class="tool-box">
+            <h3>Pegar tabla desde Excel</h3>
+            <textarea
+              rows="3"
+              [(ngModel)]="excelPasteText"
+              class="tool-textarea tabular-nums"
+              placeholder="420&#9;465&#9;515&#10;460&#9;510&#9;565"></textarea>
+            <button type="button" class="btn btn--outline w-100" (click)="applyExcelPaste()">
+              Importar tabla
+            </button>
+          </div>
+        }
       </aside>
     </div>
   }
