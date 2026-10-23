@@ -282,6 +282,11 @@ export interface PortalTenantCompany {
   catalogPolicy: 'LOCKED_BY_CENTRAL' | 'CUSTOM_MARGIN_ALLOWED';
   adminEmail: string;
   active: boolean;
+  leadsCount?: number;
+  quotesCount?: number;
+  ordersCount?: number;
+  invoicesCount?: number;
+  invoicedTotalEur?: number;
 }
 
 export interface PortalManagedUser {

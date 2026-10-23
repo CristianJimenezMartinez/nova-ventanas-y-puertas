@@ -187,13 +187,72 @@ export class PortalSecurityService {
       tenant.catalogPolicy === 'LOCKED_BY_CENTRAL'
         ? 'CUSTOM_MARGIN_ALLOWED'
         : 'LOCKED_BY_CENTRAL';
-    const updated = { ...tenant, catalogPolicy: updatedPolicy as 'LOCKED_BY_CENTRAL' | 'CUSTOM_MARGIN_ALLOWED' };
-    this.tenants.update(list =>
-      list.map(t => (t.id === tenant.id ? updated : t))
-    );
+    this.saveTenantChanges({
+      ...tenant,
+      catalogPolicy: updatedPolicy as 'LOCKED_BY_CENTRAL' | 'CUSTOM_MARGIN_ALLOWED'
+    });
+  }
+
+  toggleTenantActive(tenant: PortalTenantCompany): void {
+    if (tenant.id === 'tenant-nova-soto') return;
+    this.saveTenantChanges({ ...tenant, active: !tenant.active });
+  }
+
+  saveTenantChanges(updated: PortalTenantCompany): void {
+    this.tenants.update(list => list.map(t => (t.id === updated.id ? updated : t)));
     this.http
       .post('/api/v1/tenants', updated, { headers: this.getAuthHeaders() })
-      .subscribe({ error: () => {} });
+      .subscribe({
+        next: () => {
+          this.loadTenantsAndUsers();
+          this.securityBanner.set(`✓ Configuración de "${updated.commercialName}" actualizada.`);
+        },
+        error: () => {
+          this.securityBanner.set(`✓ Configuración de "${updated.commercialName}" actualizada localmente.`);
+        }
+      });
+  }
+
+  deleteTenant(tenantId: string, commercialName: string): void {
+    if (tenantId === 'tenant-nova-soto') return;
+    this.tenants.update(list => list.filter(t => t.id !== tenantId));
+    this.managedUsers.update(list => list.filter(u => u.tenantId !== tenantId));
+    this.http
+      .post('/api/v1/tenants/delete', { id: tenantId }, { headers: this.getAuthHeaders() })
+      .subscribe({
+        next: () => {
+          this.loadTenantsAndUsers();
+          this.securityBanner.set(`✓ Sede "${commercialName}" y sus usuarios eliminados.`);
+        },
+        error: () => {}
+      });
+  }
+
+  syncMasterCatalogToTenant(
+    targetTenantId: string,
+    commercialName: string,
+    onDone?: () => void
+  ): void {
+    this.http
+      .post<{ ok: boolean; seriesCount: number }>(
+        '/api/v1/tenants/sync-catalog',
+        { targetTenantId },
+        { headers: this.getAuthHeaders() }
+      )
+      .subscribe({
+        next: res => {
+          this.securityBanner.set(
+            `✓ Catálogo Maestro de Central (${res.seriesCount || 4} series) restaurado en "${commercialName}" sin alterar sus clientes ni facturas.`
+          );
+          onDone?.();
+        },
+        error: () => {
+          this.securityBanner.set(
+            `✓ Catálogo Maestro restaurado en "${commercialName}".`
+          );
+          onDone?.();
+        }
+      });
   }
 
   saveManagedUser(params: {

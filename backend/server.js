@@ -178,18 +178,37 @@ async function handleRequest(req, res) {
       });
     }
 
-    // 4. Gestión Multi-Empresa / Franquicias (Listado y Alta con herencia de Catálogo Maestro)
+    // 4. Gestión Multi-Empresa / Franquicias (Listado con métricas en vivo, Alta, Edición, Suspensión y Sincronización)
     if (req.method === 'GET' && path === '/api/v1/tenants') {
       const isSuper = !authUser || authUser.role === 'SUPERADMIN';
       const rows = await pool.query(
-        `SELECT id, commercial_name AS "commercialName", legal_name AS "legalName",
-                cif, city, invoice_prefix AS "invoicePrefix",
-                catalog_policy AS "catalogPolicy", admin_email AS "adminEmail", active
-         FROM nova_tenants
-         WHERE $1 = TRUE OR id = $2
-         ORDER BY created_at ASC`,
+        `SELECT t.id, t.commercial_name AS "commercialName", t.legal_name AS "legalName",
+                t.cif, t.city, t.invoice_prefix AS "invoicePrefix",
+                t.catalog_policy AS "catalogPolicy", t.admin_email AS "adminEmail", t.active,
+                s.state_json AS "stateJson"
+         FROM nova_tenants t
+         LEFT JOIN nova_state_store s ON s.tenant_id = t.id
+         WHERE $1 = TRUE OR t.id = $2
+         ORDER BY t.created_at ASC`,
         [isSuper, tenantId]
       );
+      const tenantsWithStats = rows.rows.map(r => {
+        const st = r.stateJson || {};
+        const quotes = Array.isArray(st.quotes) ? st.quotes : [];
+        const orders = Array.isArray(st.warehouseOrders) ? st.warehouseOrders : [];
+        const invoices = Array.isArray(st.invoices) ? st.invoices : [];
+        const leads = Array.isArray(st.leads) ? st.leads : [];
+        const invoicedTotalEur = invoices.reduce((acc, inv) => acc + (Number(inv.totalImporteEur) || 0), 0);
+        const { stateJson, ...cleanTenant } = r;
+        return {
+          ...cleanTenant,
+          leadsCount: leads.length,
+          quotesCount: quotes.length,
+          ordersCount: orders.length,
+          invoicesCount: invoices.length,
+          invoicedTotalEur: Math.round(invoicedTotalEur * 100) / 100
+        };
+      });
       const usersRows = await pool.query(
         `SELECT id, tenant_id AS "tenantId", email, full_name AS "fullName",
                 role, active, token_version AS "tokenVersion"
@@ -198,30 +217,27 @@ async function handleRequest(req, res) {
          ORDER BY created_at ASC`,
         [isSuper, tenantId]
       );
-      return sendJson(req, res, 200, {
-        tenants: rows.rows,
-        users: usersRows.rows
-      });
+      return sendJson(req, res, 200, { tenants: tenantsWithStats, users: usersRows.rows });
     }
 
     if (req.method === 'POST' && path === '/api/v1/tenants') {
       const body = await readJsonBody(req);
-      const slug = String(body.commercialName || 'sede')
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .slice(0, 24);
+      const slug = String(body.commercialName || 'sede').toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 24);
       const newTenantId = body.id || `tenant-${slug}-${Date.now().toString().slice(-4)}`;
       const adminEmail = String(body.adminEmail || `direccion@${slug}.es`).trim().toLowerCase();
-      const initialPassword = body.password || 'Soto2026!Seguro';
+      const isActive = body.active !== false;
 
       await pool.query(
         `INSERT INTO nova_tenants (id, commercial_name, legal_name, cif, city, invoice_prefix, catalog_policy, admin_email, active)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, TRUE)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
          ON CONFLICT (id) DO UPDATE SET
            commercial_name = EXCLUDED.commercial_name,
            legal_name = EXCLUDED.legal_name,
            cif = EXCLUDED.cif,
+           city = EXCLUDED.city,
+           invoice_prefix = EXCLUDED.invoice_prefix,
            catalog_policy = EXCLUDED.catalog_policy,
+           admin_email = EXCLUDED.admin_email,
            active = EXCLUDED.active`,
         [
           newTenantId,
@@ -231,66 +247,68 @@ async function handleRequest(req, res) {
           body.city || 'España',
           body.invoicePrefix || 'FAC-DEL',
           body.catalogPolicy || 'LOCKED_BY_CENTRAL',
-          adminEmail
-        ]
-      );
-
-      // Crear usuario gerente de esa franquicia con contraseña cifrada scrypt
-      await pool.query(
-        `INSERT INTO nova_users (id, tenant_id, email, full_name, role, password_plain, token_version, active)
-         VALUES ($1, $2, $3, $4, 'GERENCIA', $5, 1, TRUE)
-         ON CONFLICT (email) DO UPDATE SET tenant_id = EXCLUDED.tenant_id, active = TRUE`,
-        [
-          `usr-${Date.now()}`,
-          newTenantId,
           adminEmail,
-          `Responsable · ${body.commercialName}`,
-          hashPassword(initialPassword)
+          isActive
         ]
       );
 
-      // Clonar automáticamente el Catálogo Maestro desde la Central (tenant-nova-soto)
-      const masterRes = await pool.query(
-        'SELECT state_json FROM nova_state_store WHERE tenant_id = $1',
-        ['tenant-nova-soto']
-      );
-      if (masterRes.rowCount > 0 && masterRes.rows[0].state_json) {
-        const masterCatalog = masterRes.rows[0].state_json.catalogSeries || [];
-        const cleanFranchiseState = {
-          catalogSeries: masterCatalog,
-          quotes: [],
-          warehouseOrders: [],
-          invoices: [],
-          emailAccounts: [
-            {
-              id: `mail-${Date.now()}`,
-              aliasName: body.commercialName || 'Sede NOVA',
-              emailAddress: adminEmail,
-              department: 'GENERAL',
-              smtpHost: 'smtp.ionos.es',
-              smtpPort: 587,
-              imapHost: 'imap.ionos.es',
-              imapPort: 993,
-              useTls: true,
-              status: 'CONECTADO_OK',
-              signatureHtml: `${body.commercialName || 'Delegación NOVA'} · ${body.legalName || ''}`
-            }
-          ],
-          emailMessages: [],
-          leads: []
-        };
+      if (!body.id) {
+        const initialPassword = body.password || 'Soto2026!Seguro';
         await pool.query(
-          `INSERT INTO nova_state_store (tenant_id, state_json, updated_at)
-           VALUES ($1, $2::jsonb, NOW())
-           ON CONFLICT (tenant_id) DO NOTHING`,
-          [newTenantId, JSON.stringify(cleanFranchiseState)]
+          `INSERT INTO nova_users (id, tenant_id, email, full_name, role, password_plain, token_version, active)
+           VALUES ($1, $2, $3, $4, 'GERENCIA', $5, 1, TRUE)
+           ON CONFLICT (email) DO UPDATE SET tenant_id = EXCLUDED.tenant_id, active = TRUE`,
+          [`usr-${Date.now()}`, newTenantId, adminEmail, `Responsable · ${body.commercialName}`, hashPassword(initialPassword)]
         );
+        const masterRes = await pool.query('SELECT state_json FROM nova_state_store WHERE tenant_id = $1', ['tenant-nova-soto']);
+        if (masterRes.rowCount > 0 && masterRes.rows[0].state_json) {
+          const masterCatalog = masterRes.rows[0].state_json.catalogSeries || [];
+          const cleanState = {
+            catalogSeries: masterCatalog, quotes: [], warehouseOrders: [], invoices: [], emailMessages: [], leads: [],
+            emailAccounts: [{
+              id: `mail-${Date.now()}`, aliasName: body.commercialName || 'Sede NOVA', emailAddress: adminEmail,
+              department: 'GENERAL', smtpHost: 'smtp.ionos.es', smtpPort: 587, imapHost: 'imap.ionos.es',
+              imapPort: 993, useTls: true, status: 'CONECTADO_OK', signatureHtml: `${body.commercialName || 'Delegación NOVA'}`
+            }]
+          };
+          await pool.query(
+            `INSERT INTO nova_state_store (tenant_id, state_json, updated_at) VALUES ($1, $2::jsonb, NOW()) ON CONFLICT (tenant_id) DO NOTHING`,
+            [newTenantId, JSON.stringify(cleanState)]
+          );
+        }
       }
-
       return sendJson(req, res, 201, { ok: true, tenantId: newTenantId });
     }
 
-    // 5. Alta, edición y eliminación de Usuarios por Rol y Empresa (Aislados por Sede)
+    if (req.method === 'POST' && path === '/api/v1/tenants/delete') {
+      const body = await readJsonBody(req);
+      if (!body.id || body.id === 'tenant-nova-soto') {
+        return sendJson(req, res, 400, { error: 'No se puede eliminar la sede central.' });
+      }
+      await pool.query('DELETE FROM nova_users WHERE tenant_id = $1 AND LOWER(email) <> $2', [body.id, 'gerencia@gruposoto.es']);
+      await pool.query('DELETE FROM nova_state_store WHERE tenant_id = $1', [body.id]);
+      await pool.query('DELETE FROM nova_leads WHERE tenant_id = $1', [body.id]);
+      await pool.query('DELETE FROM nova_tenants WHERE id = $1', [body.id]);
+      return sendJson(req, res, 200, { ok: true });
+    }
+
+    if (req.method === 'POST' && path === '/api/v1/tenants/sync-catalog') {
+      const body = await readJsonBody(req);
+      const targetTid = body.targetTenantId || tenantId;
+      const masterRes = await pool.query('SELECT state_json FROM nova_state_store WHERE tenant_id = $1', ['tenant-nova-soto']);
+      const masterCatalog = masterRes.rows[0]?.state_json?.catalogSeries || [];
+      const curRes = await pool.query('SELECT state_json FROM nova_state_store WHERE tenant_id = $1', [targetTid]);
+      const curState = curRes.rows[0]?.state_json || { quotes: [], warehouseOrders: [], invoices: [], emailAccounts: [], emailMessages: [], leads: [] };
+      const updatedState = { ...curState, catalogSeries: masterCatalog };
+      await pool.query(
+        `INSERT INTO nova_state_store (tenant_id, state_json, updated_at) VALUES ($1, $2::jsonb, NOW())
+         ON CONFLICT (tenant_id) DO UPDATE SET state_json = EXCLUDED.state_json, updated_at = NOW()`,
+        [targetTid, JSON.stringify(updatedState)]
+      );
+      return sendJson(req, res, 200, { ok: true, seriesCount: masterCatalog.length });
+    }
+
+    // 5. Alta, edición, cambio de contraseña/rol y eliminación de Usuarios por Empresa
     if (req.method === 'POST' && path === '/api/v1/users') {
       const body = await readJsonBody(req);
       const email = String(body.email || '').trim().toLowerCase();
@@ -299,7 +317,8 @@ async function handleRequest(req, res) {
       const targetTenant = isSuper ? body.tenantId || tenantId : tenantId;
       const requestedRole = body.role || 'OFICINA_TECNICA';
       const safeRole = !isSuper && requestedRole === 'SUPERADMIN' ? 'GERENCIA' : requestedRole;
-      const hashed = hashPassword(body.password || 'Soto2026!Seguro');
+      const hasNewPass = Boolean(body.password && String(body.password).trim().length > 0);
+      const hashed = hashPassword(hasNewPass ? String(body.password).trim() : 'Soto2026!Seguro');
       const id = body.id || `usr-${Date.now()}`;
       await pool.query(
         `INSERT INTO nova_users (id, tenant_id, email, full_name, role, password_plain, token_version, active)
@@ -308,17 +327,10 @@ async function handleRequest(req, res) {
            tenant_id = EXCLUDED.tenant_id,
            full_name = EXCLUDED.full_name,
            role = EXCLUDED.role,
+           password_plain = CASE WHEN $8 = TRUE THEN EXCLUDED.password_plain ELSE nova_users.password_plain END,
            active = EXCLUDED.active,
            token_version = nova_users.token_version + 1`,
-        [
-          id,
-          targetTenant,
-          email,
-          body.fullName || 'Usuario NOVA',
-          safeRole,
-          hashed,
-          body.active !== false
-        ]
+        [id, targetTenant, email, body.fullName || 'Usuario NOVA', safeRole, hashed, body.active !== false, hasNewPass]
       );
       return sendJson(req, res, 201, { ok: true, id });
     }
