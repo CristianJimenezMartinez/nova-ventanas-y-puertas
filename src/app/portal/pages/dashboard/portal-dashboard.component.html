@@ -42,7 +42,7 @@
             [(ngModel)]="clientSearchQuery"
             placeholder="🔍 Buscar cliente, NIF o teléfono..."
             style="padding:0.4rem 0.65rem;min-width:210px;" />
-          <button type="button" class="panel-link" style="background:none;border:none;cursor:pointer;" (click)="showNewLeadModal.set(true)">
+          <button type="button" class="panel-link" style="background:none;border:none;cursor:pointer;" (click)="openNewLeadModal()">
             + Añadir cliente
           </button>
         </div>
@@ -78,6 +78,9 @@
                   <div style="display:flex;gap:0.4rem;">
                     <button type="button" class="dash-mini-btn dash-mini-btn--gold" (click)="createQuoteFromLead(lead)">
                       Presupuestar →
+                    </button>
+                    <button type="button" class="dash-mini-btn" (click)="openEditLeadModal(lead)" aria-label="Editar cliente">
+                      ✎ Editar
                     </button>
                     <button type="button" class="dash-mini-btn" (click)="deleteLead(lead.id)" aria-label="Eliminar">
                       ✕
@@ -140,7 +143,7 @@
     <div class="dash-modal-backdrop" (click)="showNewLeadModal.set(false)">
       <div class="dash-modal" (click)="$event.stopPropagation()">
         <div class="dash-modal__head">
-          <h3>Nuevo cliente / solicitud</h3>
+          <h3>{{ editingLeadId() ? 'Editar cliente' : 'Nuevo cliente / solicitud' }}</h3>
           <button type="button" class="dash-mini-btn" (click)="showNewLeadModal.set(false)">✕</button>
         </div>
         @if (leadModalError()) {
@@ -184,7 +187,7 @@
         </div>
         <div class="dash-modal__foot">
           <button type="button" class="btn btn--outline" (click)="showNewLeadModal.set(false)">Cancelar</button>
-          <button type="button" class="btn btn--champagne" (click)="saveNewLead()">Guardar cliente</button>
+          <button type="button" class="btn btn--champagne" (click)="saveNewLead()">{{ editingLeadId() ? 'Guardar cambios' : 'Guardar cliente' }}</button>
         </div>
       </div>
     </div>

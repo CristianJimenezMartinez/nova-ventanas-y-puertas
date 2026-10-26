@@ -18,6 +18,7 @@ export class PortalDashboardComponent {
 
   readonly clientSearchQuery = signal<string>('');
   readonly showNewLeadModal = signal<boolean>(false);
+  readonly editingLeadId = signal<string | null>(null);
   readonly leadModalError = signal<string>('');
   readonly newLeadName = signal<string>('');
   readonly newLeadNif = signal<string>('');
@@ -41,8 +42,54 @@ export class PortalDashboardComponent {
     );
   });
 
+  openNewLeadModal(): void {
+    this.editingLeadId.set(null);
+    this.leadModalError.set('');
+    this.newLeadName.set('');
+    this.newLeadNif.set('');
+    this.newLeadPhone.set('');
+    this.newLeadEmail.set('');
+    this.newLeadCity.set('');
+    this.newLeadSystem.set('Carpintería a medida');
+    this.newLeadType.set('REFORMA_VIVIENDA');
+    this.showNewLeadModal.set(true);
+  }
+
+  openEditLeadModal(lead: CrmLeadItem): void {
+    this.editingLeadId.set(lead.id);
+    this.leadModalError.set('');
+    this.newLeadName.set(lead.fullName);
+    this.newLeadNif.set(lead.nif || '');
+    this.newLeadPhone.set(lead.phone);
+    this.newLeadEmail.set(lead.email);
+    this.newLeadCity.set(lead.city);
+    this.newLeadSystem.set(lead.recommendedSystem || '');
+    const pt = lead.projectType === 'OBRA_NUEVA' || lead.projectType === 'SOLO_SUMINISTRO' ? lead.projectType : 'REFORMA_VIVIENDA';
+    this.newLeadType.set(pt);
+    this.showNewLeadModal.set(true);
+  }
+
   saveNewLead(): void {
     this.leadModalError.set('');
+    const editId = this.editingLeadId();
+    if (editId) {
+      const res = this.store.updateLead(editId, {
+        fullName: this.newLeadName().trim(),
+        nif: this.newLeadNif().trim(),
+        phone: this.newLeadPhone().trim(),
+        email: this.newLeadEmail().trim(),
+        city: this.newLeadCity().trim() || 'Murcia',
+        projectType: this.newLeadType(),
+        recommendedSystem: this.newLeadSystem().trim()
+      });
+      if (!res.ok) {
+        this.leadModalError.set(res.error || 'No se pudo actualizar el cliente.');
+        return;
+      }
+      this.showNewLeadModal.set(false);
+      return;
+    }
+
     const res = this.store.registerWebLead(
       {
         fullName: this.newLeadName(),
@@ -59,11 +106,6 @@ export class PortalDashboardComponent {
       this.leadModalError.set(res.error || 'No se pudo guardar el cliente.');
       return;
     }
-    this.newLeadName.set('');
-    this.newLeadNif.set('');
-    this.newLeadPhone.set('');
-    this.newLeadEmail.set('');
-    this.newLeadCity.set('');
     this.showNewLeadModal.set(false);
   }
 

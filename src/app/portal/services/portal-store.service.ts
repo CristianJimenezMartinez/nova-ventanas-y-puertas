@@ -418,49 +418,44 @@ export class PortalStoreService {
     }
     const activeTid = this.security.activeTenantId();
     const list = this.leads();
-    const dupByEmail = cleanEmail
-      ? list.find(l => (l.tenantId || activeTid) === activeTid && (l.email || '').trim().toLowerCase() === cleanEmail)
-      : undefined;
-
+    const dupByEmail = cleanEmail ? list.find(l => (l.tenantId || activeTid) === activeTid && (l.email || '').trim().toLowerCase() === cleanEmail) : undefined;
     if (dupByEmail && options?.rejectDuplicateEmail) {
-      return {
-        ok: false,
-        error: `Ya existe un cliente en esta empresa con el correo "${cleanEmail}" (${dupByEmail.fullName}).`,
-        existingLead: dupByEmail
-      };
+      return { ok: false, error: `Ya existe un cliente en esta empresa con el correo "${cleanEmail}" (${dupByEmail.fullName}).`, existingLead: dupByEmail };
     }
-
-    const existingIdx = list.findIndex(
-      l =>
-        (l.tenantId || activeTid) === activeTid &&
-        ((cleanEmail && (l.email || '').trim().toLowerCase() === cleanEmail) ||
-          (lead.nif && l.nif && l.nif.toLowerCase() === lead.nif.trim().toLowerCase()) ||
-          (!cleanEmail && l.fullName.toLowerCase() === cleanName.toLowerCase()))
+    const existingIdx = list.findIndex(l =>
+      (l.tenantId || activeTid) === activeTid &&
+      ((cleanEmail && (l.email || '').trim().toLowerCase() === cleanEmail) ||
+        (lead.nif && l.nif && l.nif.toLowerCase() === lead.nif.trim().toLowerCase()) ||
+        (!cleanEmail && l.fullName.toLowerCase() === cleanName.toLowerCase()))
     );
-
     if (existingIdx >= 0) {
-      this.leads.update(curr =>
-        curr.map((item, idx) =>
-          idx === existingIdx ? { ...item, ...lead, tenantId: activeTid, fullName: cleanName, email: cleanEmail || item.email } : item
-        )
-      );
+      this.leads.update(curr => curr.map((item, idx) => idx === existingIdx ? { ...item, ...lead, tenantId: activeTid, fullName: cleanName, email: cleanEmail || item.email } : item));
       this.persistStateToPostgresDb();
       return { ok: true, existingLead: this.leads()[existingIdx] };
     }
-
     const item: CrmLeadItem = {
-      ...lead,
-      tenantId: activeTid,
-      fullName: cleanName,
-      email: cleanEmail,
-      id: `lead-${Date.now()}`,
-      createdAtIso: new Date().toISOString(),
-      status: 'NUEVO_WEB'
+      ...lead, tenantId: activeTid, fullName: cleanName, email: cleanEmail,
+      id: `lead-${Date.now()}`, createdAtIso: new Date().toISOString(), status: 'NUEVO_WEB'
     };
     this.leads.update(curr => [item, ...curr]);
     this.http.post('/api/v1/leads', item, { headers: this.security.getAuthHeaders(activeTid) }).subscribe({ error: () => {} });
     this.persistStateToPostgresDb();
     return { ok: true, existingLead: item };
+  }
+
+  updateLead(id: string, lead: Partial<CrmLeadItem>): { ok: boolean; error?: string } {
+    const cleanEmail = (lead.email || '').trim().toLowerCase();
+    if (cleanEmail && !this.isValidEmail(cleanEmail)) {
+      return { ok: false, error: 'El formato del correo electrónico no es válido.' };
+    }
+    const activeTid = this.security.activeTenantId();
+    if (cleanEmail) {
+      const dup = this.leads().find(l => l.id !== id && (l.tenantId || activeTid) === activeTid && (l.email || '').trim().toLowerCase() === cleanEmail);
+      if (dup) return { ok: false, error: `Ya existe otro cliente con el correo "${cleanEmail}" (${dup.fullName}).` };
+    }
+    this.leads.update(list => list.map(l => (l.id !== id ? l : { ...l, ...lead, email: cleanEmail || l.email })));
+    this.persistStateToPostgresDb();
+    return { ok: true };
   }
 
   removeLead(leadId: string): void {

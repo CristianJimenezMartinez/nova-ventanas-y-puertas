@@ -6,12 +6,14 @@ import {
   WarehouseOrder
 } from '../models/portal.models';
 import { WindowSketchSvgService } from './window-sketch-svg.service';
+import { PortalSecurityService } from './portal-security.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PortalPdfGeneratorService {
   private readonly sketchSvg = inject(WindowSketchSvgService);
+  private readonly security = inject(PortalSecurityService);
 
   /**
    * 1. Genera el PDF Vectorial Oficial de Presupuesto Técnico por Huecos (con Croquis UNE-EN 12519)
@@ -70,7 +72,7 @@ export class PortalPdfGeneratorService {
           <div class="grand-total"><span>TOTAL PRESUPUESTO (IVA INCLUIDO):</span><strong>${quote.totalPvpEur.toFixed(2)} €</strong></div>
         </div>
         <div class="sign-grid">
-          <div class="sign-box">FIRMA Y SELLO OFICINA TÉCNICA NOVA<br/><br/>GRUPO SOTO EMPRESARIAL SL</div>
+          <div class="sign-box">FIRMA Y SELLO OFICINA TÉCNICA<br/><br/>${this.security.activeTenant().legalName} · CIF ${this.security.activeTenant().cif}</div>
           <div class="sign-box">CONFORMIDAD DEL CLIENTE (ACEPTACIÓN DE CROQUIS Y MEDIDAS)<br/><br/>Fdo.: ${quote.clientName}</div>
         </div>
       `
@@ -106,7 +108,7 @@ export class PortalPdfGeneratorService {
       `
         <div class="meta-grid">
           <div><span class="lbl">EXPEDIENTE OBRA:</span><strong>${quote.code} · ${quote.clientName}</strong></div>
-          <div><span class="lbl">DESTINO RECEPCIÓN:</span><strong>Nave NOVA · Pol. Ind. La Serreta (Molina de Segura)</strong></div>
+          <div><span class="lbl">DESTINO RECEPCIÓN:</span><strong>${this.security.activeTenant().commercialName} · ${this.security.activeTenant().city}</strong></div>
         </div>
         <table class="full-table">
           <thead>
@@ -149,7 +151,7 @@ export class PortalPdfGeneratorService {
           </tbody>
         </table>
         <div class="sign-grid">
-          <div class="sign-box">EXPEDIDO POR ALMACÉN NOVA<br/><br/>Caballete: ${order.assignedCaballete}</div>
+          <div class="sign-box">EXPEDIDO POR ${this.security.activeTenant().commercialName.toUpperCase()}<br/><br/>${this.security.activeTenant().legalName} · Caballete: ${order.assignedCaballete}</div>
           <div class="sign-box">RECIBÍ CONFORME (RECOGIDA EN NAVE / ENTREGA EN OBRA)<br/><br/>Nombre, DNI y Firma:</div>
         </div>
       `
@@ -259,7 +261,7 @@ export class PortalPdfGeneratorService {
 </head>
 <body>
   <div class="doc-head">
-    <div><span class="brand">NOVA</span><span class="brand-sub">VENTANAS &amp; PUERTAS · GRUPO SOTO</span></div>
+    <div><span class="brand">${this.security.activeTenant().commercialName}</span><span class="brand-sub">${this.security.activeTenant().legalName} · CIF ${this.security.activeTenant().cif} · ${this.security.activeTenant().city}</span></div>
     <div class="doc-title"><h1>${title}</h1><span>${subtitle}</span></div>
   </div>
   ${bodyContent}

@@ -50,6 +50,10 @@
           <button type="button" class="btn btn--outline" style="flex:1;padding:0.45rem 0.6rem !important;" (click)="downloadTenantBackupJson()">
             💾 Backup .JSON
           </button>
+          <label class="btn btn--outline" style="flex:1;padding:0.45rem 0.6rem !important;margin:0;cursor:pointer;text-align:center;">
+            📂 Restaurar .JSON
+            <input type="file" accept=".json" style="display:none;" (change)="onRestoreBackupFile($event)" />
+          </label>
         </div>
       </div>
 

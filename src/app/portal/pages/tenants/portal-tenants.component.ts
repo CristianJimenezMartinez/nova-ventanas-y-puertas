@@ -273,6 +273,31 @@ export class PortalTenantsComponent {
     this.security.securityBanner.set(`✓ Copia de seguridad JSON de "${tenant.commercialName}" descargada.`);
   }
 
+  onRestoreBackupFile(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const data = JSON.parse(reader.result as string);
+        if (!data || typeof data !== 'object') throw new Error('Formato inválido');
+        if (Array.isArray(data.leads)) this.store.leads.set(data.leads);
+        if (Array.isArray(data.quotes)) this.store.quotes.set(data.quotes);
+        if (Array.isArray(data.warehouseOrders)) this.store.warehouseOrders.set(data.warehouseOrders);
+        if (Array.isArray(data.invoices)) this.store.invoices.set(data.invoices);
+        if (Array.isArray(data.catalogSeries) && data.catalogSeries.length > 0) this.store.catalogSeries.set(data.catalogSeries);
+        if (Array.isArray(data.emailAccounts)) this.store.emailAccounts.set(data.emailAccounts);
+        this.store.persistStateToPostgresDb();
+        this.security.securityBanner.set(`✓ Copia de seguridad restaurada con éxito en "${this.security.activeTenant().commercialName}".`);
+      } catch {
+        this.security.securityBanner.set('⚠ Error al leer el archivo de copia de seguridad .JSON.');
+      }
+      input.value = '';
+    };
+    reader.readAsText(file);
+  }
+
   createNewUser(): void {
     const email = this.newUserEmail().trim().toLowerCase();
     if (!email || !this.store.isValidEmail(email)) {
