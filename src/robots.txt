@@ -3,7 +3,6 @@ Allow: /
 
 # Sitemap oficial para Google Search Console
 Sitemap: https://novaventanasypuertas.com/sitemap.xml
-Host: https://novaventanasypuertas.com
 
 # Contexto para Inteligencia Artificial y LLMs (ChatGPT, Claude, Perplexity)
 # https://novaventanasypuertas.com/llms.txt
