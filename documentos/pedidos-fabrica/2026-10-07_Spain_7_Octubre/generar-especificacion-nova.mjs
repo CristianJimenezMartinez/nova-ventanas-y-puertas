@@ -3,9 +3,9 @@ import path from 'path';
 import { execFileSync } from 'child_process';
 
 const scratchDir = 'C:/Users/Cayse/.gemini/antigravity/brain/ed479916-f175-4b53-a0bd-a530091dde26/scratch';
-const htmlPath = path.join(scratchDir, 'nova_spec.html');
-const outputPdfWorkspace = 'C:/Proyectos/Grupo Soto/nova-ventanas-y-puertas/Especificacion_Tecnica_NOVA_Spain_7_Octubre.pdf';
-const outputPdfArtifact = 'C:/Users/Cayse/.gemini/antigravity/brain/ed479916-f175-4b53-a0bd-a530091dde26/Especificacion_Tecnica_NOVA_Spain_7_Octubre.pdf';
+const htmlPath = path.join(scratchDir, 'nova_spec_no_logo.html');
+const outputPdfNoLogo = 'C:/Proyectos/Grupo Soto/nova-ventanas-y-puertas/documentos/pedidos-fabrica/2026-10-07_Spain_7_Octubre/Especificacion_Tecnica_Spain_7_Octubre_Sin_Logo.pdf';
+const outputPdfArtifact = 'C:/Users/Cayse/.gemini/antigravity/brain/ed479916-f175-4b53-a0bd-a530091dde26/Especificacion_Tecnica_Spain_7_Octubre_Sin_Logo.pdf';
 
 fs.mkdirSync(scratchDir, { recursive: true });
 
@@ -751,9 +751,7 @@ const html = `<!DOCTYPE html>
       <div class="page-content">
         ${p.isFirst ? `
           <div class="doc-header">
-            <div class="header-logo">
-              ${novaLogoSvg}
-            </div>
+            <div class="header-logo"></div>
             <div class="header-right">
               <div class="title-banner">Spain 7 de octubre</div>
               <div class="header-dates">
@@ -812,10 +810,10 @@ const edgePath = 'C:\\Program Files (x86)\\Microsoft\\Edge\\Application\\msedge.
 execFileSync(edgePath, [
   '--headless',
   '--disable-gpu',
-  `--print-to-pdf=${outputPdfWorkspace}`,
+  `--print-to-pdf=${outputPdfNoLogo}`,
   '--no-pdf-header-footer',
   htmlPath
 ]);
 
-fs.copyFileSync(outputPdfWorkspace, outputPdfArtifact);
-console.log('PDF regenerated successfully:', outputPdfWorkspace);
+fs.copyFileSync(outputPdfNoLogo, outputPdfArtifact);
+console.log('PDF sin logo generado:', outputPdfNoLogo);
