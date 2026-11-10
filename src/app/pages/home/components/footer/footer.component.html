@@ -26,7 +26,7 @@
         <button type="button" class="footer-link" (click)="scrollToSection('proyectos')">PROYECTOS</button>
         <button type="button" class="footer-link" (click)="scrollToSection('showroom')">SHOWROOM</button>
         <button type="button" class="footer-link" (click)="scrollToSection('contacto')">CONTACTO</button>
-        <a routerLink="/portal" class="footer-link footer-link--portal">ÁREA PROFESIONAL</a>
+        <a routerLink="/portal" rel="nofollow" class="footer-link footer-link--portal">ÁREA PROFESIONAL</a>
       </nav>
 
       <!-- Contacto Directo -->
@@ -47,6 +47,16 @@
       </div>
 
     </div>
+
+    <!-- Enlaces Directos de Especialidades Técnicas y SEO Geográfico -->
+    <nav class="nova-footer__seo-hub" aria-label="Especialidades técnicas y zonas de servicio NOVA">
+      <span class="seo-hub__label">ESPECIALIDADES TÉCNICAS &amp; ZONAS:</span>
+      <div class="seo-hub__links">
+        @for (item of seoSpecialties; track item.slug) {
+          <a [routerLink]="item.slug" class="seo-hub__link">{{ item.label }}</a>
+        }
+      </div>
+    </nav>
 
     <!-- Barra Inferior Legal & Copyright -->
     <div class="nova-footer__bottom">

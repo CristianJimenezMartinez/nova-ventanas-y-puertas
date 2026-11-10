@@ -105,6 +105,11 @@ export const routes: Routes = [
     ]
   },
   {
+    path: ':seoSlug',
+    loadComponent: () =>
+      import('./pages/seo-landing/seo-landing.component').then(m => m.SeoLandingComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

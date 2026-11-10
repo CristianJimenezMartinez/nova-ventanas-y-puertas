@@ -1,0 +1,154 @@
+<div class="nova-experience">
+  <app-header></app-header>
+
+  @if (pageData(); as page) {
+    <main class="seo-landing">
+      <!-- 1. HERO TÉCNICO ARQUITECTÓNICO -->
+      <section class="seo-hero">
+        <div class="container">
+          <nav class="seo-breadcrumb" aria-label="Ruta de navegación">
+            <a routerLink="/" class="seo-breadcrumb__link">INICIO</a>
+            <span class="seo-breadcrumb__sep">/</span>
+            <span class="seo-breadcrumb__current">{{ page.categoryBadge }}</span>
+          </nav>
+
+          <div class="seo-hero__grid">
+            <div class="seo-hero__content">
+              <div class="seo-badges">
+                <span class="seo-badge seo-badge--gold">{{ page.categoryBadge }}</span>
+                <span class="seo-badge">{{ page.normativeBadge }}</span>
+              </div>
+
+              <h1 class="seo-hero__title">{{ page.h1 }}</h1>
+              <p class="seo-hero__subtitle">{{ page.subtitle }}</p>
+
+              <div class="seo-hero__paragraphs">
+                @for (p of page.introParagraphs; track p) {
+                  <p>{{ p }}</p>
+                }
+              </div>
+
+              <div class="seo-hero__actions">
+                <button type="button" class="btn btn--champagne" (click)="scrollToConfigurator()">
+                  SOLICITAR PRESUPUESTO TÉCNICO →
+                </button>
+                <button type="button" class="btn btn--outline" (click)="openWhatsAppDirect(page)">
+                  CONSULTA DIRECTA OFICINA TÉCNICA
+                </button>
+              </div>
+            </div>
+
+            <div class="seo-hero__visual">
+              <div class="seo-hero__img-frame">
+                <img [src]="page.heroImage" [alt]="page.h1" class="seo-hero__img" loading="eager">
+                <div class="seo-hero__caption">
+                  <span class="caption-code">{{ page.recommendedSeriesCode }}</span>
+                  <strong class="caption-name">{{ page.recommendedSeriesName }}</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. MATRIZ DE ESPECIFICACIONES TÉCNICAS (TABULAR-NUMS) -->
+      <section class="seo-specs-section">
+        <div class="container">
+          <div class="seo-section-head">
+            <span class="label-tracked">ENSAYOS Y PRESTACIONES CERTIFICADAS</span>
+            <h2 class="seo-section-title">ESPECIFICACIONES TÉCNICAS · {{ page.recommendedSeriesName }}</h2>
+          </div>
+
+          <div class="seo-specs-grid tabular-nums">
+            @for (spec of page.specs; track spec.label) {
+              <div class="seo-spec-card" [class.seo-spec-card--highlight]="spec.highlight">
+                <span class="seo-spec-card__label">{{ spec.label }}</span>
+                <strong class="seo-spec-card__value">{{ spec.value }}</strong>
+              </div>
+            }
+          </div>
+
+          <!-- 3. VENTAJAS DE INGENIERÍA -->
+          <div class="seo-benefits-grid">
+            @for (benefit of page.keyBenefits; track benefit.title; let i = $index) {
+              <article class="seo-benefit-card">
+                <span class="seo-benefit-num tabular-nums">0{{ i + 1 }}</span>
+                <h3 class="seo-benefit-title">{{ benefit.title }}</h3>
+                <p class="seo-benefit-desc">{{ benefit.description }}</p>
+              </article>
+            }
+          </div>
+
+          <!-- 4. DOSSIER PDF OFICIAL EN ESPAÑOL -->
+          <div class="seo-dossier-banner">
+            <div class="seo-dossier-banner__info">
+              <span class="label-tracked">DOCUMENTACIÓN TÉCNICA OFICIAL</span>
+              <h3 class="seo-dossier-banner__title">{{ page.catalogTitle }}</h3>
+              <p class="seo-dossier-banner__sub">
+                Secciones constructivas a escala, tablas de transmitancia térmica Uw, atenuación acústica Rw y prescripción según el Código Técnico de la Edificación (CTE).
+              </p>
+            </div>
+            <div class="seo-dossier-banner__actions">
+              <a [href]="page.catalogDownloadUrl" target="_blank" rel="noopener nofollow" class="btn btn--champagne">
+                DESCARGAR DOSSIER PDF ↓
+              </a>
+              <button type="button" class="btn btn--outline" (click)="scrollToConfigurator()">
+                CONFIGURAR MEDIDAS
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. PREGUNTAS FRECUENTES DE INGENIERÍA -->
+      <section class="seo-faqs-section">
+        <div class="container">
+          <div class="seo-section-head">
+            <span class="label-tracked">RESPUESTAS TÉCNICAS Y NORMATIVA</span>
+            <h2 class="seo-section-title">PREGUNTAS FRECUENTES SOBRE {{ page.h1 | uppercase }}</h2>
+          </div>
+
+          <div class="seo-faqs-list">
+            @for (faq of page.faqs; track faq.question; let idx = $index) {
+              <div class="seo-faq-item" [class.seo-faq-item--open]="openFaqIndex() === idx">
+                <button type="button" class="seo-faq-trigger" (click)="toggleFaq(idx)">
+                  <div class="seo-faq-trigger__left">
+                    <span class="seo-faq-norm">{{ faq.normative }}</span>
+                    <span class="seo-faq-q">{{ faq.question }}</span>
+                  </div>
+                  <span class="seo-faq-icon">{{ openFaqIndex() === idx ? '−' : '+' }}</span>
+                </button>
+                @if (openFaqIndex() === idx) {
+                  <div class="seo-faq-body">
+                    <p>{{ faq.answer }}</p>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. CONFIGURADOR INTERACTIVO DE SOLUCIONES Y PRESUPUESTO -->
+      <app-solution-finder></app-solution-finder>
+
+      <!-- 7. ENLAZADO INTERNO DE ESPECIALIDADES NOVA -->
+      <section class="seo-related-section">
+        <div class="container">
+          <span class="label-tracked">EXPLORAR OTRAS SOLUCIONES TÉCNICAS NOVA</span>
+          <div class="seo-related-grid">
+            @for (rel of relatedPages(); track rel.slug) {
+              <a [routerLink]="['/', rel.slug]" class="seo-related-card">
+                <span class="seo-related-card__badge">{{ rel.categoryBadge }}</span>
+                <strong class="seo-related-card__title">{{ rel.h1 }}</strong>
+                <span class="seo-related-card__arrow">VER ESPECIFICACIONES →</span>
+              </a>
+            }
+          </div>
+        </div>
+      </section>
+    </main>
+  }
+
+  <app-footer></app-footer>
+</div>

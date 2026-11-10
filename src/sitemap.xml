@@ -3,7 +3,7 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://novaventanasypuertas.com/</loc>
-    <lastmod>2026-11-03</lastmod>
+    <lastmod>2026-11-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -21,6 +21,86 @@
     <image:image>
       <image:loc>https://novaventanasypuertas.com/assets/images/solution-correderas.jpg</image:loc>
       <image:title>Correderas Elevables a Cota Cero</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://novaventanasypuertas.com/ventanas-pvc-passivhaus</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://novaventanasypuertas.com/assets/images/material-pvc.jpg</image:loc>
+      <image:title>Ventanas de PVC Clase A Passivhaus NOVA THERM 82</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://novaventanasypuertas.com/ventanas-aluminio-hoja-oculta</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://novaventanasypuertas.com/assets/images/material-aluminio.jpg</image:loc>
+      <image:title>Ventanas de Aluminio RPT con Hoja Oculta NOVA ALU MINIMAL 75</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://novaventanasypuertas.com/puertas-pivotantes-acorazadas-rc3</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://novaventanasypuertas.com/assets/images/pivot-door.jpg</image:loc>
+      <image:title>Puertas Pivotantes Monumentales y Acorazadas RC3 NOVA SHIELD</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://novaventanasypuertas.com/correderas-elevables-cota-cero</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://novaventanasypuertas.com/assets/images/solution-correderas.jpg</image:loc>
+      <image:title>Correderas Elevables a Cota Cero NOVA HORIZON LIFT</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://novaventanasypuertas.com/cerramientos-cortinas-cristal-bioclimatica</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://novaventanasypuertas.com/assets/images/glass-terrace.jpg</image:loc>
+      <image:title>Cortinas de Cristal y Pérgolas Bioclimáticas NOVA PANORAMA</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://novaventanasypuertas.com/ventanas-y-puertas-murcia</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://novaventanasypuertas.com/assets/images/showroom-interior.jpg</image:loc>
+      <image:title>Fábrica y Showroom de Ventanas y Puertas en Murcia NOVA Grupo Soto</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://novaventanasypuertas.com/ventanas-y-puertas-alicante</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://novaventanasypuertas.com/assets/images/project-mediterranea.jpg</image:loc>
+      <image:title>Ventanas, Puertas Pivotantes y Cerramientos en Alicante y Costa Blanca</image:title>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://novaventanasypuertas.com/deducciones-irpf-cambio-ventanas</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.85</priority>
+    <image:image>
+      <image:loc>https://novaventanasypuertas.com/assets/images/pilar-eficiencia.jpg</image:loc>
+      <image:title>Deducciones Fiscales IRPF por Cambio de Ventanas Eficientes NOVA</image:title>
     </image:image>
   </url>
 </urlset>

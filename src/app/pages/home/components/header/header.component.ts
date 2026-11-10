@@ -1,6 +1,6 @@
-import { Component, HostListener, signal, OnDestroy } from '@angular/core';
+import { Component, HostListener, signal, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -10,6 +10,7 @@ import { RouterModule } from '@angular/router';
   styleUrls: ['./header.component.scss']
 })
 export class HeaderComponent implements OnDestroy {
+  private readonly router = inject(Router);
   readonly isScrolled = signal<boolean>(false);
   readonly isMobileMenuOpen = signal<boolean>(false);
 
@@ -35,7 +36,13 @@ export class HeaderComponent implements OnDestroy {
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
+      return;
     }
+    this.router.navigate(['/']).then(() => {
+      setTimeout(() => {
+        document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    });
   }
 
   private updateBodyScrollLock(locked: boolean): void {

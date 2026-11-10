@@ -8,34 +8,28 @@ NOVA diseña, fabrica e instala ventanas de hoja oculta, puertas pivotantes monu
 - **Nombre comercial**: NOVA Ventanas & Puertas
 - **Razón social**: GRUPO SOTO EMPRESARIAL SL
 - **Grupo empresarial**: Grupo Soto (https://gruposoto.es)
-- **Sitio web oficial**: https://novaventanasypuertas.com / https://novaventanasypuertas.es
+- **Sitio web canónico**: https://novaventanasypuertas.com/
 - **Sede y Showroom físico**: Polígono Industrial La Serreta, Molina de Segura, 30500 Murcia, España
 - **Ámbito geográfico de servicio**: Región de Murcia, provincia de Alicante, Costa Blanca y proyectos arquitectónicos en toda España
 - **Teléfono directo**: +34 613 75 42 71
 - **Correo electrónico**: info@novaventanasypuertas.com
 - **Horario de atención**: Lunes a Viernes de 08:30 a 19:30
 
-## Catálogo de Soluciones y Productos
+## Páginas Técnicas y Soluciones Indexables (URLs Canónicas)
 
-- [Ventanas de Hoja Oculta](https://novaventanasypuertas.com/#detalles): Perfilería minimalista de aluminio y PVC que oculta la hoja tras el marco exterior, logrando un 20% más de superficie acristalada y máxima entrada de luz natural.
-- [Puertas Pivotantes Monumentales](https://novaventanasypuertas.com/#soluciones): Entradas principales de gran envergadura (hasta 3 metros de altura) sobre eje pivotante oculto con rodamientos reforzados, cierre hermético perimetral y seguridad anti-efracción certificada RC3.
-- [Correderas Elevables a Cota Cero](https://novaventanasypuertas.com/#soluciones): Solera totalmente empotrada a ras del suelo para una continuidad fluida entre salón, porche y terraza sin barreras arquitectónicas.
-- [Cerramientos Panorámicos y Cortinas de Cristal](https://novaventanasypuertas.com/#soluciones): Acristalamientos abatibles sin montantes verticales para terrazas, áticos y pérgolas bioclimáticas.
-- [Grandes Formatos y Muros Cortina](https://novaventanasypuertas.com/#arquitectura): Fachadas de cristal estructural de doble altura para viviendas unifamiliares de vanguardia.
-
-## Materias Primas y Rendimiento Técnico
-
-1. **Aluminio con Rotura de Puente Térmico (RPT)**: Perfiles esbeltos de extrusión certificada Qualicoat, aislamiento con poliamidas de baja conductividad y resistencia climática excepcional.
-2. **PVC Passivhaus**: Perfiles multiexcéntricos con soldadura invisible de esquina, clasificación de hermeticidad clase 4 y transmitancias térmicas Uw de hasta 0.7 W/m²K aptas para certificación Passivhaus.
-3. **Madera Noble Laminada**: Pino nórdico, roble europeo o castaño con tratamiento hidrófugo y anti-UV; confort orgánico y máxima calidez sensorial.
-4. **Mixto Aluminio-Madera**: Lo mejor de dos mundos: madera maciza hacia el interior del hogar y envolvente de aluminio anodizado/lacado hacia el exterior.
+- [Inicio — NOVA Ventanas y Puertas](https://novaventanasypuertas.com/)
+- [Ventanas de PVC Passivhaus (NOVA THERM 82)](https://novaventanasypuertas.com/ventanas-pvc-passivhaus): Perfiles Clase A de 82 mm y 7 cámaras con triple junta EPDM, soldadura invisible V-Perfect, Uw desde 0.72 W/m²K y atenuación acústica Rw hasta 47 dB.
+- [Ventanas de Aluminio RPT con Hoja Oculta (NOVA ALU MINIMAL 75)](https://novaventanasypuertas.com/ventanas-aluminio-hoja-oculta): Perfilería minimalista de aluminio con sección vista exterior de solo 50 mm, poliamida tubular de 35 mm, bisagras ocultas y un 22% más de luz natural.
+- [Puertas Pivotantes Monumentales y Acorazadas RC3 (NOVA SHIELD)](https://novaventanasypuertas.com/puertas-pivotantes-acorazadas-rc3): Puertas de entrada sobre eje pivotante oculto hasta 3.200 mm de altura, paneles coplanares de 95 mm, Ud desde 0.68 W/m²K y certificación antiefracción DIN EN 1627 RC3.
+- [Correderas Elevables a Cota Cero (NOVA HORIZON LIFT)](https://novaventanasypuertas.com/correderas-elevables-cota-cero): Solera 100% empotrada a ras de suelo (CTE DB-SUA), nudo central minimalista de 25 mm, hojas de hasta 400 kg y apertura en esquina a 90° sin poste.
+- [Cortinas de Cristal y Pérgolas Bioclimáticas (NOVA PANORAMA)](https://novaventanasypuertas.com/cerramientos-cortinas-cristal-bioclimatica): Acristalamientos panorámicos en vidrio templado de 10/12 mm sin perfiles verticales y pérgolas bioclimáticas motorizadas.
+- [Fábrica y Showroom de Ventanas y Puertas en Murcia](https://novaventanasypuertas.com/ventanas-y-puertas-murcia): Sede central en Molina de Segura y montaje certificado UNE 85219 en toda la Región de Murcia.
+- [Ventanas, Puertas y Cerramientos en Alicante y Costa Blanca](https://novaventanasypuertas.com/ventanas-y-puertas-alicante): Carpintería con tratamiento anticorrosión marino Qualicoat Seaside y herraje C5 para costa.
+- [Deducciones IRPF por Cambio de Ventanas Eficientes (20%, 40% y 60%)](https://novaventanasypuertas.com/deducciones-irpf-cambio-ventanas): Guía normativa y entrega de Marcado CE y Declaración de Prestaciones (DoP) para bonificaciones fiscales por eficiencia energética.
 
 ## Los 5 Pilares de NOVA
 - **01 Diseño Puro**: Minimización de perfiles vistos y pureza de líneas contemporáneas.
-- **02 Calidad y Precisión**: Herrajes ocultos alemanes y mecanizados con tolerancias milimétricas.
-- **03 Aislamiento Extremo**: Vidrios triples bajo emisivos con cámara de gas argón (atenuación acústica de hasta 48 dB).
+- **02 Calidad y Precisión**: Herrajes ocultos europeos y mecanizados con tolerancias milimétricas.
+- **03 Aislamiento Extremo**: Vidrios triples bajo emisivos con cámara de gas Argón y Control Solar Selectivo.
 - **04 Seguridad Acorazada**: Cierres perimetrales multipunto de acero y cerraduras certificadas RC2 y RC3.
-- **05 Eficiencia Energética**: Aislamiento integral que reduce sustancialmente el consumo en calefacción y climatización.
-
-## Showroom y Asesoramiento Técnico
-Espacio de experiencia física en Molina de Segura (Murcia) donde arquitectos, interioristas y particulares pueden comparar muestras reales, ensayar el aislamiento y recibir un estudio técnico y presupuesto exacto con medición gratuita en obra.
+- **05 Eficiencia Energética**: Aislamiento integral que cumple el CTE DB-HE y califica para deducciones IRPF.

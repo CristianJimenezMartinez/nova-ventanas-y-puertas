@@ -1,9 +1,9 @@
 User-agent: *
 Allow: /
+Disallow: /api/
 
-# Sitemap oficial para Google Search Console
+# Sitemap oficial para Google Search Console y Bing Webmaster Tools
 Sitemap: https://novaventanasypuertas.com/sitemap.xml
 
-# Contexto para Inteligencia Artificial y LLMs (ChatGPT, Claude, Perplexity)
+# Contexto estructurado para Inteligencia Artificial y LLMs (ChatGPT, Claude, Perplexity, Gemini)
 # https://novaventanasypuertas.com/llms.txt
-
