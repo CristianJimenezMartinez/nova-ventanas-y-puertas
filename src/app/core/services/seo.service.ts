@@ -1,7 +1,8 @@
 import { DOCUMENT } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
-import { SEO_LANDING_PAGES, SeoLandingPageData } from './seo-pages.data';
+import { SeoLandingPageData } from './seo-pages.data';
+import { SeoLandingEnriched, getEnrichedLandingPages } from './seo-local-content.data';
 
 const BASE_URL = 'https://novaventanasypuertas.com';
 const DEFAULT_TITLE = 'NOVA | Ventanas, Puertas y Cerramientos de Diseño Arquitectónico';
@@ -16,9 +17,9 @@ export class SeoService {
   private readonly meta = inject(Meta);
   private readonly doc = inject(DOCUMENT);
 
-  readonly landingPages = SEO_LANDING_PAGES;
+  readonly landingPages: SeoLandingEnriched[] = getEnrichedLandingPages();
 
-  getPageBySlug(slug: string): SeoLandingPageData | undefined {
+  getPageBySlug(slug: string): SeoLandingEnriched | undefined {
     return this.landingPages.find(p => p.slug === slug);
   }
 

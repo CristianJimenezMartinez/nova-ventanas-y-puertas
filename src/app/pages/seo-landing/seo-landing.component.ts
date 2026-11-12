@@ -4,8 +4,10 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HeaderComponent } from '../home/components/header/header.component';
 import { SolutionFinderComponent } from '../home/components/solution-finder/solution-finder.component';
 import { FooterComponent } from '../home/components/footer/footer.component';
+import { SeoLocalSectionComponent } from './seo-local-section/seo-local-section.component';
 import { SeoService } from '../../core/services/seo.service';
-import { SeoLandingPageData } from '../../core/services/seo-pages.data';
+import { SeoLandingEnriched } from '../../core/services/seo-local-content.data';
+type SeoLandingPageData = SeoLandingEnriched;
 
 @Component({
   selector: 'app-seo-landing',
@@ -15,7 +17,8 @@ import { SeoLandingPageData } from '../../core/services/seo-pages.data';
     RouterModule,
     HeaderComponent,
     SolutionFinderComponent,
-    FooterComponent
+    FooterComponent,
+    SeoLocalSectionComponent
   ],
   templateUrl: './seo-landing.component.html',
   styleUrls: ['./seo-landing.component.scss']

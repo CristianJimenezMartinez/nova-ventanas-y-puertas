@@ -1,0 +1,51 @@
+<section class="seo-local-section">
+          <div class="container">
+            <div class="seo-section-head">
+              <span class="label-tracked">INGENIERÍA ADAPTADA A TU ZONA</span>
+              <h2 class="seo-section-title">{{ local().climateTitle }}</h2>
+              <p class="seo-local-text">{{ local().climateText }}</p>
+            </div>
+
+            <div class="seo-zones-grid">
+              @for (zone of local().zones; track zone.name) {
+                <div class="seo-zone-card">
+                  <strong class="seo-zone-card__name">{{ zone.name }}</strong>
+                  <p class="seo-zone-card__detail">{{ zone.detail }}</p>
+                </div>
+              }
+            </div>
+
+            <div class="seo-section-head seo-local-sub">
+              <span class="label-tracked">OBRAS REALIZADAS</span>
+              <h2 class="seo-section-title">PROYECTOS NOVA EN LA ZONA</h2>
+            </div>
+            <div class="seo-projects-grid">
+              @for (proj of local().projects; track proj.title) {
+                <article class="seo-project-card">
+                  <img [src]="proj.imageUrl" [alt]="proj.title + ' · ' + proj.location" loading="lazy" class="seo-project-card__img">
+                  <div class="seo-project-card__body">
+                    <span class="seo-project-card__meta tabular-nums">{{ proj.location }} · {{ proj.year }}</span>
+                    <h3 class="seo-project-card__title">{{ proj.title }}</h3>
+                    <p class="seo-project-card__systems">{{ proj.systems }}</p>
+                  </div>
+                </article>
+              }
+            </div>
+
+            <div class="seo-section-head seo-local-sub">
+              <span class="label-tracked">CÓMO TRABAJAMOS</span>
+              <h2 class="seo-section-title">DE LA MEDICIÓN A LA INSTALACIÓN EN 6 PASOS</h2>
+            </div>
+            <ol class="seo-steps">
+              @for (step of local().process; track step.title; let i = $index) {
+                <li class="seo-step">
+                  <span class="seo-step__num tabular-nums">0{{ i + 1 }}</span>
+                  <div>
+                    <strong class="seo-step__title">{{ step.title }}</strong>
+                    <p class="seo-step__text">{{ step.text }}</p>
+                  </div>
+                </li>
+              }
+            </ol>
+          </div>
+        </section>

@@ -32,161 +32,34 @@ const portalHtml = baseHtml
 fs.writeFileSync(path.join(DIST_DIR, 'portal.html'), portalHtml, 'utf8');
 console.log('✅ Generado portal.html (noindex, nofollow, sin canonical duplicada)');
 
-// 2. Páginas SEO Estratégicas Pre-renderizadas (0 MB RAM en VPS, respuesta 200 OK directa en Nginx)
-const SEO_PAGES = [
-  {
-    slug: 'ventanas-pvc-passivhaus',
-    metaTitle: 'Ventanas de PVC Passivhaus en Murcia y Alicante | NOVA THERM 82',
-    metaDescription:
-      'Fabricación e instalación de ventanas de PVC Clase A Passivhaus en Murcia y Alicante. Serie NOVA THERM 82 con 7 cámaras, triple junta EPDM, Uw desde 0.72 W/m²K y 47 dB.',
-    h1: 'Ventanas de PVC Clase A Passivhaus en Murcia y Alicante',
-    lead: 'Serie propia NOVA THERM 82 Triple Junta de 82 mm y 7 cámaras con espesor de pared Clase A (UNE-EN 12608), soldadura invisible V-Perfect, transmitancia térmica Uw desde 0.72 W/m²K y aislamiento acústico de hasta 47 dB.',
-    image: 'assets/images/material-pvc.jpg',
-    faqs: [
-      {
-        q: '¿Se amarillea o deforma el PVC con el sol de Murcia y Alicante?',
-        a: 'No. Los perfiles NOVA THERM 82 están certificados para Clima Severo (Clasificación S según UNE-EN 12608) y cuentan con tecnología reflectante térmica con 10 años de garantía.'
-      },
-      {
-        q: '¿Qué diferencia aporta la triple junta central frente a una ventana estándar de 2 juntas?',
-        a: 'La junta central crea una cámara seca aislada que protege el herraje perimetral, mejora el aislamiento acústico en 4 dB adicionales y eleva la estanqueidad Clase 4.'
-      }
-    ]
-  },
-  {
-    slug: 'ventanas-aluminio-hoja-oculta',
-    metaTitle: 'Ventanas de Aluminio RPT con Hoja Oculta en Murcia y Alicante | NOVA',
-    metaDescription:
-      'Ventanas de aluminio arquitectónico con Rotura de Puente Térmico (RPT) y hoja oculta de solo 50 mm de sección vista. Serie NOVA ALU MINIMAL 75 con herraje oculto.',
-    h1: 'Ventanas de Aluminio RPT de Hoja Oculta y Perfil Minimalista',
-    lead: 'Sistema NOVA ALU MINIMAL 75 RPT con sección vista frontal de solo 50 mm, poliamida tubular de 35 mm, bisagras invisibles ocultas, lacado marino Qualicoat Seaside y un 22% más de luz natural.',
-    image: 'assets/images/material-aluminio.jpg',
-    faqs: [
-      {
-        q: '¿Produce condensación una ventana de aluminio moderna con RPT de 35 mm?',
-        a: 'Jamás. La poliamida tubular de 35 mm con espuma aislante rompe la transmisión térmica entre exterior e interior, eliminando la condensación superficial conforme al CTE DB-HE1.'
-      },
-      {
-        q: '¿Qué peso de vidrio de seguridad soporta la hoja oculta NOVA ALU MINIMAL 75?',
-        a: 'Sus compases ocultos de acero inoxidable admiten hojas de hasta 150 kg para instalar triples vidrios laminares acústicos y antirrobo RC2.'
-      }
-    ]
-  },
-  {
-    slug: 'puertas-pivotantes-acorazadas-rc3',
-    metaTitle: 'Puertas Pivotantes y Acorazadas RC3 en Murcia y Alicante | Catálogo NOVA',
-    metaDescription:
-      'Puertas de entrada pivotantes de gran formato y puertas acorazadas arquitectónicas certificadas DIN EN 1627 RC3. Paneles coplanares en piedra, aluminio y madera noble.',
-    h1: 'Puertas Pivotantes Monumentales y Acorazadas de Seguridad RC3',
-    lead: 'Colección NOVA SHIELD Pivot & Acorazada RC3 con paneles coplanares enrasados de 95 mm, transmitancia Ud desde 0.68 W/m²K, eje pivotante oculto hasta 3.200 mm de altura, umbral magnético automático y cerradura biométrica.',
-    image: 'assets/images/pivot-door.jpg',
-    faqs: [
-      {
-        q: '¿Es tan hermética una puerta pivotante como una puerta abatible tradicional?',
-        a: 'Sí. El sistema NOVA SHIELD incorpora triple junta perimetral y umbral magnético retráctil que sella herméticamente todo el contorno con clasificación Clase 4.'
-      },
-      {
-        q: '¿Qué significa exactamente la certificación antirrobo DIN EN 1627 RC3?',
-        a: 'Garantiza mediante ensayo oficial que la puerta resiste intentos de intrusión con palancas de acero de 70 cm, cuñas y herramientas mecánicas.'
-      }
-    ]
-  },
-  {
-    slug: 'correderas-elevables-cota-cero',
-    metaTitle: 'Correderas Elevables a Cota Cero y Grandes Formatos | NOVA Ventanas',
-    metaDescription:
-      'Correderas elevables y minimalistas a cota cero con nudo central de 25 mm. Serie NOVA HORIZON LIFT para hojas de hasta 400 kg, esquinas a 90° sin poste y máxima hermeticidad.',
-    h1: 'Correderas Elevables a Cota Cero y Grandes Formatos Acristalados',
-    lead: 'Sistema NOVA HORIZON LIFT con carril inferior 100% empotrado a ras de pavimento (CTE DB-SUA), encuentro central minimalista de 25 mm, hojas de hasta 400 kg y aperturas de esquina a 90° sin columna.',
-    image: 'assets/images/solution-correderas.jpg',
-    faqs: [
-      {
-        q: '¿Puede entrar agua de lluvia al estar el carril empotrado a cota cero?',
-        a: 'No. La guía empotrada incorpora colector de drenaje oculto subpavimento con válvula antirretorno ensayado frente a lluvias intensas.'
-      },
-      {
-        q: '¿Qué diferencia hay entre una corredera tradicional y una corredera elevable?',
-        a: 'La corredera elevable NOVA HORIZON LIFT desciende sobre juntas herméticas de EPDM al cerrarse, logrando aislamiento térmico y acústico Clase 4.'
-      }
-    ]
-  },
-  {
-    slug: 'cerramientos-cortinas-cristal-bioclimatica',
-    metaTitle: 'Cortinas de Cristal y Pérgolas Bioclimáticas en Murcia y Alicante | NOVA',
-    metaDescription:
-      'Cerramientos de terrazas, porches y áticos con cortinas de cristal sin perfiles verticales y pérgolas bioclimáticas motorizadas en Murcia y Alicante. Serie NOVA PANORAMA.',
-    h1: 'Cerramientos Panorámicos, Cortinas de Cristal y Pérgolas Bioclimáticas',
-    lead: 'Gama NOVA PANORAMA Glass & Bioclimática en vidrio templado de seguridad de 10 y 12 mm sin montantes verticales, combinable con pérgolas bioclimáticas de lamas orientables motorizadas e iluminación LED.',
-    image: 'assets/images/glass-terrace.jpg',
-    faqs: [
-      {
-        q: '¿Aíslan del ruido y del viento las cortinas de cristal sin perfiles?',
-        a: 'Sí. Con vidrio templado de 10/12 mm y sellos transparentes inter-cristal reducen el ruido hasta en 34 dB y soportan vientos Clase C4.'
-      },
-      {
-        q: '¿Es totalmente impermeable el techo de una pérgola bioclimática cuando llueve?',
-        a: 'Totalmente. Las lamas recogen el agua en canales perimetrales y la evacúan de forma oculta por el interior de las columnas.'
-      }
-    ]
-  },
-  {
-    slug: 'ventanas-y-puertas-murcia',
-    metaTitle: 'Fábrica y Showroom de Ventanas y Puertas en Murcia | NOVA Grupo Soto',
-    metaDescription:
-      'Fabricación, showroom e instalación de ventanas de PVC Passivhaus, aluminio RPT hoja oculta, puertas pivotantes y cerramientos en Murcia y Molina de Segura. Grupo Soto.',
-    h1: 'Fábrica, Showroom e Instalación de Ventanas y Puertas en Murcia',
-    lead: 'Sede central y Showroom técnico en Polígono Industrial La Serreta (Molina de Segura, Murcia). Fabricación e instalación propia conforme a norma UNE 85219 en Murcia Capital, Altorreal, Cartagena, Lorca y toda la Región.',
-    image: 'assets/images/showroom-interior.jpg',
-    faqs: [
-      {
-        q: '¿Dónde está ubicado el Showroom de NOVA Ventanas y Puertas en Murcia?',
-        a: 'En el Polígono Industrial La Serreta, 30500 Molina de Segura (Murcia), abierto de lunes a viernes de 08:30 a 19:30.'
-      },
-      {
-        q: '¿Realizáis mediciones gratuitas en obra en toda la Región de Murcia?',
-        a: 'Sí, nuestra oficina técnica realiza estudio térmico, acústico y medición en obra sin compromiso en toda la Región de Murcia.'
-      }
-    ]
-  },
-  {
-    slug: 'ventanas-y-puertas-alicante',
-    metaTitle: 'Ventanas, Puertas Pivotantes y Cerramientos en Alicante y Costa Blanca | NOVA',
-    metaDescription:
-      'Instalación de ventanas de PVC Passivhaus, carpintería de aluminio RPT con protección marina Qualicoat Seaside, puertas pivotantes RC3 y correderas en Alicante y Costa Blanca.',
-    h1: 'Carpintería Arquitectónica de Ventanas y Puertas en Alicante y Costa Blanca',
-    lead: 'Ejecución integral de proyectos de carpintería exterior de alta gama en Alicante, Elche, Orihuela Costa, Torrevieja, Benidorm, Altea y Jávea con protección marina Qualicoat Seaside y vidrios de Control Solar Selectivo.',
-    image: 'assets/images/project-mediterranea.jpg',
-    faqs: [
-      {
-        q: '¿Qué material es más recomendable cerca del mar en Alicante: PVC o Aluminio Seaside?',
-        a: 'Ambos son idóneos: el PVC Clase A es inmune al salitre y el Aluminio RPT con sello Qualicoat Seaside y herraje C5 garantiza durabilidad total en primera línea de costa.'
-      },
-      {
-        q: '¿Trabajáis con estudios de arquitectura y villas en la Costa Blanca?',
-        a: 'Sí, proporcionamos prescripción técnica CTE, detalles constructivos y montaje propio certificado para obra nueva y rehabilitación.'
-      }
-    ]
-  },
-  {
-    slug: 'deducciones-irpf-cambio-ventanas',
-    metaTitle: 'Deducciones IRPF por Cambio de Ventanas Eficientes (20%, 40% y 60%) | NOVA',
-    metaDescription:
-      'Guía técnica actualizada sobre las deducciones fiscales en el IRPF (20%, 40% y 60%) y ayudas por cambio de ventanas de alta eficiencia energética en Murcia y Alicante.',
-    h1: 'Deducciones Fiscales en el IRPF por Cambio de Ventanas Eficientes',
-    lead: 'Deduce el 20%, 40% o 60% en el IRPF al sustituir tus ventanas por carpintería certificada NOVA THERM 82 o NOVA ALU MINIMAL 75. Entregamos Marcado CE, Declaración de Prestaciones (DoP) y factura oficial VeriFactu.',
-    image: 'assets/images/pilar-eficiencia.jpg',
-    faqs: [
-      {
-        q: '¿Qué requisito es imprescindible antes de desmontar las ventanas viejas?',
-        a: 'Disponer del Certificado de Eficiencia Energética (CEE) previo registrado antes de la obra y emitir el certificado posterior tras la instalación.'
-      },
-      {
-        q: '¿Cumplen todas las ventanas NOVA los valores límite del CTE para la deducción?',
-        a: 'Sí, nuestras series alcanzan transmitancias Uw de 0.72 a 0.95 W/m²K, superando ampliamente las exigencias del CTE DB-HE1 en Murcia y Alicante.'
-      }
-    ]
-  }
-];
+// 2. Páginas SEO: fuente única = src/app/core/services/seo-*.data.ts (sin duplicar contenido)
+import ts from 'typescript';
+import { pathToFileURL } from 'node:url';
+
+const SERVICES_DIR = path.resolve('src/app/core/services');
+const TMP_DIR = path.resolve('node_modules/.cache/seo-data');
+fs.mkdirSync(TMP_DIR, { recursive: true });
+for (const file of ['seo-pages.data', 'seo-local-content.data']) {
+  const source = fs.readFileSync(path.join(SERVICES_DIR, `${file}.ts`), 'utf8');
+  const js = ts
+    .transpileModule(source, { compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2020 } })
+    .outputText.replace(/from '\.\/seo-pages\.data'/g, "from './seo-pages.data.mjs'");
+  fs.writeFileSync(path.join(TMP_DIR, `${file}.mjs`), js, 'utf8');
+}
+const { getEnrichedLandingPages } = await import(
+  pathToFileURL(path.join(TMP_DIR, 'seo-local-content.data.mjs')).href
+);
+
+const SEO_PAGES = getEnrichedLandingPages().map(p => ({
+  slug: p.slug,
+  metaTitle: p.metaTitle,
+  metaDescription: p.metaDescription,
+  h1: p.h1,
+  lead: p.introParagraphs.join(' '),
+  image: p.heroImage,
+  faqs: p.faqs.map(f => ({ q: f.question, a: f.answer })),
+  zones: p.local ? p.local.zones.map(z => `${z.name}: ${z.detail}`) : []
+}));
 
 const escapeHtml = str =>
   str
@@ -243,6 +116,8 @@ for (const page of SEO_PAGES) {
     .map(f => `<section><h2>${escapeHtml(f.q)}</h2><p>${escapeHtml(f.a)}</p></section>`)
     .join('');
 
+  const zonesHtml = page.zones.length ? `<h2>Zonas de servicio</h2><ul>${page.zones.map(z => `<li>${escapeHtml(z)}</li>`).join('')}</ul>` : '';
+
   const pageHtml = baseHtml
     .replace(/<title>[\s\S]*?<\/title>/, `<title>${escapeHtml(page.metaTitle)}</title>`)
     .replace(
@@ -287,7 +162,7 @@ for (const page of SEO_PAGES) {
     )
     .replace(
       /<app-root>[\s\S]*?<\/app-root>/,
-      `<app-root><div style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);"><h1>${escapeHtml(page.h1)}</h1><p>${escapeHtml(page.lead)}</p>${faqsSemanticHtml}<nav>${internalLinksHtml}<a href="${BASE_URL}/">Inicio NOVA Ventanas y Puertas</a></nav></div></app-root>`
+      `<app-root><div style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);"><h1>${escapeHtml(page.h1)}</h1><p>${escapeHtml(page.lead)}</p>${zonesHtml}${faqsSemanticHtml}<nav>${internalLinksHtml}<a href="${BASE_URL}/">Inicio NOVA Ventanas y Puertas</a></nav></div></app-root>`
     );
 
   fs.writeFileSync(path.join(DIST_DIR, `${page.slug}.html`), pageHtml, 'utf8');

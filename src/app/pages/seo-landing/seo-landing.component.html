@@ -100,6 +100,10 @@
         </div>
       </section>
 
+      @if (page.local; as local) {
+        <app-seo-local-section [local]="local"></app-seo-local-section>
+      }
+
       <!-- 5. PREGUNTAS FRECUENTES DE INGENIERÍA -->
       <section class="seo-faqs-section">
         <div class="container">
