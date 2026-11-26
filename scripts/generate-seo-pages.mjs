@@ -32,6 +32,13 @@ const portalHtml = baseHtml
 fs.writeFileSync(path.join(DIST_DIR, 'portal.html'), portalHtml, 'utf8');
 console.log('✅ Generado portal.html (noindex, nofollow, sin canonical duplicada)');
 
+const notFoundHtml = portalHtml.replace(
+  /<title>[\s\S]*?<\/title>/,
+  '<title>Página no encontrada | NOVA Ventanas y Puertas</title>'
+);
+fs.writeFileSync(path.join(DIST_DIR, '404.html'), notFoundHtml, 'utf8');
+console.log('✅ Generado 404.html (HTTP 404 real sin Soft-404 ni canonical duplicada)');
+
 // 2. Páginas SEO: fuente única = src/app/core/services/seo-*.data.ts (sin duplicar contenido)
 import ts from 'typescript';
 import { pathToFileURL } from 'node:url';
